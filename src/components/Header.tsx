@@ -10,6 +10,7 @@ import Link from 'next/link';
 const navLinks = [
   { label: 'صفحه اصلی', href: '#hero' },
   { label: 'دوره‌ها', href: '#courses' },
+  { label: 'همکاری و نمایندگی', href: '#partners' },
   { label: 'درباره ما', href: '#about' },
   { label: 'نظرات', href: '#testimonials' },
   { label: 'سؤالات متداول', href: '#faq' },

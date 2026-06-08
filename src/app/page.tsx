@@ -10,6 +10,7 @@ import TrustSection from '@/components/home/TrustSection';
 import TestimonialsSection from '@/components/home/TestimonialsSection';
 import FAQSection from '@/components/home/FAQSection';
 import CTASection from '@/components/home/CTASection';
+import PartnersSection from '@/components/home/PartnersSection';
 import QuickLeadForm from '@/components/home/QuickLeadForm';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { getReferralCodeFromURL } from '@/lib/referral';
@@ -42,6 +43,7 @@ export default function Home() {
         <CompetencyClusters />
         <FeaturedCourses />
         <TrustSection />
+        <PartnersSection />
         <TestimonialsSection />
         <FAQSection />
         <QuickLeadForm />

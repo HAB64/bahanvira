@@ -1,6 +1,6 @@
 'use client';
 
-import { Users, Calendar, Award, Heart, Music, Megaphone } from 'lucide-react';
+import { Users, Calendar, Award, Heart, Music, Megaphone, MapPin, Building2, Handshake } from 'lucide-react';
 import { stats } from '@/data/courses';
 import Image from 'next/image';
 
@@ -9,6 +9,9 @@ const iconMap: Record<string, React.ElementType> = {
   Calendar,
   Award,
   Heart,
+  MapPin,
+  Building2,
+  Handshake,
 };
 
 const statColors = [
