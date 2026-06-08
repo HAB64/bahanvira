@@ -1,8 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { Send, User, Phone, MessageSquare, BookOpen } from 'lucide-react';
+import { Send, User, Phone, MessageSquare, BookOpen, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { addLead } from '@/lib/storage';
+import { addConsultationRequest } from '@/lib/storage';
+import { getReferralCodeFromURL } from '@/lib/referral';
+import type { Lead, ConsultationRequest } from '@/types';
+
+const courseMap: Record<string, string> = {
+  beginner: 'دوره چرتکه مقدماتی',
+  intermediate: 'دوره حساب ذهنی متوسط',
+  advanced: 'دوره چرتکه پیشرفته',
+  competition: 'دوره آمادگی مسابقات',
+};
+
+function getInitialReferralCode(): string | null {
+  if (typeof window === 'undefined') return null;
+  return getReferralCodeFromURL();
+}
 
 export default function QuickLeadForm() {
   const [formData, setFormData] = useState({
@@ -11,15 +27,53 @@ export default function QuickLeadForm() {
     childAge: '',
     course: '',
     message: '',
+    referralCode: '',
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [referralCode, setReferralCode] = useState<string | null>(getInitialReferralCode);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate form submission
+    // Simulate form submission delay
     await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const effectiveReferralCode = referralCode || formData.referralCode || undefined;
+
+    // Save as Lead in CRM
+    const newLead: Lead = {
+      id: `lead-${Date.now()}`,
+      name: formData.name,
+      phone: formData.phone,
+      childAge: formData.childAge ? parseInt(formData.childAge) : undefined,
+      interestedCourse: courseMap[formData.course] || formData.course,
+      source: effectiveReferralCode ? 'referral' : 'website_form',
+      status: 'new',
+      priority: 'medium',
+      notes: formData.message || '',
+      referralCode: effectiveReferralCode,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    addLead(newLead);
+
+    // Also save as ConsultationRequest
+    const consultationRequest: ConsultationRequest = {
+      id: `consult-${Date.now()}`,
+      name: formData.name,
+      phone: formData.phone,
+      childAge: formData.childAge || undefined,
+      interestedCourse: courseMap[formData.course] || formData.course,
+      message: formData.message || undefined,
+      source: effectiveReferralCode ? 'referral' : 'website',
+      referralCode: effectiveReferralCode,
+      status: 'new',
+      createdAt: new Date().toISOString(),
+      leadId: newLead.id,
+    };
+    addConsultationRequest(consultationRequest);
+
     setSubmitted(true);
     setLoading(false);
   };
@@ -187,6 +241,27 @@ export default function QuickLeadForm() {
                   <option value="competition">آمادگی مسابقات</option>
                 </select>
               </div>
+            </div>
+
+            {/* Referral Code */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                <Gift className="w-4 h-4 text-amber-600" />
+                کد معرف (اختیاری)
+              </label>
+              <input
+                type="text"
+                name="referralCode"
+                value={referralCode || formData.referralCode}
+                onChange={handleChange}
+                readOnly={!!referralCode}
+                className={`w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-200 outline-none transition-all text-sm ${referralCode ? 'bg-amber-50 border-amber-300' : ''}`}
+                placeholder="مثال: VIRA-A3K9"
+                dir="ltr"
+              />
+              {referralCode && (
+                <p className="text-xs text-amber-600">کد معرف از لینک شما تشخیص داده شد ✓</p>
+              )}
             </div>
 
             <div className="space-y-2">

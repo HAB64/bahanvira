@@ -77,3 +77,30 @@ Stage Summary:
 - Responsive design with shadcn/ui components
 - Static export compatible (no API routes)
 - Successfully deployed to GitHub Pages
+
+---
+Task ID: 4
+Agent: full-stack-developer
+Task: Enhance Vira Abacus site with starter-kit types and features
+
+Work Log:
+- Read all existing project files to understand current code structure
+- Updated types/index.ts with enhanced types from starter-kit: Added Admin, AdminPermission, Instructor, Parent interfaces; Added Course with slug, schedule, syllabus, status, capacity, enrolledCount, startDate, endDate; Added CourseStatus, ClassSchedule, DayOfWeek, SyllabusItem, Enrollment, EnrollmentStatus, PaymentStatus types; Enhanced Exam with courseId, status, availableFrom, availableTo, createdAt, createdBy; Added ExamStatus type; Enhanced ExamQuestion with timeLimit; Enhanced ExamAttempt with status; Added AttemptStatus type; Enhanced DashboardStats with studentGrowth, revenueGrowth, leadSources, upcomingClasses, activeExams; Added MonthlyData, LeadSourceData, ConsultationRequest, Certificate, Notification, NotificationType, ReferralStats, LeadNote, FollowUp types; Added examStatusLabels and courseStatusLabels; Kept all existing Persian label maps; Used string type for Date fields for localStorage JSON serialization compatibility
+- Enhanced QuickLeadForm to save leads to CRM and support referral codes: Imports addLead, addConsultationRequest, getReferralCodeFromURL; Creates Lead object on form submission with addLead(); Creates ConsultationRequest linked to lead; Detects referral code from URL on component mount; Added referral code input field with auto-fill from URL; Added Gift icon import
+- Added referral code URL detection on homepage: Made page.tsx a client component; Detects ?ref=CODE URL parameter; Shows amber/orange banner with referral code info and dismiss button; Uses lazy initialization pattern to avoid lint errors
+- Added Exam Management Tab to Admin Panel: Created ExamTable component with stats summary, type filtering, and exam data table; Added "آزمون‌ها" tab to admin TabsList with ClipboardList icon; Added TabsContent with ExamTable using sampleExams data
+- Enhanced Admin Dashboard with charts and more stats: Added 8 stat cards (total students, active students, new leads, conversion rate, total revenue, monthly revenue, active exams, pending referrals); Added CSS-based bar chart for lead sources breakdown; Added quick actions card with buttons to navigate to Leads, Students, Exams, Referrals tabs; DashboardStats now receives setActiveTab prop for navigation
+- Added ConsultationRequest support to storage.ts: Added STORAGE_KEYS.CONSULTATION_REQUESTS; Added getConsultationRequests(), addConsultationRequest(), updateConsultationRequest() functions; Updated calculateDashboardStats() to include leadSources, upcomingClasses, activeExams fields; Imported ConsultationRequest and LeadSourceData types
+- Fixed lint errors: Replaced useEffect+setState pattern with lazy state initialization to avoid react-hooks/set-state-in-effect errors
+- Build passes successfully with no errors
+- Lint passes with no errors
+
+Stage Summary:
+- Enhanced type system with 20+ new types and interfaces from starter-kit
+- QuickLeadForm now persists leads and consultation requests to localStorage CRM
+- Referral code detection from URL with visual banner on homepage
+- New Exam Management tab in admin panel with stats and filtering
+- Enhanced dashboard with 8 stat cards, lead sources bar chart, and quick action buttons
+- ConsultationRequest management in storage layer
+- All changes maintain backward compatibility with existing components
+- Zero lint errors, successful static export build

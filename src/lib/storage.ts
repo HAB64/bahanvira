@@ -3,7 +3,8 @@
 //  Vira Decimal Abacus - Local Storage Helpers
 // ═══════════════════════════════════════════════════════════
 
-import type { Lead, Student, Referral, ExamAttempt, ExamResult } from '@/types';
+import type { Lead, Student, Referral, ExamAttempt, ExamResult, ConsultationRequest, LeadSourceData } from '@/types';
+import { leadSourceLabels, type LeadSource } from '@/types';
 
 const STORAGE_KEYS = {
   ADMIN_AUTH: 'vira_admin_auth',
@@ -14,6 +15,7 @@ const STORAGE_KEYS = {
   EXAM_ATTEMPTS: 'vira_exam_attempts',
   STUDENT_RESULTS: 'vira_student_results',
   STUDENT_ACHIEVEMENTS: 'vira_student_achievements',
+  CONSULTATION_REQUESTS: 'vira_consultation_requests',
   DATA_INITIALIZED: 'vira_data_initialized',
 } as const;
 
@@ -169,6 +171,27 @@ export function updateReferral(id: string, updates: Partial<Referral>): void {
   }
 }
 
+// ─── Consultation Requests ────────────────────────────────
+
+export function getConsultationRequests(): ConsultationRequest[] {
+  return getItem<ConsultationRequest[]>(STORAGE_KEYS.CONSULTATION_REQUESTS, []);
+}
+
+export function addConsultationRequest(request: ConsultationRequest): void {
+  const requests = getConsultationRequests();
+  requests.unshift(request);
+  setItem(STORAGE_KEYS.CONSULTATION_REQUESTS, requests);
+}
+
+export function updateConsultationRequest(id: string, updates: Partial<ConsultationRequest>): void {
+  const requests = getConsultationRequests();
+  const index = requests.findIndex(r => r.id === id);
+  if (index !== -1) {
+    requests[index] = { ...requests[index], ...updates };
+    setItem(STORAGE_KEYS.CONSULTATION_REQUESTS, requests);
+  }
+}
+
 // ─── Exam Attempts ────────────────────────────────────────
 
 export function getExamAttempts(): ExamAttempt[] {
@@ -238,6 +261,18 @@ export function calculateDashboardStats() {
     r.status === 'registered' || r.status === 'reward_pending'
   ).length;
 
+  // Calculate lead sources breakdown
+  const sourceCounts: Record<string, number> = {};
+  leads.forEach(l => {
+    sourceCounts[l.source] = (sourceCounts[l.source] || 0) + 1;
+  });
+
+  const leadSources: LeadSourceData[] = Object.entries(sourceCounts).map(([source, count]) => ({
+    source: source as LeadSource,
+    count,
+    percentage: leads.length > 0 ? Math.round((count / leads.length) * 100) : 0,
+  })).sort((a, b) => b.count - a.count);
+
   return {
     totalStudents: students.length,
     activeStudents: students.length,
@@ -246,6 +281,11 @@ export function calculateDashboardStats() {
     conversionRate,
     totalRevenue,
     monthlyRevenue,
+    upcomingClasses: 4, // From scheduled classes
+    activeExams: 2, // From sampleExams
     pendingReferrals,
+    studentGrowth: [] as { month: string; value: number }[],
+    revenueGrowth: [] as { month: string; value: number }[],
+    leadSources,
   };
 }

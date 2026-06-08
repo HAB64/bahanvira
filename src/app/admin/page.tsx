@@ -14,11 +14,13 @@ import {
   LogOut,
   ArrowRight,
   Shield,
+  ClipboardList,
 } from 'lucide-react';
 import DashboardStats from '@/components/admin/DashboardStats';
 import LeadTable from '@/components/admin/LeadTable';
 import StudentTable from '@/components/admin/StudentTable';
 import ReferralTable from '@/components/admin/ReferralTable';
+import ExamTable from '@/components/admin/ExamTable';
 import {
   isAdminAuthenticated,
   loginAdmin,
@@ -28,7 +30,7 @@ import {
   getReferrals,
   calculateDashboardStats,
 } from '@/lib/storage';
-import { initializeSampleData } from '@/lib/sample-data';
+import { initializeSampleData, sampleExams } from '@/lib/sample-data';
 import Image from 'next/image';
 import { siteConfig } from '@/config/site';
 
@@ -204,6 +206,10 @@ export default function AdminPage() {
               <UserCheck className="w-4 h-4" />
               <span className="hidden sm:inline">کارآموزان</span>
             </TabsTrigger>
+            <TabsTrigger value="exams" className="gap-2 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700">
+              <ClipboardList className="w-4 h-4" />
+              <span className="hidden sm:inline">آزمون‌ها</span>
+            </TabsTrigger>
             <TabsTrigger value="referrals" className="gap-2 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700">
               <Gift className="w-4 h-4" />
               <span className="hidden sm:inline">معرف‌ها</span>
@@ -212,7 +218,7 @@ export default function AdminPage() {
 
           {/* Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6">
-            {stats && <DashboardStats stats={stats} />}
+            {stats && <DashboardStats stats={stats} setActiveTab={setActiveTab} />}
 
             {/* Quick overview cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -298,6 +304,21 @@ export default function AdminPage() {
                   students={students}
                   onUpdate={() => setRefreshKey(k => k + 1)}
                 />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Exams Tab */}
+          <TabsContent value="exams">
+            <Card className="border-purple-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ClipboardList className="w-5 h-5 text-purple-600" />
+                  مدیریت آزمون‌ها
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ExamTable exams={sampleExams} />
               </CardContent>
             </Card>
           </TabsContent>
