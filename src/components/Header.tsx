@@ -108,14 +108,24 @@ export default function Header() {
               </Button>
             </Link>
             <div className="w-px h-6 bg-gray-200" />
-            <a
-              href={siteConfig.contact.phoneHref}
-              className="flex items-center gap-2 text-sm text-gray-600 hover:text-amber-700 transition-colors"
-              dir="ltr"
-            >
-              <Phone className="w-4 h-4" />
-              <span>{siteConfig.contact.phoneRaw}</span>
-            </a>
+            <div className="flex items-center gap-3">
+              <a
+                href={siteConfig.contact.phone1Href}
+                className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-amber-700 transition-colors"
+                dir="ltr"
+              >
+                <Phone className="w-4 h-4" />
+                <span>{siteConfig.contact.phone1Raw}</span>
+              </a>
+              <span className="text-gray-300">|</span>
+              <a
+                href={siteConfig.contact.phone2Href}
+                className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-amber-700 transition-colors"
+                dir="ltr"
+              >
+                <span>{siteConfig.contact.phone2Raw}</span>
+              </a>
+            </div>
             <Button
               onClick={() => handleNavClick('#contact')}
               className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl px-5"

@@ -20,11 +20,17 @@ export const siteConfig = {
   },
 
   contact: {
-    phone: '۰۲۱-۱۲۳۴۵۶۷۸',
-    phoneHref: 'tel:02112345678',
-    phoneRaw: '02112345678',
-    whatsappRaw: '989121234567',
-    whatsappUrl: 'https://wa.me/989121234567',
+    phone1: '۰۱۱-۴۴۷۴۶۴۴۱',
+    phone1Href: 'tel:01144746441',
+    phone1Raw: '01144746441',
+    phone2: '۰۹۱۱-۱۲۷۷۱۹۴',
+    phone2Href: 'tel:09111277194',
+    phone2Raw: '09111277194',
+    phone: '۰۱۱-۴۴۷۴۶۴۴۱',
+    phoneHref: 'tel:01144746441',
+    phoneRaw: '01144746441',
+    whatsappRaw: '989111277194',
+    whatsappUrl: 'https://wa.me/989111277194',
     email: 'info@vira-abacus.ir',
   },
 

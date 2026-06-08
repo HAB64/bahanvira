@@ -175,7 +175,7 @@ export default function PartnersSection() {
                 <ArrowLeft className="w-5 h-5 mr-2" />
               </Button>
               <a
-                href="tel:02112345678"
+                href="tel:01144746441"
                 className="flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white font-bold px-8 py-4 rounded-xl hover:bg-white/20 transition-colors border border-white/30"
               >
                 <Phone className="w-5 h-5" />

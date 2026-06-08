@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { Send, User, Phone, MessageSquare, BookOpen, Gift } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Send, User, Phone, MessageSquare, BookOpen, Gift, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { addLead } from '@/lib/storage';
 import { addConsultationRequest } from '@/lib/storage';
 import { getReferralCodeFromURL } from '@/lib/referral';
+import { provinces } from '@/data/provinces';
 import type { Lead, ConsultationRequest } from '@/types';
 
 const courseMap: Record<string, string> = {
@@ -26,12 +27,30 @@ export default function QuickLeadForm() {
     phone: '',
     childAge: '',
     course: '',
+    province: '',
+    city: '',
     message: '',
     referralCode: '',
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [referralCode, setReferralCode] = useState<string | null>(getInitialReferralCode);
+
+  const availableCities = useMemo(() => {
+    const prov = provinces.find(p => p.name === formData.province);
+    return prov ? prov.cities : [];
+  }, [formData.province]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    if (name === 'province') {
+      setFormData((prev) => ({ ...prev, province: value, city: '' }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +67,8 @@ export default function QuickLeadForm() {
       phone: formData.phone,
       childAge: formData.childAge ? parseInt(formData.childAge) : undefined,
       interestedCourse: courseMap[formData.course] || formData.course,
+      province: formData.province || undefined,
+      city: formData.city || undefined,
       source: effectiveReferralCode ? 'referral' : 'website_form',
       status: 'new',
       priority: 'medium',
@@ -65,6 +86,8 @@ export default function QuickLeadForm() {
       phone: formData.phone,
       childAge: formData.childAge || undefined,
       interestedCourse: courseMap[formData.course] || formData.course,
+      province: formData.province || undefined,
+      city: formData.city || undefined,
       message: formData.message || undefined,
       source: effectiveReferralCode ? 'referral' : 'website',
       referralCode: effectiveReferralCode,
@@ -76,12 +99,6 @@ export default function QuickLeadForm() {
 
     setSubmitted(true);
     setLoading(false);
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   if (submitted) {
@@ -206,6 +223,49 @@ export default function QuickLeadForm() {
                 placeholder="۰۹۱۲۳۴۵۶۷۸۹"
                 dir="ltr"
               />
+            </div>
+
+            {/* Province and City */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-amber-600" />
+                  استان
+                </label>
+                <select
+                  name="province"
+                  value={formData.province}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-200 outline-none transition-all text-sm bg-white"
+                >
+                  <option value="">انتخاب استان</option>
+                  {provinces.map((p) => (
+                    <option key={p.name} value={p.name}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-amber-600" />
+                  شهرستان
+                </label>
+                <select
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  disabled={!formData.province}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-200 outline-none transition-all text-sm bg-white disabled:bg-gray-100 disabled:text-gray-400"
+                >
+                  <option value="">انتخاب شهرستان</option>
+                  {availableCities.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

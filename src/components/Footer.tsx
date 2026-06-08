@@ -70,11 +70,18 @@ export default function Footer() {
             <h4 className="font-bold text-white">تماس با ما</h4>
             <div className="space-y-3 text-sm">
               <a
-                href={siteConfig.contact.phoneHref}
+                href={siteConfig.contact.phone1Href}
                 className="flex items-center gap-3 hover:text-amber-400 transition-colors"
               >
                 <Phone className="w-4 h-4 shrink-0" />
-                <span dir="ltr">{siteConfig.contact.phoneRaw}</span>
+                <span dir="ltr">{siteConfig.contact.phone1Raw}</span>
+              </a>
+              <a
+                href={siteConfig.contact.phone2Href}
+                className="flex items-center gap-3 hover:text-amber-400 transition-colors"
+              >
+                <Phone className="w-4 h-4 shrink-0" />
+                <span dir="ltr">{siteConfig.contact.phone2Raw}</span>
               </a>
               <a
                 href={`mailto:${siteConfig.contact.email}`}

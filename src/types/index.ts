@@ -131,6 +131,8 @@ export interface Lead {
   childName?: string;
   childAge?: number;
   interestedCourse?: string;
+  province?: string;
+  city?: string;
   source: LeadSource;
   status: LeadStatus;
   priority: LeadPriority;
@@ -341,6 +343,8 @@ export interface ConsultationRequest {
   childName?: string;
   childAge?: string;
   interestedCourse?: string;
+  province?: string;
+  city?: string;
   message?: string;
   source: 'website' | 'whatsapp' | 'instagram' | 'referral';
   referralCode?: string;

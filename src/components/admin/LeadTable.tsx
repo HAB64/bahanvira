@@ -73,6 +73,8 @@ export default function LeadTable({ leads, onUpdate }: LeadTableProps) {
   const [formStatus, setFormStatus] = useState<LeadStatus>('new');
   const [formPriority, setFormPriority] = useState<LeadPriority>('medium');
   const [formNotes, setFormNotes] = useState('');
+  const [formProvince, setFormProvince] = useState('');
+  const [formCity, setFormCity] = useState('');
 
   const filteredLeads = leads.filter((lead) => {
     const matchesSearch =
@@ -94,6 +96,8 @@ export default function LeadTable({ leads, onUpdate }: LeadTableProps) {
     setFormStatus('new');
     setFormPriority('medium');
     setFormNotes('');
+    setFormProvince('');
+    setFormCity('');
     setEditingLead(null);
   };
 
@@ -108,6 +112,8 @@ export default function LeadTable({ leads, onUpdate }: LeadTableProps) {
     setFormStatus(lead.status);
     setFormPriority(lead.priority);
     setFormNotes(lead.notes || '');
+    setFormProvince(lead.province || '');
+    setFormCity(lead.city || '');
     setShowAddDialog(true);
   };
 
@@ -121,6 +127,8 @@ export default function LeadTable({ leads, onUpdate }: LeadTableProps) {
         childName: formChildName || undefined,
         childAge: formChildAge ? parseInt(formChildAge) : undefined,
         interestedCourse: formCourse || undefined,
+        province: formProvince || undefined,
+        city: formCity || undefined,
         source: formSource,
         status: formStatus,
         priority: formPriority,
@@ -134,6 +142,8 @@ export default function LeadTable({ leads, onUpdate }: LeadTableProps) {
         childName: formChildName || undefined,
         childAge: formChildAge ? parseInt(formChildAge) : undefined,
         interestedCourse: formCourse || undefined,
+        province: formProvince || undefined,
+        city: formCity || undefined,
         source: formSource,
         status: formStatus,
         priority: formPriority,
@@ -223,6 +233,7 @@ export default function LeadTable({ leads, onUpdate }: LeadTableProps) {
                 <TableHead className="text-right">شماره تماس</TableHead>
                 <TableHead className="text-right hidden md:table-cell">نام فرزند</TableHead>
                 <TableHead className="text-right hidden lg:table-cell">دوره مورد نظر</TableHead>
+                <TableHead className="text-right hidden md:table-cell">استان / شهر</TableHead>
                 <TableHead className="text-right hidden sm:table-cell">منبع</TableHead>
                 <TableHead className="text-right">وضعیت</TableHead>
                 <TableHead className="text-right hidden md:table-cell">اولویت</TableHead>
@@ -233,7 +244,7 @@ export default function LeadTable({ leads, onUpdate }: LeadTableProps) {
             <TableBody>
               {filteredLeads.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8 text-gray-500">
+                  <TableCell colSpan={10} className="text-center py-8 text-gray-500">
                     سرنخی یافت نشد
                   </TableCell>
                 </TableRow>
@@ -244,6 +255,7 @@ export default function LeadTable({ leads, onUpdate }: LeadTableProps) {
                     <TableCell dir="ltr" className="text-sm">{lead.phone}</TableCell>
                     <TableCell className="hidden md:table-cell">{lead.childName || '—'}</TableCell>
                     <TableCell className="hidden lg:table-cell text-sm">{lead.interestedCourse || '—'}</TableCell>
+                    <TableCell className="hidden md:table-cell text-sm">{lead.province ? (lead.city ? `${lead.province} - ${lead.city}` : lead.province) : '—'}</TableCell>
                     <TableCell className="hidden sm:table-cell">
                       <Badge variant="outline" className="text-xs">
                         {leadSourceLabels[lead.source]}
@@ -335,6 +347,16 @@ export default function LeadTable({ leads, onUpdate }: LeadTableProps) {
                   <SelectItem value="دوره آمادگی مسابقات">دوره آمادگی مسابقات</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">استان</label>
+                <Input value={formProvince} onChange={(e) => setFormProvince(e.target.value)} placeholder="مثلاً مازندران" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">شهرستان</label>
+                <Input value={formCity} onChange={(e) => setFormCity(e.target.value)} placeholder="مثلاً ساری" />
+              </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
