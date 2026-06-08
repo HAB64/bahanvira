@@ -31,6 +31,7 @@ import {
 } from '@/lib/storage';
 import type { Student, ExamResult } from '@/types';
 import Image from 'next/image';
+import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 
 export default function PortalPage() {
@@ -159,10 +160,10 @@ export default function PortalPage() {
                 <p className="text-xs" dir="ltr">09143333333 (آریا احمدی)</p>
               </div>
 
-              <a href="/" className="inline-flex items-center gap-1 text-amber-600 hover:text-amber-700 text-sm">
+              <Link href="/" className="inline-flex items-center gap-1 text-amber-600 hover:text-amber-700 text-sm">
                 <ArrowRight className="w-4 h-4" />
                 بازگشت به صفحه اصلی
-              </a>
+              </Link>
             </div>
           </CardContent>
         </Card>
@@ -178,7 +179,7 @@ export default function PortalPage() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
-              <a href="/">
+              <Link href="/">
                 <Image
                   src="/logo.webp"
                   alt={siteConfig.name.fullName}
@@ -186,24 +187,24 @@ export default function PortalPage() {
                   height={36}
                   className="rounded-lg"
                 />
-              </a>
+              </Link>
               <div>
                 <h1 className="font-bold text-teal-700">پورتال کارآموز</h1>
                 <p className="text-[10px] text-gray-500 hidden sm:block">{student?.name}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <a href="/exam">
+              <Link href="/exam">
                 <Button variant="outline" size="sm" className="text-xs gap-1">
                   <ClipboardList className="w-3 h-3" />
                   آزمون‌ها
                 </Button>
-              </a>
-              <a href="/">
+              </Link>
+              <Link href="/">
                 <Button variant="outline" size="sm" className="text-xs">
                   بازگشت به سایت
                 </Button>
-              </a>
+              </Link>
               <Button
                 variant="outline"
                 size="sm"

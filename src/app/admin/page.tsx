@@ -32,6 +32,7 @@ import {
 } from '@/lib/storage';
 import { initializeSampleData, sampleExams } from '@/lib/sample-data';
 import Image from 'next/image';
+import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 
 export default function AdminPage() {
@@ -171,11 +172,11 @@ export default function AdminPage() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <a href="/">
+              <Link href="/">
                 <Button variant="outline" size="sm" className="text-xs">
                   بازگشت به سایت
                 </Button>
-              </a>
+              </Link>
               <Button
                 variant="outline"
                 size="sm"
