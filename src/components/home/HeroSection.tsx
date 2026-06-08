@@ -99,7 +99,7 @@ export default function HeroSection() {
             <div className="relative w-full max-w-md lg:max-w-lg">
               <div className="absolute -inset-4 bg-gradient-to-br from-amber-200 via-orange-200 to-teal-200 rounded-3xl blur-2xl opacity-40" />
               <Image
-                src="/images/abacus-hero.png"
+                src="/images/abacus-hero.jpg"
                 alt="چرتکه دهگانی ویرا"
                 width={600}
                 height={400}
