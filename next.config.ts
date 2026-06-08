@@ -9,9 +9,10 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: "/bahanvira",
-  assetPrefix: "/bahanvira/",
   trailingSlash: true,
+  turbopack: {
+    root: "..",
+  },
 };
 
 export default nextConfig;
