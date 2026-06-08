@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, Shield, User, ClipboardList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { siteConfig } from '@/config/site';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const navLinks = [
   { label: 'صفحه اصلی', href: '#hero' },
@@ -44,7 +45,7 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3">
             <Image
               src="/logo.webp"
               alt={siteConfig.name.fullName}
@@ -60,7 +61,7 @@ export default function Header() {
                 چرتکه دهگانی
               </span>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1">
@@ -73,10 +74,39 @@ export default function Header() {
                 {link.label}
               </button>
             ))}
+            <div className="w-px h-6 bg-gray-200 mx-1" />
+            <Link
+              href="/exam"
+              className="px-3 py-2 text-sm font-medium text-teal-700 hover:text-teal-800 hover:bg-teal-50 rounded-lg transition-colors flex items-center gap-1.5"
+            >
+              <ClipboardList className="w-4 h-4" />
+              آزمون آنلاین
+            </Link>
           </nav>
 
-          {/* CTA + Phone */}
+          {/* CTA + Phone + Portal/Admin */}
           <div className="hidden md:flex items-center gap-3">
+            <Link href="/portal">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-teal-300 text-teal-700 hover:bg-teal-50 rounded-xl text-xs gap-1.5"
+              >
+                <User className="w-3.5 h-3.5" />
+                پورتال کارآموز
+              </Button>
+            </Link>
+            <Link href="/admin">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-amber-300 text-amber-700 hover:bg-amber-50 rounded-xl text-xs gap-1.5"
+              >
+                <Shield className="w-3.5 h-3.5" />
+                پنل مدیریت
+              </Button>
+            </Link>
+            <div className="w-px h-6 bg-gray-200" />
             <a
               href={siteConfig.contact.phoneHref}
               className="flex items-center gap-2 text-sm text-gray-600 hover:text-amber-700 transition-colors"
@@ -117,6 +147,32 @@ export default function Header() {
                 {link.label}
               </button>
             ))}
+            <div className="pt-3 border-t border-gray-100 space-y-2">
+              <Link
+                href="/exam"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
+              >
+                <ClipboardList className="w-4 h-4" />
+                آزمون آنلاین
+              </Link>
+              <Link
+                href="/portal"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-teal-700 hover:bg-teal-50 rounded-lg transition-colors"
+              >
+                <User className="w-4 h-4" />
+                پورتال کارآموز
+              </Link>
+              <Link
+                href="/admin"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center gap-2 px-4 py-3 text-sm font-medium text-amber-700 hover:bg-amber-50 rounded-lg transition-colors"
+              >
+                <Shield className="w-4 h-4" />
+                پنل مدیریت
+              </Link>
+            </div>
             <div className="pt-3 border-t border-gray-100">
               <Button
                 onClick={() => handleNavClick('#contact')}
