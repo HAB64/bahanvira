@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     'چرتکه ویرا',
   ],
   icons: {
-    icon: '/logo.png',
+    icon: '/logo.webp',
   },
   openGraph: {
     title: 'چرتکه دهگانی ویرا | آموزش چرتکه و حساب ذهنی',

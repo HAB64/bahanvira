@@ -46,7 +46,7 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <Image
-              src="/logo.png"
+              src="/logo.webp"
               alt={siteConfig.name.fullName}
               width={48}
               height={48}

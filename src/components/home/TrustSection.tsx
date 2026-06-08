@@ -1,7 +1,8 @@
 'use client';
 
-import { Users, Calendar, Award, Heart } from 'lucide-react';
+import { Users, Calendar, Award, Heart, Music, Megaphone } from 'lucide-react';
 import { stats } from '@/data/courses';
+import Image from 'next/image';
 
 const iconMap: Record<string, React.ElementType> = {
   Users,
@@ -26,7 +27,7 @@ const statBgs = [
 
 export default function TrustSection() {
   return (
-    <section className="py-16 md:py-24 bg-white" dir="rtl">
+    <section id="about" className="py-16 md:py-24 bg-white" dir="rtl">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
@@ -108,6 +109,53 @@ export default function TrustSection() {
                 <p className="text-sm text-gray-600 leading-6">{item.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Vira Anthem & Promo Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+          {/* سرود ویرا */}
+          <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300">
+            <div className="relative h-56 md:h-64 overflow-hidden">
+              <Image
+                src="/images/abacus-anthem.jpg"
+                alt="سرود ویرا"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-4 right-4 left-4">
+                <div className="flex items-center gap-2 text-white">
+                  <Music className="w-5 h-5" />
+                  <span className="font-bold text-sm">سرود ویرا</span>
+                </div>
+                <p className="text-white/80 text-xs mt-1">
+                  سرود انگیزشی آموزشگاه چرتکه دهگانی ویرا
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* اولین آگهی */}
+          <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300">
+            <div className="relative h-56 md:h-64 overflow-hidden">
+              <Image
+                src="/images/abacus-ad.jpg"
+                alt="آگهی ویرا"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute bottom-4 right-4 left-4">
+                <div className="flex items-center gap-2 text-white">
+                  <Megaphone className="w-5 h-5" />
+                  <span className="font-bold text-sm">اخبار و آگهی‌ها</span>
+                </div>
+                <p className="text-white/80 text-xs mt-1">
+                  جدیدترین اخبار و اطلاعیه‌های آموزشگاه ویرا
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

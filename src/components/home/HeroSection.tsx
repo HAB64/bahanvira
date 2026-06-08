@@ -99,7 +99,7 @@ export default function HeroSection() {
             <div className="relative w-full max-w-md lg:max-w-lg">
               <div className="absolute -inset-4 bg-gradient-to-br from-amber-200 via-orange-200 to-teal-200 rounded-3xl blur-2xl opacity-40" />
               <Image
-                src="/images/hero-bg.png"
+                src="/images/abacus-hero.png"
                 alt="چرتکه دهگانی ویرا"
                 width={600}
                 height={400}
@@ -108,17 +108,15 @@ export default function HeroSection() {
               />
             </div>
 
-            {/* Floating badge */}
-            <div className="absolute bottom-4 right-4 md:bottom-8 md:right-4 bg-white rounded-2xl shadow-xl p-4 border border-amber-100 z-10">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center text-white text-xl font-black">
-                  و
-                </div>
-                <div>
-                  <p className="font-bold text-gray-900 text-sm">ویرا</p>
-                  <p className="text-xs text-gray-500">چرتکه دهگانی</p>
-                </div>
-              </div>
+            {/* Floating badge with real logo */}
+            <div className="absolute bottom-4 right-4 md:bottom-8 md:right-4 bg-white rounded-2xl shadow-xl p-3 border border-teal-100 z-10">
+              <Image
+                src="/logo.webp"
+                alt="لوگو ویرا"
+                width={52}
+                height={52}
+                className="rounded-lg"
+              />
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { Phone, Mail, MapPin, Instagram, Send } from 'lucide-react';
 import { siteConfig } from '@/config/site';
+import Image from 'next/image';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -12,7 +13,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* About */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-amber-400">{siteConfig.name.fullName}</h3>
+            <div className="flex items-center gap-3">
+              <Image
+                src="/logo.webp"
+                alt={siteConfig.name.fullName}
+                width={48}
+                height={48}
+                className="rounded-lg"
+              />
+              <h3 className="text-xl font-bold text-amber-400">{siteConfig.name.fa}</h3>
+            </div>
             <p className="text-sm leading-7 text-gray-400">
               آموزش تخصصی چرتکه دهگانی و حساب ذهنی برای کودکان و نوجوانان با بهره‌گیری از
               جدیدترین روش‌های آموزشی و اساتید مجرب. هدف ما پرورش نسل توانمند و خلاق در
