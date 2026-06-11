@@ -1,8 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// ═══════════════════════════════════════════════════════════
+//  پلتفرم بهان رایانه - Enterprise Architecture
+//  Bahan Rayaneh Platform - Prisma Schema
+// ═══════════════════════════════════════════════════════════
 
 generator client {
   provider = "prisma-client-js"
@@ -13,20 +12,944 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ─── لایه 1: هسته مرکزی (Core ERP) ─────────────────────────
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(cuid())
+  email         String    @unique
+  phone         String?
+  name          String
+  passwordHash  String    @default("")
+  role          UserRole  @default(STAFF)
+  avatar        String?
+  isActive      Boolean   @default(true)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  instructor    Instructor?
+  staff         Staff?
+  student       Student?
+  leadCreatedBy Lead[]    @relation("LeadCreator")
+  notifications Notification[]
+  auditLogs     AuditLog[]
+  createdCourses Course[]  @relation("CourseCreator")
+  examAttempts  ExamAttempt[]
+  supportTickets Ticket[]  @relation("TicketCreator")
+  ticketMessages TicketMessage[]
+
+  @@map("users")
 }
 
-model Post {
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  BRANCH_MANAGER
+  INSTRUCTOR
+  STAFF
+  STUDENT
+  PARENT
+  @@map("user_roles")
+}
+
+model Branch {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  province    String
+  city        String
+  address     String?
+  phone       String?
+  managerName String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  instructors Instructor[]
+  students    Student[]
+  classes     Class[]
+  enrollments Enrollment[]
+  courses     Course[]
+  leads       Lead[]
+  revenues    Revenue[]
+  expenses    Expense[]
+
+  @@map("branches")
+}
+
+model Instructor {
+  id              String        @id @default(cuid())
+  userId          String        @unique
+  specialties     String        @default("[]") // JSON array
+  bio             String?
+  rating          Float         @default(0)
+  totalClasses    Int           @default(0)
+  hireDate        DateTime?
+  salaryBase      Int           @default(0)
+  isActive        Boolean       @default(true)
+  branchId        String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User          @relation(fields: [userId], references: [id])
+  branch          Branch?       @relation(fields: [branchId], references: [id])
+  classInstructor Class[]
+  examCreator     Exam[]
+  salaryRecords   SalaryRecord[]
+
+  @@map("instructors")
+}
+
+model Staff {
   id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
+  userId    String   @unique
+  position  String?
+  department String?
+  branchId  String?
+  hireDate  DateTime?
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("staff")
+}
+
+model Document {
+  id          String       @id @default(cuid())
+  title       String
+  type        DocumentType @default(GENERAL)
+  category    String?
+  fileUrl     String?
+  description String?
+  userId      String?
+  branchId    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("documents")
+}
+
+enum DocumentType {
+  CONTRACT
+  CERTIFICATE
+  ID_CARD
+  RECEIPT
+  GENERAL
+  @@map("document_types")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  actionUrl String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  details   String?  // JSON
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+// ─── لایه 2: آموزش (LMS) ───────────────────────────────────
+
+model Course {
+  id              String         @id @default(cuid())
+  slug            String         @unique
+  title           String
+  description     String?
+  level           CourseLevel    @default(BEGINNER)
+  ageRange        String?
+  duration        String?
+  sessions        Int            @default(12)
+  sessionsPerWeek Int            @default(2)
+  sessionDuration Int            @default(60) // minutes
+  price           Int            @default(0)  // in Rials
+  features        String         @default("[]") // JSON array
+  icon            String?
+  color           String?
+  status          CourseStatus   @default(ACTIVE)
+  capacity        Int            @default(15)
+  enrolledCount   Int            @default(0)
+  startDate       DateTime?
+  endDate         DateTime?
+  createdById     String?
+  branchId        String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  creator         User?          @relation("CourseCreator", fields: [createdById], references: [id])
+  branch          Branch?        @relation(fields: [branchId], references: [id])
+  syllabus        SyllabusItem[]
+  classes         Class[]
+  enrollments     Enrollment[]
+  exams           Exam[]
+  contents        CourseContent[]
+  assignments     Assignment[]
+  tuitions        Tuition[]
+
+  @@map("courses")
+}
+
+enum CourseLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  COMPETITION
+  @@map("course_levels")
+}
+
+enum CourseStatus {
+  UPCOMING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  @@map("course_statuses")
+}
+
+model SyllabusItem {
+  id          String   @id @default(cuid())
+  courseId     String
+  sessionNumber Int
+  title       String
+  topics      String   @default("[]") // JSON array
+  homework    String?
+  duration    Int      @default(60)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("syllabus_items")
+}
+
+model Class {
+  id          String      @id @default(cuid())
+  courseId     String
+  instructorId String?
+  branchId    String?
+  dayOfWeek   DayOfWeek?
+  startTime   String      @default("16:00")
+  endTime     String      @default("17:30")
+  location    String?
+  isOnline    Boolean     @default(false)
+  onlineLink  String?
+  status      ClassStatus @default(SCHEDULED)
+  classDate   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  instructor  Instructor? @relation(fields: [instructorId], references: [id])
+  branch      Branch?     @relation(fields: [branchId], references: [id])
+  attendance  Attendance[]
+
+  @@map("classes")
+}
+
+enum DayOfWeek {
+  SATURDAY
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  @@map("days_of_week")
+}
+
+enum ClassStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  @@map("class_statuses")
+}
+
+model CourseContent {
+  id          String       @id @default(cuid())
+  courseId     String
+  title       String
+  type        ContentType  @default(VIDEO)
+  url         String?
+  content     String?      // text content
+  orderNum    Int          @default(0)
+  isPublished Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@map("course_contents")
+}
+
+enum ContentType {
+  VIDEO
+  DOCUMENT
+  IMAGE
+  LINK
+  TEXT
+  @@map("content_types")
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  courseId     String
+  title       String
+  description String?
+  dueDate     DateTime?
+  maxScore    Int      @default(100)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  submissions AssignmentSubmission[]
+
+  @@map("assignments")
+}
+
+model AssignmentSubmission {
+  id           String   @id @default(cuid())
+  assignmentId String
+  studentId    String
+  content      String?
+  fileUrl      String?
+  score        Int?
+  feedback     String?
+  submittedAt  DateTime @default(now())
+  gradedAt     DateTime?
+
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student      Student   @relation(fields: [studentId], references: [id])
+
+  @@map("assignment_submissions")
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  classId   String
+  studentId String
+  status    AttendanceStatus @default(PRESENT)
+  notes     String?
+  recordedAt DateTime @default(now())
+
+  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+  student   Student  @relation(fields: [studentId], references: [id])
+
+  @@unique([classId, studentId])
+  @@map("attendance")
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+  @@map("attendance_statuses")
+}
+
+// ─── لایه 3: CRM آموزشی ────────────────────────────────────
+
+model Lead {
+  id               String       @id @default(cuid())
+  name             String
+  phone            String
+  email            String?
+  childName        String?
+  childAge         Int?
+  interestedCourse String?
+  province         String?
+  city             String?
+  source           LeadSource   @default(WEBSITE_FORM)
+  status           LeadStatus   @default(NEW)
+  priority         LeadPriority @default(MEDIUM)
+  notes            String?
+  referralCode     String?
+  assignedToId     String?
+  branchId         String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  assignedTo       User?        @relation("LeadCreator", fields: [assignedToId], references: [id])
+  branch           Branch?      @relation(fields: [branchId], references: [id])
+  followUps        FollowUp[]
+  leadNotes        LeadNote[]
+  consultation     Consultation?
+
+  @@map("leads")
+}
+
+enum LeadSource {
+  WEBSITE_FORM
+  WHATSAPP
+  PHONE_CALL
+  INSTAGRAM
+  TELEGRAM
+  REFERRAL
+  WALK_IN
+  ADVERTISEMENT
+  CAMPAIGN
+  OTHER
+  @@map("lead_sources")
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CONSULTATION_SCHEDULED
+  CONSULTATION_DONE
+  TRIAL_CLASS_SCHEDULED
+  TRIAL_CLASS_DONE
+  ENROLLMENT_OFFERED
+  ENROLLED
+  LOST
+  NOT_INTERESTED
+  @@map("lead_statuses")
+}
+
+enum LeadPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+  @@map("lead_priorities")
+}
+
+model FollowUp {
+  id          String          @id @default(cuid())
+  leadId      String
+  type        FollowUpType    @default(CALL)
+  note        String?
+  scheduledAt DateTime
+  completed   Boolean         @default(false)
+  completedAt DateTime?
+  createdAt   DateTime        @default(now())
+
+  lead        Lead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("follow_ups")
+}
+
+enum FollowUpType {
+  CALL
+  WHATSAPP
+  MEETING
+  EMAIL
+  SMS
+  @@map("followup_types")
+}
+
+model LeadNote {
+  id        String   @id @default(cuid())
+  leadId    String
+  content   String
+  type      String   @default("general")
+  createdBy String?
+  createdAt DateTime @default(now())
+
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("lead_notes")
+}
+
+model Consultation {
+  id              String   @id @default(cuid())
+  leadId          String   @unique
+  consultantId    String?
+  scheduledAt     DateTime
+  completedAt     DateTime?
+  result          String?
+  recommendedCourse String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  lead            Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("consultations")
+}
+
+model Campaign {
+  id          String   @id @default(cuid())
+  title       String
+  type        String   @default("sms") // sms, whatsapp, email
+  status      String   @default("draft")
+  targetGroup String?
+  message     String
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  totalSent   Int      @default(0)
+  totalOpened Int      @default(0)
+  totalClicked Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("campaigns")
+}
+
+// ─── لایه 4: مالی ───────────────────────────────────────────
+
+model Revenue {
+  id          String       @id @default(cuid())
+  amount      Int
+  category    RevenueCategory @default(TUITION)
+  description String?
+  branchId    String?
+  receivedAt  DateTime     @default(now())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  branch      Branch?      @relation(fields: [branchId], references: [id])
+
+  @@map("revenues")
+}
+
+enum RevenueCategory {
+  TUITION
+  EXAM_FEE
+  CERTIFICATE_FEE
+  CONSULTATION_FEE
+  MATERIAL_SALE
+  OTHER
+  @@map("revenue_categories")
+}
+
+model Expense {
+  id          String        @id @default(cuid())
+  amount      Int
+  category    ExpenseCategory @default(OPERATIONAL)
+  description String?
+  branchId    String?
+  payee       String?
+  receiptUrl  String?
+  paidAt      DateTime      @default(now())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  branch      Branch?       @relation(fields: [branchId], references: [id])
+
+  @@map("expenses")
+}
+
+enum ExpenseCategory {
+  OPERATIONAL
+  SALARY
+  RENT
+  UTILITIES
+  MARKETING
+  EQUIPMENT
+  MATERIALS
+  OTHER
+  @@map("expense_categories")
+}
+
+model Tuition {
+  id            String          @id @default(cuid())
+  studentId     String
+  courseId      String
+  totalAmount   Int
+  paidAmount    Int             @default(0)
+  discount      Int             @default(0)
+  paymentType   PaymentType     @default(CASH)
+  installments  Int             @default(1)
+  status        TuitionStatus   @default(PENDING)
+  dueDate       DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  student       Student         @relation(fields: [studentId], references: [id])
+  course        Course          @relation(fields: [courseId], references: [id])
+  payments      Payment[]
+
+  @@map("tuitions")
+}
+
+enum PaymentType {
+  CASH
+  INSTALLMENT
+  ONLINE
+  TRANSFER
+  @@map("payment_types")
+}
+
+enum TuitionStatus {
+  PENDING
+  PARTIAL
+  PAID
+  OVERDUE
+  CANCELLED
+  @@map("tuition_statuses")
+}
+
+model Payment {
+  id            String      @id @default(cuid())
+  tuitionId     String
+  amount        Int
+  method        PaymentMethod @default(CASH)
+  reference     String?
+  receiptUrl    String?
+  paidAt        DateTime    @default(now())
+  createdAt     DateTime    @default(now())
+
+  tuition       Tuition     @relation(fields: [tuitionId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  TRANSFER
+  ONLINE
+  CHEQUE
+  @@map("payment_methods")
+}
+
+model Invoice {
+  id          String   @id @default(cuid())
+  number      String   @unique
+  studentId   String
+  tuitionId   String?
+  items       String   @default("[]") // JSON array of line items
+  totalAmount Int
+  taxAmount   Int      @default(0)
+  status      String   @default("issued")
+  dueDate     DateTime?
+  issuedAt    DateTime @default(now())
+  paidAt      DateTime?
+
+  @@map("invoices")
+}
+
+model SalaryRecord {
+  id          String   @id @default(cuid())
+  instructorId String
+  month       String   // "1404-03"
+  baseSalary  Int
+  bonuses     Int      @default(0)
+  deductions  Int      @default(0)
+  totalAmount Int
+  status      String   @default("pending")
+  paidAt      DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  instructor  Instructor @relation(fields: [instructorId], references: [id])
+
+  @@map("salary_records")
+}
+
+// ─── لایه 5: کارآموزان و ثبت‌نام ───────────────────────────
+
+model Student {
+  id            String        @id @default(cuid())
+  userId        String?       @unique
+  name          String
+  phone         String
+  email         String?
+  age           Int           @default(7)
+  parentName    String?
+  parentPhone   String?
+  level         StudentLevel  @default(BEGINNER)
+  province      String?
+  city          String?
+  address       String?
+  referralCode  String?       @unique
+  referredBy    String?
+  isActive      Boolean       @default(true)
+  branchId      String?
+  enrolledAt    DateTime      @default(now())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  user          User?         @relation(fields: [userId], references: [id])
+  branch        Branch?       @relation(fields: [branchId], references: [id])
+  enrollments   Enrollment[]
+  attendance    Attendance[]
+  tuitions      Tuition[]
+  examAttempts  ExamAttempt[]
+  certificates  Certificate[]
+  submissions   AssignmentSubmission[]
+  referralFrom  Referral[]    @relation("ReferredBy")
+  referralTo    Referral[]    @relation("Referrer")
+
+  @@map("students")
+}
+
+enum StudentLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  COMPETITION
+  @@map("student_levels")
+}
+
+model Enrollment {
+  id            String            @id @default(cuid())
+  studentId     String
+  courseId      String
+  branchId      String?
+  status        EnrollmentStatus  @default(ACTIVE)
+  enrolledAt    DateTime          @default(now())
+  completedAt   DateTime?
+  progress      Int               @default(0)
+  notes         String?
+  discountCode  String?
+  referralCode  String?
+
+  student       Student           @relation(fields: [studentId], references: [id])
+  course        Course            @relation(fields: [courseId], references: [id])
+  branch        Branch?           @relation(fields: [branchId], references: [id])
+
+  @@map("enrollments")
+}
+
+enum EnrollmentStatus {
+  PENDING
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+  @@map("enrollment_statuses")
+}
+
+// ─── لایه 7: آزمون هوشمند ───────────────────────────────────
+
+model Exam {
+  id            String       @id @default(cuid())
+  title         String
+  description   String?
+  type          ExamType     @default(PRACTICE)
+  level         StudentLevel @default(BEGINNER)
+  courseId      String?
+  duration      Int          @default(30) // minutes
+  totalScore    Int          @default(100)
+  passingScore  Int          @default(60)
+  status        ExamStatus   @default(DRAFT)
+  questions     String       @default("[]") // JSON array of question IDs
+  availableFrom DateTime?
+  availableTo   DateTime?
+  creatorId     String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  course        Course?      @relation(fields: [courseId], references: [id])
+  creator       Instructor?  @relation(fields: [creatorId], references: [id])
+  attempts      ExamAttempt[]
+
+  @@map("exams")
+}
+
+enum ExamType {
+  PLACEMENT
+  LESSON_QUIZ
+  MIDTERM
+  FINAL
+  COMPETITION
+  PRACTICE
+  @@map("exam_types")
+}
+
+enum ExamStatus {
+  DRAFT
+  PUBLISHED
+  ACTIVE
+  CLOSED
+  ARCHIVED
+  @@map("exam_statuses")
+}
+
+model QuestionBank {
+  id          String            @id @default(cuid())
+  question    String
+  type        QuestionType      @default(MULTIPLE_CHOICE)
+  options     String?           // JSON array
+  correctAnswer String?
+  points      Int               @default(10)
+  difficulty  QuestionDifficulty @default(MEDIUM)
+  category    String?
+  subject     String?
+  explanation String?
+  imageUrl    String?
+  aiGenerated Boolean           @default(false)
+  qualityScore Float?
+  usageCount  Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("question_bank")
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  FILL_BLANK
+  MENTAL_CALCULATION
+  ABACUS_READING
+  NUMBER_SEQUENCE
+  @@map("question_types")
+}
+
+enum QuestionDifficulty {
+  EASY
+  MEDIUM
+  HARD
+  EXPERT
+  @@map("question_difficulties")
+}
+
+model ExamAttempt {
+  id           String         @id @default(cuid())
+  examId       String
+  studentId    String
+  userId       String?
+  answers      String         @default("[]") // JSON array
+  score        Int            @default(0)
+  maxScore     Int            @default(100)
+  percentage   Float          @default(0)
+  passed       Boolean        @default(false)
+  startedAt    DateTime       @default(now())
+  completedAt  DateTime?
+  duration     Int            @default(0) // seconds
+  status       AttemptStatus  @default(IN_PROGRESS)
+
+  exam         Exam           @relation(fields: [examId], references: [id])
+  student      Student        @relation(fields: [studentId], references: [id])
+  user         User?          @relation(fields: [userId], references: [id])
+
+  @@map("exam_attempts")
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  COMPLETED
+  TIMEOUT
+  ABANDONED
+  @@map("attempt_statuses")
+}
+
+model Certificate {
+  id                String       @id @default(cuid())
+  studentId         String
+  courseId          String
+  studentName       String
+  courseName        String
+  level             StudentLevel
+  completedAt       DateTime
+  issuedAt          DateTime     @default(now())
+  certificateNumber String       @unique
+  verificationUrl   String?
+
+  student           Student      @relation(fields: [studentId], references: [id])
+
+  @@map("certificates")
+}
+
+// ─── سیستم معرف ─────────────────────────────────────────────
+
+model Referral {
+  id              String          @id @default(cuid())
+  referrerCode    String
+  referrerId      String
+  referrerName    String
+  referredId      String?
+  referredName    String?
+  referredPhone   String?
+  status          ReferralStatus  @default(REGISTERED)
+  reward          String?         // JSON
+  courseEnrolled  String?
+  createdAt       DateTime        @default(now())
+  convertedAt     DateTime?
+  rewardClaimedAt DateTime?
+
+  referrer        Student         @relation("Referrer", fields: [referrerId], references: [id])
+  referred        Student?        @relation("ReferredBy", fields: [referredId], references: [id])
+
+  @@map("referrals")
+}
+
+enum ReferralStatus {
+  REGISTERED
+  CONSULTATION
+  TRIAL_DONE
+  ENROLLED
+  REWARD_PENDING
+  REWARD_CLAIMED
+  EXPIRED
+  @@map("referral_statuses")
+}
+
+// ─── تیکت پشتیبانی ──────────────────────────────────────────
+
+model Ticket {
+  id          String       @id @default(cuid())
+  title       String
+  category    String       @default("general")
+  status      TicketStatus @default(OPEN)
+  priority    String       @default("medium")
+  creatorId   String
+  assignedToId String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  closedAt    DateTime?
+
+  creator     User         @relation("TicketCreator", fields: [creatorId], references: [id])
+  messages    TicketMessage[]
+
+  @@map("tickets")
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING
+  RESOLVED
+  CLOSED
+  @@map("ticket_statuses")
+}
+
+model TicketMessage {
+  id        String   @id @default(cuid())
+  ticketId  String
+  senderId  String
+  content   String
+  attachments String? // JSON
+  createdAt DateTime @default(now())
+
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  sender    User     @relation(fields: [senderId], references: [id])
+
+  @@map("ticket_messages")
+}
+
+// ─── تنظیمات سیستم ──────────────────────────────────────────
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+  label String?
+
+  @@map("settings")
 }

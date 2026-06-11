@@ -1,99 +1,331 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect, useCallback } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   LayoutDashboard,
   Users,
+  Building2,
+  GraduationCap,
+  UserCog,
   UserCheck,
+  BookOpen,
+  Calendar,
+  FileText,
+  Target,
+  Phone,
+  MessageSquare,
+  Megaphone,
+  TrendingUp,
+  TrendingDown,
+  CreditCard,
+  Receipt,
+  ClipboardList,
+  HelpCircle,
+  BarChart3,
   Gift,
-  Lock,
+  Bell,
+  Settings,
+  Shield,
   LogOut,
   ArrowRight,
-  Shield,
-  ClipboardList,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  X,
 } from 'lucide-react';
-import DashboardStats from '@/components/admin/DashboardStats';
-import LeadTable from '@/components/admin/LeadTable';
-import StudentTable from '@/components/admin/StudentTable';
-import ReferralTable from '@/components/admin/ReferralTable';
-import ExamTable from '@/components/admin/ExamTable';
-import {
-  isAdminAuthenticated,
-  loginAdmin,
-  logoutAdmin,
-  getLeads,
-  getStudents,
-  getReferrals,
-  calculateDashboardStats,
-} from '@/lib/storage';
-import { initializeSampleData, sampleExams } from '@/lib/sample-data';
 import Image from 'next/image';
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 
-export default function AdminPage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [refreshKey, setRefreshKey] = useState(0);
+// Panel imports
+import DashboardPanel from '@/components/admin/enterprise/DashboardPanel';
+import UsersPanel from '@/components/admin/enterprise/UsersPanel';
+import BranchesPanel from '@/components/admin/enterprise/BranchesPanel';
+import InstructorsPanel from '@/components/admin/enterprise/InstructorsPanel';
+import StudentsPanel from '@/components/admin/enterprise/StudentsPanel';
+import CoursesPanel from '@/components/admin/enterprise/CoursesPanel';
+import ClassesPanel from '@/components/admin/enterprise/ClassesPanel';
+import LeadsPanel from '@/components/admin/enterprise/LeadsPanel';
+import ExamsPanel from '@/components/admin/enterprise/ExamsPanel';
+import QuestionsPanel from '@/components/admin/enterprise/QuestionsPanel';
+import RevenuePanel from '@/components/admin/enterprise/RevenuePanel';
+import ExpensesPanel from '@/components/admin/enterprise/ExpensesPanel';
+import TuitionPanel from '@/components/admin/enterprise/TuitionPanel';
 
-  // Data states
-  const [leads, setLeads] = useState<ReturnType<typeof getLeads>>([]);
-  const [students, setStudents] = useState<ReturnType<typeof getStudents>>([]);
-  const [referrals, setReferrals] = useState<ReturnType<typeof getReferrals>>([]);
-  const [stats, setStats] = useState<ReturnType<typeof calculateDashboardStats> | null>(null);
+// Types
+type PanelKey =
+  | 'dashboard' | 'users' | 'branches' | 'instructors' | 'staff' | 'students'
+  | 'courses' | 'classes' | 'content'
+  | 'leads' | 'followups' | 'consultations' | 'campaigns'
+  | 'revenue' | 'expenses' | 'tuition' | 'invoices'
+  | 'exams' | 'questions' | 'results'
+  | 'referrals' | 'notifications' | 'settings';
 
-  const refreshData = () => {
-    setLeads(getLeads());
-    setStudents(getStudents());
-    setReferrals(getReferrals());
-    setStats(calculateDashboardStats());
+interface MenuItem {
+  key: PanelKey;
+  label: string;
+  icon: React.ElementType;
+}
+
+interface MenuGroup {
+  title: string;
+  items: MenuItem[];
+}
+
+const menuGroups: MenuGroup[] = [
+  {
+    title: 'هسته مرکزی',
+    items: [
+      { key: 'dashboard', label: 'داشبورد', icon: LayoutDashboard },
+      { key: 'users', label: 'کاربران', icon: Users },
+      { key: 'branches', label: 'شعب', icon: Building2 },
+      { key: 'instructors', label: 'اساتید', icon: GraduationCap },
+      { key: 'students', label: 'کارآموزان', icon: UserCheck },
+      { key: 'staff', label: 'کارکنان', icon: UserCog },
+    ],
+  },
+  {
+    title: 'آموزش',
+    items: [
+      { key: 'courses', label: 'دوره‌ها', icon: BookOpen },
+      { key: 'classes', label: 'کلاس‌ها', icon: Calendar },
+      { key: 'content', label: 'محتوا', icon: FileText },
+    ],
+  },
+  {
+    title: 'CRM',
+    items: [
+      { key: 'leads', label: 'سرنخ‌ها', icon: Target },
+      { key: 'followups', label: 'پیگیری‌ها', icon: Phone },
+      { key: 'consultations', label: 'مشاوره‌ها', icon: MessageSquare },
+      { key: 'campaigns', label: 'کمپین‌ها', icon: Megaphone },
+    ],
+  },
+  {
+    title: 'مالی',
+    items: [
+      { key: 'revenue', label: 'درآمدها', icon: TrendingUp },
+      { key: 'expenses', label: 'هزینه‌ها', icon: TrendingDown },
+      { key: 'tuition', label: 'شهریه‌ها', icon: CreditCard },
+      { key: 'invoices', label: 'فاکتورها', icon: Receipt },
+    ],
+  },
+  {
+    title: 'آزمون',
+    items: [
+      { key: 'exams', label: 'آزمون‌ها', icon: ClipboardList },
+      { key: 'questions', label: 'بانک سوالات', icon: HelpCircle },
+      { key: 'results', label: 'نتایج', icon: BarChart3 },
+    ],
+  },
+  {
+    title: 'سیستم',
+    items: [
+      { key: 'referrals', label: 'معرف‌ها', icon: Gift },
+      { key: 'notifications', label: 'اعلان‌ها', icon: Bell },
+      { key: 'settings', label: 'تنظیمات', icon: Settings },
+    ],
+  },
+];
+
+// Panel titles mapping
+const panelTitles: Record<PanelKey, string> = {
+  dashboard: 'داشبورد',
+  users: 'مدیریت کاربران',
+  branches: 'مدیریت شعب',
+  instructors: 'مدیریت اساتید',
+  staff: 'مدیریت کارکنان',
+  students: 'مدیریت کارآموزان',
+  courses: 'مدیریت دوره‌ها',
+  classes: 'مدیریت کلاس‌ها',
+  content: 'مدیریت محتوا',
+  leads: 'مدیریت سرنخ‌ها',
+  followups: 'پیگیری‌ها',
+  consultations: 'مشاوره‌ها',
+  campaigns: 'کمپین‌ها',
+  revenue: 'مدیریت درآمدها',
+  expenses: 'مدیریت هزینه‌ها',
+  tuition: 'مدیریت شهریه‌ها',
+  invoices: 'فاکتورها',
+  exams: 'مدیریت آزمون‌ها',
+  questions: 'بانک سوالات',
+  results: 'نتایج آزمون‌ها',
+  referrals: 'معرف‌ها',
+  notifications: 'اعلان‌ها',
+  settings: 'تنظیمات',
+};
+
+// Placeholder Panel Component (defined outside render)
+function PlaceholderPanel({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <Card className="w-full max-w-md">
+        <CardContent className="p-8 text-center">
+          <div className="p-4 bg-gray-100 rounded-full w-fit mx-auto mb-4">
+            <Settings className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
+          <p className="text-gray-500 text-sm">{description}</p>
+          <p className="text-gray-400 text-xs mt-4">این بخش به زودی فعال خواهد شد</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Sidebar Component (defined outside render)
+interface SidebarProps {
+  sidebarCollapsed: boolean;
+  activePanel: PanelKey;
+  onPanelChange: (panel: PanelKey) => void;
+  onLogout: () => void;
+  onCloseMobile?: () => void;
+}
+
+function SidebarContent({ sidebarCollapsed, activePanel, onPanelChange, onLogout, onCloseMobile }: SidebarProps) {
+  const handleItemClick = (key: PanelKey) => {
+    onPanelChange(key);
+    if (onCloseMobile) onCloseMobile();
   };
 
-  useEffect(() => {
-    // Initialize sample data on first load
-    initializeSampleData();
+  return (
+    <div className="flex flex-col h-full">
+      {/* Logo Section */}
+      <div className="p-4 border-b border-slate-700/50">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/logo.webp"
+            alt="ویرا"
+            width={36}
+            height={36}
+            className="rounded-lg flex-shrink-0"
+          />
+          {!sidebarCollapsed && (
+            <div className="overflow-hidden">
+              <h2 className="font-bold text-amber-400 text-sm">پنل مدیریت ویرا</h2>
+              <p className="text-[10px] text-slate-400">Enterprise Admin</p>
+            </div>
+          )}
+        </div>
+      </div>
 
-    // Check auth - localStorage only available client-side
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsAuthenticated(isAdminAuthenticated());
+      {/* Navigation */}
+      <ScrollArea className="flex-1 py-2">
+        <div className="space-y-1 px-2">
+          {menuGroups.map((group, gIdx) => (
+            <div key={gIdx}>
+              {!sidebarCollapsed && (
+                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-3 py-2 mt-2 first:mt-0">
+                  {group.title}
+                </p>
+              )}
+              {sidebarCollapsed && gIdx > 0 && (
+                <Separator className="bg-slate-700/50 my-2" />
+              )}
+              {group.items.map((item) => {
+                const isActive = activePanel === item.key;
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.key}
+                    onClick={() => handleItemClick(item.key)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
+                      isActive
+                        ? 'bg-amber-500/20 text-amber-400 font-medium'
+                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    }`}
+                    title={sidebarCollapsed ? item.label : undefined}
+                  >
+                    <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-amber-400' : 'text-slate-400'}`} />
+                    {!sidebarCollapsed && <span>{item.label}</span>}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+
+      {/* Bottom Section */}
+      <div className="border-t border-slate-700/50 p-3 space-y-1">
+        <Link href="/">
+          <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+            <ArrowRight className="w-4 h-4 flex-shrink-0" />
+            {!sidebarCollapsed && <span>بازگشت به سایت</span>}
+          </button>
+        </Link>
+        <button
+          onClick={onLogout}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+        >
+          <LogOut className="w-4 h-4 flex-shrink-0" />
+          {!sidebarCollapsed && <span>خروج</span>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default function AdminPage() {
+  const [authState, setAuthState] = useState<{ checked: boolean; authenticated: boolean }>({
+    checked: false,
+    authenticated: false,
+  });
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [activePanel, setActivePanel] = useState<PanelKey>('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const auth = localStorage.getItem('admin_auth');
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Reading from localStorage on mount is legitimate
+    setAuthState({ checked: true, authenticated: auth === 'vira2024' });
   }, []);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      refreshData();
-    }
-  }, [isAuthenticated, refreshKey]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (loginAdmin(password)) {
-      setIsAuthenticated(true);
+    if (password === 'vira2024') {
+      localStorage.setItem('admin_auth', 'vira2024');
+      setAuthState({ checked: true, authenticated: true });
       setError('');
     } else {
       setError('رمز عبور اشتباه است');
     }
   };
 
-  const handleLogout = () => {
-    logoutAdmin();
-    setIsAuthenticated(false);
-  };
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('admin_auth');
+    setAuthState({ checked: true, authenticated: false });
+  }, []);
+
+  const handlePanelChange = useCallback((panel: PanelKey) => {
+    setActivePanel(panel);
+  }, []);
+
+  // Wait for auth check to complete
+  if (!authState.checked) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center" dir="rtl">
+        <div className="animate-pulse flex items-center gap-3">
+          <div className="w-8 h-8 bg-amber-200 rounded-full" />
+        </div>
+      </div>
+    );
+  }
 
   // Login Screen
-  if (!isAuthenticated) {
+  if (!authState.authenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-bl from-amber-50 via-orange-50 to-teal-50 flex items-center justify-center p-4" dir="rtl">
         <Card className="w-full max-w-md border-2 border-amber-200 shadow-xl">
           <CardContent className="p-8">
             <div className="text-center space-y-6">
-              {/* Logo */}
               <div className="flex justify-center">
                 <Image
                   src="/logo.webp"
@@ -103,18 +335,15 @@ export default function AdminPage() {
                   className="rounded-xl"
                 />
               </div>
-
               <div>
                 <h1 className="text-2xl font-black text-gray-900">پنل مدیریت</h1>
                 <p className="text-gray-500 mt-1">{siteConfig.name.fullName}</p>
               </div>
-
               <div className="flex justify-center">
                 <div className="p-4 bg-amber-100 rounded-full">
                   <Shield className="w-8 h-8 text-amber-600" />
                 </div>
               </div>
-
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">رمز عبور</label>
@@ -129,9 +358,7 @@ export default function AdminPage() {
                     className="text-center"
                     dir="ltr"
                   />
-                  {error && (
-                    <p className="text-red-500 text-sm">{error}</p>
-                  )}
+                  {error && <p className="text-red-500 text-sm">{error}</p>}
                 </div>
                 <Button
                   type="submit"
@@ -141,7 +368,6 @@ export default function AdminPage() {
                   <ArrowRight className="w-4 h-4 mr-2" />
                 </Button>
               </form>
-
               <p className="text-xs text-gray-400">
                 فقط مدیران مجاز می‌توانند وارد شوند
               </p>
@@ -152,197 +378,136 @@ export default function AdminPage() {
     );
   }
 
-  // Admin Dashboard
+  const renderPanel = () => {
+    switch (activePanel) {
+      case 'dashboard': return <DashboardPanel />;
+      case 'users': return <UsersPanel />;
+      case 'branches': return <BranchesPanel />;
+      case 'instructors': return <InstructorsPanel />;
+      case 'students': return <StudentsPanel />;
+      case 'courses': return <CoursesPanel />;
+      case 'classes': return <ClassesPanel />;
+      case 'leads': return <LeadsPanel />;
+      case 'exams': return <ExamsPanel />;
+      case 'questions': return <QuestionsPanel />;
+      case 'revenue': return <RevenuePanel />;
+      case 'expenses': return <ExpensesPanel />;
+      case 'tuition': return <TuitionPanel />;
+      // Placeholder panels
+      case 'staff': return <PlaceholderPanel title="کارکنان" description="مدیریت کارکنان و پرسنل سازمان" />;
+      case 'content': return <PlaceholderPanel title="محتوا" description="مدیریت محتوای آموزشی دوره‌ها" />;
+      case 'followups': return <PlaceholderPanel title="پیگیری‌ها" description="پیگیری تماس‌ها و ارتباط با سرنخ‌ها" />;
+      case 'consultations': return <PlaceholderPanel title="مشاوره‌ها" description="مدیریت جلسات مشاوره" />;
+      case 'campaigns': return <PlaceholderPanel title="کمپین‌ها" description="مدیریت کمپین‌های بازاریابی" />;
+      case 'invoices': return <PlaceholderPanel title="فاکتورها" description="مدیریت فاکتورها و صورتحساب‌ها" />;
+      case 'results': return <PlaceholderPanel title="نتایج" description="مشاهده نتایج آزمون‌ها" />;
+      case 'referrals': return <PlaceholderPanel title="معرف‌ها" description="مدیریت سیستم معرف‌ها" />;
+      case 'notifications': return <PlaceholderPanel title="اعلان‌ها" description="مدیریت اعلان‌ها و اطلاع‌رسانی" />;
+      case 'settings': return <PlaceholderPanel title="تنظیمات" description="تنظیمات سیستم و پیکربندی" />;
+      default: return <DashboardPanel />;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
-      {/* Header */}
-      <header className="bg-white border-b border-amber-200 sticky top-0 z-40">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <Image
-                src="/logo.webp"
-                alt={siteConfig.name.fullName}
-                width={40}
-                height={40}
-                className="rounded-lg"
-              />
-              <div>
-                <h1 className="font-bold text-amber-700">پنل مدیریت ویرا</h1>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link href="/">
-                <Button variant="outline" size="sm" className="text-xs">
-                  بازگشت به سایت
-                </Button>
-              </Link>
+    <div className="min-h-screen bg-gray-50 flex" dir="rtl">
+      {/* Desktop Sidebar */}
+      <aside
+        className={`hidden lg:flex flex-col bg-slate-900 border-l border-slate-700/50 transition-all duration-300 ${
+          sidebarCollapsed ? 'w-16' : 'w-60'
+        }`}
+      >
+        <SidebarContent
+          sidebarCollapsed={sidebarCollapsed}
+          activePanel={activePanel}
+          onPanelChange={handlePanelChange}
+          onLogout={handleLogout}
+        />
+      </aside>
+
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div
+            className="fixed inset-0 bg-black/60"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <aside className="fixed right-0 top-0 h-full w-64 bg-slate-900 z-50 shadow-xl">
+            <div className="absolute left-2 top-2">
               <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="text-red-500 border-red-200 hover:bg-red-50 text-xs"
+                variant="ghost"
+                size="icon"
+                className="text-slate-400 hover:text-white"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                <LogOut className="w-4 h-4 ml-1" />
-                خروج
+                <X className="w-5 h-5" />
               </Button>
             </div>
-          </div>
+            <SidebarContent
+              sidebarCollapsed={false}
+              activePanel={activePanel}
+              onPanelChange={handlePanelChange}
+              onLogout={handleLogout}
+              onCloseMobile={() => setMobileMenuOpen(false)}
+            />
+          </aside>
         </div>
-      </header>
+      )}
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="bg-white border shadow-sm">
-            <TabsTrigger value="dashboard" className="gap-2 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700">
-              <LayoutDashboard className="w-4 h-4" />
-              <span className="hidden sm:inline">داشبورد</span>
-            </TabsTrigger>
-            <TabsTrigger value="leads" className="gap-2 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700">
-              <Users className="w-4 h-4" />
-              <span className="hidden sm:inline">سرنخ‌ها</span>
-            </TabsTrigger>
-            <TabsTrigger value="students" className="gap-2 data-[state=active]:bg-teal-50 data-[state=active]:text-teal-700">
-              <UserCheck className="w-4 h-4" />
-              <span className="hidden sm:inline">کارآموزان</span>
-            </TabsTrigger>
-            <TabsTrigger value="exams" className="gap-2 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700">
-              <ClipboardList className="w-4 h-4" />
-              <span className="hidden sm:inline">آزمون‌ها</span>
-            </TabsTrigger>
-            <TabsTrigger value="referrals" className="gap-2 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700">
-              <Gift className="w-4 h-4" />
-              <span className="hidden sm:inline">معرف‌ها</span>
-            </TabsTrigger>
-          </TabsList>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Header */}
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+          <div className="flex items-center justify-between h-14 px-4">
+            <div className="flex items-center gap-3">
+              {/* Mobile Menu Toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden"
+                onClick={() => setMobileMenuOpen(true)}
+              >
+                <Menu className="w-5 h-5" />
+              </Button>
 
-          {/* Dashboard Tab */}
-          <TabsContent value="dashboard" className="space-y-6">
-            {stats && <DashboardStats stats={stats} setActiveTab={setActiveTab} />}
+              {/* Desktop Sidebar Toggle */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden lg:flex"
+                onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              >
+                {sidebarCollapsed ? (
+                  <ChevronRight className="w-4 h-4" />
+                ) : (
+                  <ChevronLeft className="w-4 h-4" />
+                )}
+              </Button>
 
-            {/* Quick overview cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="border-amber-200">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Users className="w-5 h-5 text-amber-600" />
-                    آخرین سرنخ‌ها
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {leads.slice(0, 5).map((lead) => (
-                      <div key={lead.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                        <div>
-                          <p className="font-medium text-sm">{lead.name}</p>
-                          <p className="text-xs text-gray-500">{lead.childName && `فرزند: ${lead.childName}`}</p>
-                        </div>
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                          {lead.source === 'website_form' ? 'وبسایت' : lead.source === 'whatsapp' ? 'واتساپ' : 'سایر'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-teal-200">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <UserCheck className="w-5 h-5 text-teal-600" />
-                    آخرین کارآموزان
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {students.slice(0, 5).map((student) => (
-                      <div key={student.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                        <div>
-                          <p className="font-medium text-sm">{student.name}</p>
-                          <p className="text-xs text-gray-500">{student.age} ساله • {student.parentName}</p>
-                        </div>
-                        <span className="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded-full">
-                          {student.level === 'beginner' ? 'مقدماتی' : student.level === 'intermediate' ? 'متوسط' : student.level === 'advanced' ? 'پیشرفته' : 'مسابقات'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Panel Title */}
+              <div>
+                <h1 className="font-bold text-gray-800 text-lg">
+                  {panelTitles[activePanel]}
+                </h1>
+              </div>
             </div>
-          </TabsContent>
 
-          {/* Leads Tab */}
-          <TabsContent value="leads">
-            <Card className="border-amber-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-amber-600" />
-                  مدیریت سرنخ‌ها
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <LeadTable
-                  leads={leads}
-                  onUpdate={() => setRefreshKey(k => k + 1)}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" className="relative">
+                <Bell className="w-4 h-4 text-gray-500" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full" />
+              </Button>
+              <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center">
+                <span className="text-amber-700 font-bold text-xs">ادمین</span>
+              </div>
+            </div>
+          </div>
+        </header>
 
-          {/* Students Tab */}
-          <TabsContent value="students">
-            <Card className="border-teal-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <UserCheck className="w-5 h-5 text-teal-600" />
-                  مدیریت کارآموزان
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <StudentTable
-                  students={students}
-                  onUpdate={() => setRefreshKey(k => k + 1)}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Exams Tab */}
-          <TabsContent value="exams">
-            <Card className="border-purple-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <ClipboardList className="w-5 h-5 text-purple-600" />
-                  مدیریت آزمون‌ها
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ExamTable exams={sampleExams} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Referrals Tab */}
-          <TabsContent value="referrals">
-            <Card className="border-orange-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Gift className="w-5 h-5 text-orange-600" />
-                  پیگیری معرف‌ها
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ReferralTable
-                  referrals={referrals}
-                  onUpdate={() => setRefreshKey(k => k + 1)}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </main>
+        {/* Panel Content */}
+        <main className="flex-1 p-4 md:p-6 overflow-auto">
+          {renderPanel()}
+        </main>
+      </div>
     </div>
   );
 }
