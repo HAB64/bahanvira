@@ -1,8 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Sparkles, Star } from 'lucide-react';
+import { ArrowLeft, Sparkles, Star, Rainbow } from 'lucide-react';
 import Image from 'next/image';
+import ChildFriendlyBackground from './ChildFriendlyBackground';
 
 export default function HeroSection() {
   return (
@@ -11,33 +12,29 @@ export default function HeroSection() {
       className="relative min-h-screen flex items-center overflow-hidden"
       dir="rtl"
     >
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-bl from-amber-50 via-orange-50 to-teal-50" />
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-20 right-20 w-72 h-72 bg-amber-400 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-teal-400 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-orange-300 rounded-full blur-3xl" />
-      </div>
+      {/* Child-friendly warm gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-bl from-amber-50 via-yellow-50/80 to-teal-50/60" />
 
-      {/* Decorative floating elements */}
-      <div className="absolute top-32 right-[15%] animate-bounce delay-100">
-        <div className="w-3 h-3 rounded-full bg-amber-400 opacity-60" />
-      </div>
-      <div className="absolute top-48 left-[20%] animate-bounce delay-300">
-        <div className="w-2 h-2 rounded-full bg-teal-400 opacity-60" />
-      </div>
-      <div className="absolute bottom-40 right-[25%] animate-bounce delay-500">
-        <div className="w-4 h-4 rounded-full bg-orange-300 opacity-50" />
+      {/* Animated child-friendly background */}
+      <ChildFriendlyBackground variant="hero" />
+
+      {/* Soft wave divider at bottom */}
+      <div className="absolute bottom-0 left-0 right-0">
+        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+          <path d="M0 60L48 55C96 50 192 40 288 45C384 50 480 70 576 75C672 80 768 70 864 60C960 50 1056 40 1152 45C1248 50 1344 70 1392 80L1440 90V120H1392C1344 120 1248 120 1152 120C1056 120 960 120 864 120C768 120 672 120 576 120C480 120 384 120 288 120C192 120 96 120 48 120H0V60Z" fill="white" fillOpacity="0.6" />
+          <path d="M0 80L48 75C96 70 192 60 288 65C384 70 480 90 576 95C672 100 768 90 864 80C960 70 1056 60 1152 65C1248 70 1344 90 1392 100L1440 110V120H1392C1344 120 1248 120 1152 120C1056 120 960 120 864 120C768 120 672 120 576 120C480 120 384 120 288 120C192 120 96 120 48 120H0V80Z" fill="white" />
+        </svg>
       </div>
 
       <div className="container mx-auto px-4 pt-24 pb-16 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Content */}
           <div className="space-y-6 md:space-y-8 text-center lg:text-right">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-amber-100/80 backdrop-blur-sm text-amber-800 px-4 py-2 rounded-full text-sm font-medium border border-amber-200">
-              <Sparkles className="w-4 h-4" />
+            {/* Badge - playful style */}
+            <div className="inline-flex items-center gap-2 bg-gradient-to-l from-amber-100 to-yellow-100 backdrop-blur-sm text-amber-800 px-5 py-2.5 rounded-full text-sm font-bold border border-amber-200 shadow-sm animate-bounce-gentle">
+              <Sparkles className="w-4 h-4 text-amber-500" />
               <span>روش نوین آموزش چرتکه دهگانی</span>
+              <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
@@ -54,18 +51,17 @@ export default function HeroSection() {
               تمرکز، اعتماد به نفس و هوش ریاضی خود را به‌طور چشمگیری تقویت می‌کند.
             </p>
 
-            {/* Stats mini */}
-            <div className="flex items-center justify-center lg:justify-start gap-6 text-sm">
-              <div className="flex items-center gap-1.5 text-amber-700">
+            {/* Stats mini - playful pills */}
+            <div className="flex items-center justify-center lg:justify-start gap-4 text-sm">
+              <div className="flex items-center gap-1.5 bg-amber-100/80 text-amber-700 px-4 py-2 rounded-full border border-amber-200">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                 <span className="font-bold">۵۰۰+</span>
-                <span className="text-gray-500">کارآموز</span>
+                <span className="text-amber-600">کارآموز</span>
               </div>
-              <div className="w-px h-4 bg-gray-300" />
-              <div className="flex items-center gap-1.5 text-teal-700">
+              <div className="flex items-center gap-1.5 bg-teal-100/80 text-teal-700 px-4 py-2 rounded-full border border-teal-200">
                 <Star className="w-4 h-4 fill-teal-400 text-teal-400" />
                 <span className="font-bold">۴۵+</span>
-                <span className="text-gray-500">رتبه برتر</span>
+                <span className="text-teal-600">رتبه برتر</span>
               </div>
             </div>
 
@@ -73,7 +69,7 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <Button
                 size="lg"
-                className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl px-8 py-6 text-base font-bold shadow-lg shadow-amber-200 hover:shadow-xl hover:shadow-amber-300 transition-all"
+                className="bg-gradient-to-l from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-2xl px-8 py-6 text-base font-bold shadow-lg shadow-amber-200/60 hover:shadow-xl hover:shadow-amber-300/60 transition-all hover:scale-105"
                 onClick={() => {
                   document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
                 }}
@@ -84,7 +80,7 @@ export default function HeroSection() {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-2 border-amber-300 text-amber-700 hover:bg-amber-50 rounded-xl px-8 py-6 text-base font-bold"
+                className="border-2 border-amber-300 text-amber-700 hover:bg-amber-50 rounded-2xl px-8 py-6 text-base font-bold hover:scale-105 transition-all"
                 onClick={() => {
                   document.querySelector('#courses')?.scrollIntoView({ behavior: 'smooth' });
                 }}
@@ -97,19 +93,32 @@ export default function HeroSection() {
           {/* Image */}
           <div className="relative flex items-center justify-center">
             <div className="relative w-full max-w-md lg:max-w-lg">
-              <div className="absolute -inset-4 bg-gradient-to-br from-amber-200 via-orange-200 to-teal-200 rounded-3xl blur-2xl opacity-40" />
+              {/* Decorative rotating border */}
+              <div className="absolute -inset-6 bg-gradient-to-br from-amber-200 via-yellow-200 to-teal-200 rounded-[2rem] blur-2xl opacity-50 animate-pulse" style={{ animationDuration: '4s' }} />
+              <div className="absolute -inset-3 bg-gradient-to-br from-amber-300/30 via-orange-200/20 to-teal-300/30 rounded-[1.8rem] animate-wiggle" />
               <Image
                 src="/images/abacus-hero.jpg"
                 alt="چرتکه دهگانی ویرا"
                 width={600}
                 height={400}
-                className="relative rounded-3xl shadow-2xl shadow-amber-200/50 object-cover"
+                className="relative rounded-3xl shadow-2xl shadow-amber-200/50 object-cover border-4 border-white/50"
                 priority
               />
+
+              {/* Playful floating decorative elements around image */}
+              <div className="absolute -top-4 -right-4 w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center shadow-lg animate-bounce-gentle">
+                <Star className="w-5 h-5 text-white fill-white" />
+              </div>
+              <div className="absolute -bottom-3 -left-3 w-8 h-8 bg-teal-400 rounded-full shadow-lg animate-bounce-gentle" style={{ animationDelay: '1s' }}>
+              </div>
+              <div className="absolute top-1/4 -left-5 w-6 h-6 bg-pink-300 rounded-lg rotate-45 shadow-md animate-float" style={{ animationDuration: '6s' }}>
+              </div>
+              <div className="absolute bottom-1/4 -right-5 w-5 h-5 bg-violet-300 rounded-full shadow-md animate-float" style={{ animationDuration: '8s', animationDelay: '2s' }}>
+              </div>
             </div>
 
             {/* Floating badge with real logo */}
-            <div className="absolute bottom-4 right-4 md:bottom-8 md:right-4 bg-white rounded-2xl shadow-xl p-3 border border-teal-100 z-10">
+            <div className="absolute bottom-4 right-4 md:bottom-8 md:right-4 bg-white rounded-2xl shadow-xl p-3 border border-teal-100 z-10 animate-bounce-gentle" style={{ animationDelay: '0.5s' }}>
               <Image
                 src="/logo.webp"
                 alt="لوگو ویرا"

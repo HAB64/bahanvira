@@ -8,8 +8,16 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-gray-300" dir="rtl">
-      <div className="container mx-auto px-4 py-12 md:py-16">
+    <footer className="relative overflow-hidden" dir="rtl">
+      {/* Warm gradient background instead of flat dark */}
+      <div className="absolute inset-0 bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950" />
+      {/* Subtle decorative orbs */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-20 right-40 w-64 h-64 bg-amber-400 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-40 w-48 h-48 bg-teal-400 rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto px-4 py-12 md:py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* About */}
           <div className="space-y-4">
@@ -19,9 +27,9 @@ export default function Footer() {
                 alt={siteConfig.name.fullName}
                 width={48}
                 height={48}
-                className="rounded-lg"
+                className="rounded-xl"
               />
-              <h3 className="text-xl font-bold text-amber-400">{siteConfig.name.fa}</h3>
+              <h3 className="text-xl font-bold bg-gradient-to-l from-amber-400 to-orange-400 bg-clip-text text-transparent">{siteConfig.name.fa}</h3>
             </div>
             <p className="text-sm leading-7 text-gray-400">
               آموزش تخصصی چرتکه دهگانی و حساب ذهنی برای کودکان و نوجوانان با بهره‌گیری از
@@ -39,7 +47,7 @@ export default function Footer() {
                   <li key={item}>
                     <a
                       href={`#${item === 'صفحه اصلی' ? 'hero' : item === 'دوره‌ها' ? 'courses' : item === 'درباره ما' ? 'about' : item === 'سؤالات متداول' ? 'faq' : 'contact'}`}
-                      className="hover:text-amber-400 transition-colors"
+                      className="hover:text-amber-400 transition-colors text-gray-400"
                     >
                       {item}
                     </a>
@@ -56,7 +64,7 @@ export default function Footer() {
               {['چرتکه مقدماتی', 'حساب ذهنی متوسط', 'چرتکه پیشرفته', 'آمادگی مسابقات'].map(
                 (item) => (
                   <li key={item}>
-                    <a href="#courses" className="hover:text-amber-400 transition-colors">
+                    <a href="#courses" className="hover:text-amber-400 transition-colors text-gray-400">
                       {item}
                     </a>
                   </li>
@@ -71,26 +79,26 @@ export default function Footer() {
             <div className="space-y-3 text-sm">
               <a
                 href={siteConfig.contact.phone1Href}
-                className="flex items-center gap-3 hover:text-amber-400 transition-colors"
+                className="flex items-center gap-3 hover:text-amber-400 transition-colors text-gray-400"
               >
                 <Phone className="w-4 h-4 shrink-0" />
                 <span dir="ltr">{siteConfig.contact.phone1Raw}</span>
               </a>
               <a
                 href={siteConfig.contact.phone2Href}
-                className="flex items-center gap-3 hover:text-amber-400 transition-colors"
+                className="flex items-center gap-3 hover:text-amber-400 transition-colors text-gray-400"
               >
                 <Phone className="w-4 h-4 shrink-0" />
                 <span dir="ltr">{siteConfig.contact.phone2Raw}</span>
               </a>
               <a
                 href={`mailto:${siteConfig.contact.email}`}
-                className="flex items-center gap-3 hover:text-amber-400 transition-colors"
+                className="flex items-center gap-3 hover:text-amber-400 transition-colors text-gray-400"
               >
                 <Mail className="w-4 h-4 shrink-0" />
                 <span dir="ltr">{siteConfig.contact.email}</span>
               </a>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 text-gray-400">
                 <MapPin className="w-4 h-4 shrink-0" />
                 <span>{siteConfig.location.address}</span>
               </div>
@@ -100,7 +108,7 @@ export default function Footer() {
                 href={siteConfig.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-amber-600 transition-colors"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-800/80 hover:bg-gradient-to-br hover:from-pink-500 hover:to-purple-500 transition-all hover:scale-110"
                 aria-label="اینستاگرام"
               >
                 <Instagram className="w-5 h-5" />
@@ -109,7 +117,7 @@ export default function Footer() {
                 href={siteConfig.social.telegram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-amber-600 transition-colors"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-800/80 hover:bg-blue-500 transition-all hover:scale-110"
                 aria-label="تلگرام"
               >
                 <Send className="w-5 h-5" />
@@ -118,7 +126,7 @@ export default function Footer() {
                 href={siteConfig.contact.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 hover:bg-green-600 transition-colors"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-800/80 hover:bg-green-500 transition-all hover:scale-110"
                 aria-label="واتساپ"
               >
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
