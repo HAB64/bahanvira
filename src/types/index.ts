@@ -431,6 +431,292 @@ export type NotificationType =
   | 'payment'
   | 'system';
 
+// ─── کمپین بازاریابی ────────────────────────────────────
+
+export interface Campaign {
+  id: string;
+  title: string;
+  description: string;
+  type: CampaignType;
+  status: CampaignStatus;
+  startDate: string;
+  endDate: string;
+  budget: number;
+  spent: number;
+  targetAudience: string;
+  channels: CampaignChannel[];
+  leadsGenerated: number;
+  conversions: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CampaignType = 'social_media' | 'email' | 'sms' | 'referral_boost' | 'discount' | 'event' | 'seo';
+export type CampaignStatus = 'draft' | 'active' | 'paused' | 'completed' | 'cancelled';
+export type CampaignChannel = 'instagram' | 'telegram' | 'whatsapp' | 'sms' | 'email' | 'website' | 'offline';
+
+// ─── نظرسنجی رضایت ─────────────────────────────────────
+
+export interface SatisfactionSurvey {
+  id: string;
+  title: string;
+  type: 'course' | 'instructor' | 'general' | 'facility';
+  questions: SurveyQuestion[];
+  status: 'draft' | 'active' | 'closed';
+  responses: SurveyResponse[];
+  createdAt: string;
+}
+
+export interface SurveyQuestion {
+  id: string;
+  text: string;
+  type: 'rating' | 'text' | 'multiple_choice';
+  options?: string[];
+  required: boolean;
+}
+
+export interface SurveyResponse {
+  id: string;
+  surveyId: string;
+  respondentName: string;
+  respondentPhone: string;
+  answers: SurveyAnswer[];
+  submittedAt: string;
+}
+
+export interface SurveyAnswer {
+  questionId: string;
+  rating?: number;
+  text?: string;
+  selectedOption?: string;
+}
+
+// ─── محتوای آموزشی ─────────────────────────────────────
+
+export interface CourseContent {
+  id: string;
+  courseId: string;
+  sessionId: number;
+  title: string;
+  type: ContentType;
+  url?: string;
+  description: string;
+  fileSize?: number;
+  duration?: number;
+  order: number;
+  isPublished: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ContentType = 'video' | 'document' | 'audio' | 'image' | 'link' | 'presentation' | 'worksheet';
+
+// ─── تکلیف و پروژه ─────────────────────────────────────
+
+export interface Assignment {
+  id: string;
+  courseId: string;
+  sessionId?: number;
+  title: string;
+  description: string;
+  type: 'homework' | 'project' | 'practice' | 'research';
+  dueDate: string;
+  maxScore: number;
+  submissions: AssignmentSubmission[];
+  status: 'active' | 'closed' | 'graded';
+  createdAt: string;
+}
+
+export interface AssignmentSubmission {
+  id: string;
+  assignmentId: string;
+  studentId: string;
+  studentName: string;
+  content: string;
+  fileUrl?: string;
+  score?: number;
+  feedback?: string;
+  submittedAt: string;
+  gradedAt?: string;
+  status: 'submitted' | 'late' | 'graded' | 'returned';
+}
+
+// ─── حضور و غیاب ───────────────────────────────────────
+
+export interface AttendanceRecord {
+  id: string;
+  classId: string;
+  courseId: string;
+  sessionId: number;
+  date: string;
+  records: StudentAttendance[];
+  instructorId: string;
+  createdAt: string;
+}
+
+export interface StudentAttendance {
+  studentId: string;
+  studentName: string;
+  status: 'present' | 'absent' | 'late' | 'excused';
+  notes?: string;
+}
+
+// ─── تقویم آموزشی ───────────────────────────────────────
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  description: string;
+  type: 'class' | 'exam' | 'holiday' | 'event' | 'deadline' | 'meeting';
+  startDate: string;
+  endDate: string;
+  courseId?: string;
+  branchId?: string;
+  isAllDay: boolean;
+  color: string;
+  createdAt: string;
+}
+
+// ─── فاکتور ────────────────────────────────────────────
+
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  studentId: string;
+  studentName: string;
+  items: InvoiceItem[];
+  subtotal: number;
+  discount: number;
+  tax: number;
+  total: number;
+  status: InvoiceStatus;
+  dueDate: string;
+  paidAmount: number;
+  paidAt?: string;
+  paymentMethod?: PaymentMethod;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InvoiceItem {
+  id: string;
+  description: string;
+  quantity: number;
+  unitPrice: number;
+  total: number;
+}
+
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'partial' | 'overdue' | 'cancelled';
+export type PaymentMethod = 'cash' | 'card' | 'transfer' | 'online' | 'cheque';
+
+// ─── اقساط ─────────────────────────────────────────────
+
+export interface InstallmentPlan {
+  id: string;
+  studentId: string;
+  studentName: string;
+  courseId: string;
+  courseName: string;
+  totalAmount: number;
+  paidAmount: number;
+  remainingAmount: number;
+  installments: Installment[];
+  status: 'active' | 'completed' | 'overdue' | 'cancelled';
+  createdAt: string;
+}
+
+export interface Installment {
+  id: string;
+  planId: string;
+  amount: number;
+  dueDate: string;
+  paidAt?: string;
+  status: 'pending' | 'paid' | 'overdue' | 'cancelled';
+  paymentMethod?: PaymentMethod;
+  notes?: string;
+}
+
+// ─── حقوق و دستمزد ─────────────────────────────────────
+
+export interface SalaryRecord {
+  id: string;
+  staffId: string;
+  staffName: string;
+  staffRole: string;
+  baseSalary: number;
+  bonuses: number;
+  deductions: number;
+  netSalary: number;
+  month: string;
+  year: number;
+  status: 'pending' | 'paid';
+  paidAt?: string;
+  paymentMethod?: PaymentMethod;
+  notes?: string;
+  createdAt: string;
+}
+
+// ─── کارکنان ────────────────────────────────────────────
+
+export interface Staff {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  role: StaffRole;
+  branchId?: string;
+  branchName?: string;
+  hireDate: string;
+  salary: number;
+  status: 'active' | 'inactive';
+  nationalId?: string;
+  address?: string;
+  emergencyContact?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type StaffRole = 'manager' | 'receptionist' | 'accountant' | 'marketing' | 'support' | 'it' | 'cleaner' | 'other';
+
+// ─── لاگ حسابرسی ────────────────────────────────────────
+
+export interface AuditLogEntry {
+  id: string;
+  userId: string;
+  userName: string;
+  action: string;
+  entity: string;
+  entityId: string;
+  details: string;
+  timestamp: string;
+}
+
+// ─── تنظیمات سیستم ─────────────────────────────────────
+
+export interface SystemSettings {
+  instituteName: string;
+  instituteNameEn: string;
+  address: string;
+  phone1: string;
+  phone2: string;
+  email: string;
+  website: string;
+  logo: string;
+  fiscalYearStart: string;
+  currency: string;
+  defaultPaymentMethod: PaymentMethod;
+  smsEnabled: boolean;
+  emailEnabled: boolean;
+  whatsappEnabled: boolean;
+  referralRewardType: ReferralRewardType;
+  referralRewardValue: number;
+  autoBackup: boolean;
+  backupInterval: number;
+  maintenanceMode: boolean;
+}
+
 // ─── فارسی‌سازی برچسب‌ها ─────────────────────────────────
 
 export const leadSourceLabels: Record<LeadSource, string> = {
@@ -503,5 +789,103 @@ export const courseStatusLabels: Record<CourseStatus, string> = {
   upcoming: 'آینده',
   active: 'فعال',
   completed: 'تکمیل شده',
+  cancelled: 'لغو شده',
+};
+
+// ─── فارسی‌سازی برچسب‌های فاز ۱ ─────────────────────────
+
+export const campaignTypeLabels: Record<CampaignType, string> = {
+  social_media: 'شبکه اجتماعی',
+  email: 'ایمیل',
+  sms: 'پیامک',
+  referral_boost: 'تقویت معرف',
+  discount: 'تخفیف',
+  event: 'رویداد',
+  seo: 'سئو',
+};
+
+export const campaignStatusLabels: Record<CampaignStatus, string> = {
+  draft: 'پیش‌نویس',
+  active: 'فعال',
+  paused: 'متوقف شده',
+  completed: 'تکمیل شده',
+  cancelled: 'لغو شده',
+};
+
+export const campaignChannelLabels: Record<CampaignChannel, string> = {
+  instagram: 'اینستاگرام',
+  telegram: 'تلگرام',
+  whatsapp: 'واتساپ',
+  sms: 'پیامک',
+  email: 'ایمیل',
+  website: 'وبسایت',
+  offline: 'حضوری',
+};
+
+export const contentTypeLabels: Record<ContentType, string> = {
+  video: 'ویدیو',
+  document: 'سند',
+  audio: 'صوتی',
+  image: 'تصویر',
+  link: 'لینک',
+  presentation: 'ارائه',
+  worksheet: 'کاربرگ',
+};
+
+export const invoiceStatusLabels: Record<InvoiceStatus, string> = {
+  draft: 'پیش‌نویس',
+  sent: 'ارسال شده',
+  paid: 'پرداخت شده',
+  partial: 'پرداخت جزئی',
+  overdue: 'سررسید گذشته',
+  cancelled: 'لغو شده',
+};
+
+export const paymentMethodLabels: Record<PaymentMethod, string> = {
+  cash: 'نقدی',
+  card: 'کارت',
+  transfer: 'انتقال',
+  online: 'آنلاین',
+  cheque: 'چک',
+};
+
+export const staffRoleLabels: Record<StaffRole, string> = {
+  manager: 'مدیر',
+  receptionist: 'پذیرش',
+  accountant: 'حسابدار',
+  marketing: 'بازاریابی',
+  support: 'پشتیبانی',
+  it: 'فناوری اطلاعات',
+  cleaner: 'نظافت',
+  other: 'سایر',
+};
+
+export const attendanceStatusLabels: Record<'present' | 'absent' | 'late' | 'excused', string> = {
+  present: 'حاضر',
+  absent: 'غایب',
+  late: 'تأخیر',
+  excused: 'مرخصی',
+};
+
+export const calendarEventTypeLabels: Record<CalendarEvent['type'], string> = {
+  class: 'کلاس',
+  exam: 'آزمون',
+  holiday: 'تعطیلی',
+  event: 'رویداد',
+  deadline: 'مهلت',
+  meeting: 'جلسه',
+};
+
+export const assignmentTypeLabels: Record<Assignment['type'], string> = {
+  homework: 'تکلیف',
+  project: 'پروژه',
+  practice: 'تمرین',
+  research: 'تحقیق',
+};
+
+export const installmentStatusLabels: Record<Installment['status'], string> = {
+  pending: 'در انتظار',
+  paid: 'پرداخت شده',
+  overdue: 'سررسید گذشته',
   cancelled: 'لغو شده',
 };

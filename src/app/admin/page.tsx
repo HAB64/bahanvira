@@ -29,6 +29,9 @@ import {
   BarChart3,
   Gift,
   Bell,
+  ClipboardCheck,
+  PenTool,
+  Landmark,
   Settings,
   Shield,
   LogOut,
@@ -56,13 +59,26 @@ import QuestionsPanel from '@/components/admin/enterprise/QuestionsPanel';
 import RevenuePanel from '@/components/admin/enterprise/RevenuePanel';
 import ExpensesPanel from '@/components/admin/enterprise/ExpensesPanel';
 import TuitionPanel from '@/components/admin/enterprise/TuitionPanel';
+import FollowUpsPanel from '@/components/admin/enterprise/FollowUpsPanel';
+import ConsultationsPanel from '@/components/admin/enterprise/ConsultationsPanel';
+import CampaignsPanel from '@/components/admin/enterprise/CampaignsPanel';
+import ContentPanel from '@/components/admin/enterprise/ContentPanel';
+import AssignmentsPanel from '@/components/admin/enterprise/AssignmentsPanel';
+import AttendancePanel from '@/components/admin/enterprise/AttendancePanel';
+import InvoicesPanel from '@/components/admin/enterprise/InvoicesPanel';
+import InstallmentsPanel from '@/components/admin/enterprise/InstallmentsPanel';
+import ResultsPanel from '@/components/admin/enterprise/ResultsPanel';
+import StaffPanel from '@/components/admin/enterprise/StaffPanel';
+import ReferralsPanel from '@/components/admin/enterprise/ReferralsPanel';
+import NotificationsPanel from '@/components/admin/enterprise/NotificationsPanel';
+import SettingsPanel from '@/components/admin/enterprise/SettingsPanel';
 
 // Types
 type PanelKey =
   | 'dashboard' | 'users' | 'branches' | 'instructors' | 'staff' | 'students'
-  | 'courses' | 'classes' | 'content'
+  | 'courses' | 'classes' | 'content' | 'assignments' | 'attendance'
   | 'leads' | 'followups' | 'consultations' | 'campaigns'
-  | 'revenue' | 'expenses' | 'tuition' | 'invoices'
+  | 'revenue' | 'expenses' | 'tuition' | 'invoices' | 'installments'
   | 'exams' | 'questions' | 'results'
   | 'referrals' | 'notifications' | 'settings';
 
@@ -95,6 +111,8 @@ const menuGroups: MenuGroup[] = [
       { key: 'courses', label: 'دوره‌ها', icon: BookOpen },
       { key: 'classes', label: 'کلاس‌ها', icon: Calendar },
       { key: 'content', label: 'محتوا', icon: FileText },
+      { key: 'assignments', label: 'تکالیف', icon: PenTool },
+      { key: 'attendance', label: 'حضور و غیاب', icon: ClipboardCheck },
     ],
   },
   {
@@ -113,6 +131,7 @@ const menuGroups: MenuGroup[] = [
       { key: 'expenses', label: 'هزینه‌ها', icon: TrendingDown },
       { key: 'tuition', label: 'شهریه‌ها', icon: CreditCard },
       { key: 'invoices', label: 'فاکتورها', icon: Receipt },
+      { key: 'installments', label: 'اقساط', icon: Landmark },
     ],
   },
   {
@@ -144,6 +163,8 @@ const panelTitles: Record<PanelKey, string> = {
   courses: 'مدیریت دوره‌ها',
   classes: 'مدیریت کلاس‌ها',
   content: 'مدیریت محتوا',
+  assignments: 'تکالیف',
+  attendance: 'حضور و غیاب',
   leads: 'مدیریت سرنخ‌ها',
   followups: 'پیگیری‌ها',
   consultations: 'مشاوره‌ها',
@@ -152,6 +173,7 @@ const panelTitles: Record<PanelKey, string> = {
   expenses: 'مدیریت هزینه‌ها',
   tuition: 'مدیریت شهریه‌ها',
   invoices: 'فاکتورها',
+  installments: 'اقساط',
   exams: 'مدیریت آزمون‌ها',
   questions: 'بانک سوالات',
   results: 'نتایج آزمون‌ها',
@@ -393,17 +415,19 @@ export default function AdminPage() {
       case 'revenue': return <RevenuePanel />;
       case 'expenses': return <ExpensesPanel />;
       case 'tuition': return <TuitionPanel />;
-      // Placeholder panels
-      case 'staff': return <PlaceholderPanel title="کارکنان" description="مدیریت کارکنان و پرسنل سازمان" />;
-      case 'content': return <PlaceholderPanel title="محتوا" description="مدیریت محتوای آموزشی دوره‌ها" />;
-      case 'followups': return <PlaceholderPanel title="پیگیری‌ها" description="پیگیری تماس‌ها و ارتباط با سرنخ‌ها" />;
-      case 'consultations': return <PlaceholderPanel title="مشاوره‌ها" description="مدیریت جلسات مشاوره" />;
-      case 'campaigns': return <PlaceholderPanel title="کمپین‌ها" description="مدیریت کمپین‌های بازاریابی" />;
-      case 'invoices': return <PlaceholderPanel title="فاکتورها" description="مدیریت فاکتورها و صورتحساب‌ها" />;
-      case 'results': return <PlaceholderPanel title="نتایج" description="مشاهده نتایج آزمون‌ها" />;
-      case 'referrals': return <PlaceholderPanel title="معرف‌ها" description="مدیریت سیستم معرف‌ها" />;
-      case 'notifications': return <PlaceholderPanel title="اعلان‌ها" description="مدیریت اعلان‌ها و اطلاع‌رسانی" />;
-      case 'settings': return <PlaceholderPanel title="تنظیمات" description="تنظیمات سیستم و پیکربندی" />;
+      case 'followups': return <FollowUpsPanel />;
+      case 'consultations': return <ConsultationsPanel />;
+      case 'campaigns': return <CampaignsPanel />;
+      case 'content': return <ContentPanel />;
+      case 'assignments': return <AssignmentsPanel />;
+      case 'attendance': return <AttendancePanel />;
+      case 'invoices': return <InvoicesPanel />;
+      case 'installments': return <InstallmentsPanel />;
+      case 'results': return <ResultsPanel />;
+      case 'staff': return <StaffPanel />;
+      case 'referrals': return <ReferralsPanel />;
+      case 'notifications': return <NotificationsPanel />;
+      case 'settings': return <SettingsPanel />;
       default: return <DashboardPanel />;
     }
   };

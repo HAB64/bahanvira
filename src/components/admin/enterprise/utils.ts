@@ -69,6 +69,57 @@ export const statusColors: Record<string, string> = {
   MEDIUM: 'bg-amber-100 text-amber-800',
   HARD: 'bg-orange-100 text-orange-800',
   EXPERT: 'bg-red-100 text-red-800',
+  // Follow-up types
+  CALL: 'bg-blue-100 text-blue-800',
+  WHATSAPP: 'bg-green-100 text-green-800',
+  MEETING: 'bg-purple-100 text-purple-800',
+  EMAIL: 'bg-amber-100 text-amber-800',
+  // Follow-up completion
+  COMPLETED_FOLLOWUP: 'bg-green-100 text-green-800',
+  PENDING_FOLLOWUP: 'bg-amber-100 text-amber-800',
+  // Consultation statuses
+  NEW_CONSULTATION: 'bg-blue-100 text-blue-800',
+  CONTACTED_CONSULTATION: 'bg-cyan-100 text-cyan-800',
+  SCHEDULED_CONSULTATION: 'bg-purple-100 text-purple-800',
+  CONVERTED_CONSULTATION: 'bg-green-100 text-green-800',
+  LOST_CONSULTATION: 'bg-red-100 text-red-800',
+  // Campaign statuses
+  DRAFT_CAMPAIGN: 'bg-gray-100 text-gray-800',
+  ACTIVE_CAMPAIGN: 'bg-green-100 text-green-800',
+  PAUSED_CAMPAIGN: 'bg-amber-100 text-amber-800',
+  COMPLETED_CAMPAIGN: 'bg-blue-100 text-blue-800',
+  CANCELLED_CAMPAIGN: 'bg-red-100 text-red-800',
+  // Campaign types
+  SOCIAL_MEDIA: 'bg-pink-100 text-pink-800',
+  EMAIL_CAMPAIGN: 'bg-amber-100 text-amber-800',
+  SMS: 'bg-blue-100 text-blue-800',
+  REFERRAL_BOOST: 'bg-green-100 text-green-800',
+  DISCOUNT: 'bg-orange-100 text-orange-800',
+  EVENT: 'bg-purple-100 text-purple-800',
+  SEO: 'bg-teal-100 text-teal-800',
+  // Content types
+  VIDEO: 'bg-red-100 text-red-800',
+  DOCUMENT: 'bg-blue-100 text-blue-800',
+  AUDIO: 'bg-purple-100 text-purple-800',
+  IMAGE: 'bg-cyan-100 text-cyan-800',
+  LINK: 'bg-teal-100 text-teal-800',
+  PRESENTATION: 'bg-orange-100 text-orange-800',
+  WORKSHEET: 'bg-green-100 text-green-800',
+  // Assignment types
+  HOMEWORK: 'bg-blue-100 text-blue-800',
+  PROJECT: 'bg-purple-100 text-purple-800',
+  PRACTICE: 'bg-green-100 text-green-800',
+  RESEARCH: 'bg-amber-100 text-amber-800',
+  // Submission statuses
+  SUBMITTED: 'bg-blue-100 text-blue-800',
+  LATE: 'bg-red-100 text-red-800',
+  RETURNED: 'bg-amber-100 text-amber-800',
+  // Attendance statuses
+  PRESENT: 'bg-green-100 text-green-800',
+  ABSENT: 'bg-red-100 text-red-800',
+  EXCUSED: 'bg-purple-100 text-purple-800',
+  // Invoice statuses
+  SENT: 'bg-blue-100 text-blue-800',
 };
 
 // Status Persian translations
@@ -179,6 +230,67 @@ export const statusLabels: Record<string, string> = {
   STAFF: 'کارمند',
   STUDENT: 'کارآموز',
   PARENT: 'ولی',
+  // Follow-up types
+  CALL: 'تماس تلفنی',
+  WHATSAPP: 'واتساپ',
+  MEETING: 'جلسه حضوری',
+  EMAIL: 'ایمیل',
+  // Follow-up completion
+  COMPLETED_FOLLOWUP: 'انجام شده',
+  PENDING_FOLLOWUP: 'در انتظار',
+  // Consultation statuses
+  NEW_CONSULTATION: 'جدید',
+  CONTACTED_CONSULTATION: 'تماس گرفته شده',
+  SCHEDULED_CONSULTATION: 'برنامه‌ریزی شده',
+  CONVERTED_CONSULTATION: 'تبدیل شده',
+  LOST_CONSULTATION: 'از دست رفته',
+  // Campaign statuses
+  DRAFT_CAMPAIGN: 'پیش‌نویس',
+  ACTIVE_CAMPAIGN: 'فعال',
+  PAUSED_CAMPAIGN: 'متوقف شده',
+  COMPLETED_CAMPAIGN: 'تکمیل شده',
+  CANCELLED_CAMPAIGN: 'لغو شده',
+  // Campaign types
+  SOCIAL_MEDIA: 'شبکه اجتماعی',
+  EMAIL_CAMPAIGN: 'ایمیل',
+  SMS_CAMPAIGN: 'پیامک',
+  REFERRAL_BOOST: 'تقویت معرف',
+  DISCOUNT: 'تخفیف',
+  EVENT: 'رویداد',
+  SEO: 'سئو',
+  // Campaign channels
+  INSTAGRAM_CHANNEL: 'اینستاگرام',
+  TELEGRAM_CHANNEL: 'تلگرام',
+  WHATSAPP_CHANNEL: 'واتساپ',
+  SMS_CHANNEL: 'پیامک',
+  EMAIL_CHANNEL: 'ایمیل',
+  WEBSITE_CHANNEL: 'وبسایت',
+  OFFLINE_CHANNEL: 'حضوری',
+  // Content types
+  VIDEO: 'ویدیو',
+  DOCUMENT: 'سند',
+  AUDIO: 'صوتی',
+  IMAGE: 'تصویر',
+  LINK: 'لینک',
+  PRESENTATION: 'ارائه',
+  WORKSHEET: 'کاربرگ',
+  // Assignment types
+  HOMEWORK: 'تکلیف',
+  PROJECT: 'پروژه',
+  PRACTICE: 'تمرین',
+  RESEARCH: 'تحقیق',
+  // Assignment statuses
+  GRADED: 'نمره‌گذاری شده',
+  // Submission statuses
+  SUBMITTED: 'ارسال شده',
+  LATE: 'دیرتر از موعد',
+  RETURNED: 'بازگشت داده شده',
+  // Attendance statuses
+  PRESENT: 'حاضر',
+  ABSENT: 'غایب',
+  EXCUSED: 'مرخصی',
+  // Invoice statuses
+  SENT: 'ارسال شده',
 };
 
 export const getStatusBadgeClass = (status: string): string => {
