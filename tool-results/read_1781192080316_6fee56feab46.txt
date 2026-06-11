@@ -1,0 +1,956 @@
+     1→// ═══════════════════════════════════════════════════════════
+     2→//  پلتفرم بهان رایانه - Enterprise Architecture
+     3→//  Bahan Rayaneh Platform - Prisma Schema
+     4→// ═══════════════════════════════════════════════════════════
+     5→
+     6→generator client {
+     7→  provider = "prisma-client-js"
+     8→}
+     9→
+    10→datasource db {
+    11→  provider = "sqlite"
+    12→  url      = env("DATABASE_URL")
+    13→}
+    14→
+    15→// ─── لایه 1: هسته مرکزی (Core ERP) ─────────────────────────
+    16→
+    17→model User {
+    18→  id            String    @id @default(cuid())
+    19→  email         String    @unique
+    20→  phone         String?
+    21→  name          String
+    22→  passwordHash  String    @default("")
+    23→  role          UserRole  @default(STAFF)
+    24→  avatar        String?
+    25→  isActive      Boolean   @default(true)
+    26→  lastLoginAt   DateTime?
+    27→  createdAt     DateTime  @default(now())
+    28→  updatedAt     DateTime  @updatedAt
+    29→
+    30→  // Relations
+    31→  instructor    Instructor?
+    32→  staff         Staff?
+    33→  student       Student?
+    34→  leadCreatedBy Lead[]    @relation("LeadCreator")
+    35→  notifications Notification[]
+    36→  auditLogs     AuditLog[]
+    37→  createdCourses Course[]  @relation("CourseCreator")
+    38→  examAttempts  ExamAttempt[]
+    39→  supportTickets Ticket[]  @relation("TicketCreator")
+    40→  ticketMessages TicketMessage[]
+    41→
+    42→  @@map("users")
+    43→}
+    44→
+    45→enum UserRole {
+    46→  SUPER_ADMIN
+    47→  ADMIN
+    48→  BRANCH_MANAGER
+    49→  INSTRUCTOR
+    50→  STAFF
+    51→  STUDENT
+    52→  PARENT
+    53→  @@map("user_roles")
+    54→}
+    55→
+    56→model Branch {
+    57→  id          String   @id @default(cuid())
+    58→  name        String
+    59→  code        String   @unique
+    60→  province    String
+    61→  city        String
+    62→  address     String?
+    63→  phone       String?
+    64→  managerName String?
+    65→  isActive    Boolean  @default(true)
+    66→  createdAt   DateTime @default(now())
+    67→  updatedAt   DateTime @updatedAt
+    68→
+    69→  // Relations
+    70→  instructors Instructor[]
+    71→  students    Student[]
+    72→  classes     Class[]
+    73→  enrollments Enrollment[]
+    74→  courses     Course[]
+    75→  leads       Lead[]
+    76→  revenues    Revenue[]
+    77→  expenses    Expense[]
+    78→
+    79→  @@map("branches")
+    80→}
+    81→
+    82→model Instructor {
+    83→  id              String        @id @default(cuid())
+    84→  userId          String        @unique
+    85→  specialties     String        @default("[]") // JSON array
+    86→  bio             String?
+    87→  rating          Float         @default(0)
+    88→  totalClasses    Int           @default(0)
+    89→  hireDate        DateTime?
+    90→  salaryBase      Int           @default(0)
+    91→  isActive        Boolean       @default(true)
+    92→  branchId        String?
+    93→  createdAt       DateTime      @default(now())
+    94→  updatedAt       DateTime      @updatedAt
+    95→
+    96→  user            User          @relation(fields: [userId], references: [id])
+    97→  branch          Branch?       @relation(fields: [branchId], references: [id])
+    98→  classInstructor Class[]
+    99→  examCreator     Exam[]
+   100→  salaryRecords   SalaryRecord[]
+   101→
+   102→  @@map("instructors")
+   103→}
+   104→
+   105→model Staff {
+   106→  id        String   @id @default(cuid())
+   107→  userId    String   @unique
+   108→  position  String?
+   109→  department String?
+   110→  branchId  String?
+   111→  hireDate  DateTime?
+   112→  isActive  Boolean  @default(true)
+   113→  createdAt DateTime @default(now())
+   114→  updatedAt DateTime @updatedAt
+   115→
+   116→  user      User     @relation(fields: [userId], references: [id])
+   117→
+   118→  @@map("staff")
+   119→}
+   120→
+   121→model Document {
+   122→  id          String       @id @default(cuid())
+   123→  title       String
+   124→  type        DocumentType @default(GENERAL)
+   125→  category    String?
+   126→  fileUrl     String?
+   127→  description String?
+   128→  userId      String?
+   129→  branchId    String?
+   130→  createdAt   DateTime     @default(now())
+   131→  updatedAt   DateTime     @updatedAt
+   132→
+   133→  @@map("documents")
+   134→}
+   135→
+   136→enum DocumentType {
+   137→  CONTRACT
+   138→  CERTIFICATE
+   139→  ID_CARD
+   140→  RECEIPT
+   141→  GENERAL
+   142→  @@map("document_types")
+   143→}
+   144→
+   145→model Notification {
+   146→  id        String   @id @default(cuid())
+   147→  userId    String
+   148→  title     String
+   149→  message   String
+   150→  type      String   @default("info")
+   151→  isRead    Boolean  @default(false)
+   152→  actionUrl String?
+   153→  createdAt DateTime @default(now())
+   154→
+   155→  user      User     @relation(fields: [userId], references: [id])
+   156→
+   157→  @@map("notifications")
+   158→}
+   159→
+   160→model AuditLog {
+   161→  id        String   @id @default(cuid())
+   162→  userId    String?
+   163→  action    String
+   164→  entity    String
+   165→  entityId  String?
+   166→  details   String?  // JSON
+   167→  ipAddress String?
+   168→  createdAt DateTime @default(now())
+   169→
+   170→  user      User?    @relation(fields: [userId], references: [id])
+   171→
+   172→  @@map("audit_logs")
+   173→}
+   174→
+   175→// ─── لایه 2: آموزش (LMS) ───────────────────────────────────
+   176→
+   177→model Course {
+   178→  id              String         @id @default(cuid())
+   179→  slug            String         @unique
+   180→  title           String
+   181→  description     String?
+   182→  level           CourseLevel    @default(BEGINNER)
+   183→  ageRange        String?
+   184→  duration        String?
+   185→  sessions        Int            @default(12)
+   186→  sessionsPerWeek Int            @default(2)
+   187→  sessionDuration Int            @default(60) // minutes
+   188→  price           Int            @default(0)  // in Rials
+   189→  features        String         @default("[]") // JSON array
+   190→  icon            String?
+   191→  color           String?
+   192→  status          CourseStatus   @default(ACTIVE)
+   193→  capacity        Int            @default(15)
+   194→  enrolledCount   Int            @default(0)
+   195→  startDate       DateTime?
+   196→  endDate         DateTime?
+   197→  createdById     String?
+   198→  branchId        String?
+   199→  createdAt       DateTime       @default(now())
+   200→  updatedAt       DateTime       @updatedAt
+   201→
+   202→  creator         User?          @relation("CourseCreator", fields: [createdById], references: [id])
+   203→  branch          Branch?        @relation(fields: [branchId], references: [id])
+   204→  syllabus        SyllabusItem[]
+   205→  classes         Class[]
+   206→  enrollments     Enrollment[]
+   207→  exams           Exam[]
+   208→  contents        CourseContent[]
+   209→  assignments     Assignment[]
+   210→  tuitions        Tuition[]
+   211→
+   212→  @@map("courses")
+   213→}
+   214→
+   215→enum CourseLevel {
+   216→  BEGINNER
+   217→  INTERMEDIATE
+   218→  ADVANCED
+   219→  COMPETITION
+   220→  @@map("course_levels")
+   221→}
+   222→
+   223→enum CourseStatus {
+   224→  UPCOMING
+   225→  ACTIVE
+   226→  COMPLETED
+   227→  CANCELLED
+   228→  @@map("course_statuses")
+   229→}
+   230→
+   231→model SyllabusItem {
+   232→  id          String   @id @default(cuid())
+   233→  courseId     String
+   234→  sessionNumber Int
+   235→  title       String
+   236→  topics      String   @default("[]") // JSON array
+   237→  homework    String?
+   238→  duration    Int      @default(60)
+   239→  createdAt   DateTime @default(now())
+   240→  updatedAt   DateTime @updatedAt
+   241→
+   242→  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+   243→
+   244→  @@map("syllabus_items")
+   245→}
+   246→
+   247→model Class {
+   248→  id          String      @id @default(cuid())
+   249→  courseId     String
+   250→  instructorId String?
+   251→  branchId    String?
+   252→  dayOfWeek   DayOfWeek?
+   253→  startTime   String      @default("16:00")
+   254→  endTime     String      @default("17:30")
+   255→  location    String?
+   256→  isOnline    Boolean     @default(false)
+   257→  onlineLink  String?
+   258→  status      ClassStatus @default(SCHEDULED)
+   259→  classDate   DateTime?
+   260→  createdAt   DateTime    @default(now())
+   261→  updatedAt   DateTime    @updatedAt
+   262→
+   263→  course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+   264→  instructor  Instructor? @relation(fields: [instructorId], references: [id])
+   265→  branch      Branch?     @relation(fields: [branchId], references: [id])
+   266→  attendance  Attendance[]
+   267→
+   268→  @@map("classes")
+   269→}
+   270→
+   271→enum DayOfWeek {
+   272→  SATURDAY
+   273→  SUNDAY
+   274→  MONDAY
+   275→  TUESDAY
+   276→  WEDNESDAY
+   277→  THURSDAY
+   278→  FRIDAY
+   279→  @@map("days_of_week")
+   280→}
+   281→
+   282→enum ClassStatus {
+   283→  SCHEDULED
+   284→  IN_PROGRESS
+   285→  COMPLETED
+   286→  CANCELLED
+   287→  @@map("class_statuses")
+   288→}
+   289→
+   290→model CourseContent {
+   291→  id          String       @id @default(cuid())
+   292→  courseId     String
+   293→  title       String
+   294→  type        ContentType  @default(VIDEO)
+   295→  url         String?
+   296→  content     String?      // text content
+   297→  orderNum    Int          @default(0)
+   298→  isPublished Boolean      @default(false)
+   299→  createdAt   DateTime     @default(now())
+   300→  updatedAt   DateTime     @updatedAt
+   301→
+   302→  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+   303→
+   304→  @@map("course_contents")
+   305→}
+   306→
+   307→enum ContentType {
+   308→  VIDEO
+   309→  DOCUMENT
+   310→  IMAGE
+   311→  LINK
+   312→  TEXT
+   313→  @@map("content_types")
+   314→}
+   315→
+   316→model Assignment {
+   317→  id          String   @id @default(cuid())
+   318→  courseId     String
+   319→  title       String
+   320→  description String?
+   321→  dueDate     DateTime?
+   322→  maxScore    Int      @default(100)
+   323→  createdAt   DateTime @default(now())
+   324→  updatedAt   DateTime @updatedAt
+   325→
+   326→  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+   327→  submissions AssignmentSubmission[]
+   328→
+   329→  @@map("assignments")
+   330→}
+   331→
+   332→model AssignmentSubmission {
+   333→  id           String   @id @default(cuid())
+   334→  assignmentId String
+   335→  studentId    String
+   336→  content      String?
+   337→  fileUrl      String?
+   338→  score        Int?
+   339→  feedback     String?
+   340→  submittedAt  DateTime @default(now())
+   341→  gradedAt     DateTime?
+   342→
+   343→  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+   344→  student      Student   @relation(fields: [studentId], references: [id])
+   345→
+   346→  @@map("assignment_submissions")
+   347→}
+   348→
+   349→model Attendance {
+   350→  id        String   @id @default(cuid())
+   351→  classId   String
+   352→  studentId String
+   353→  status    AttendanceStatus @default(PRESENT)
+   354→  notes     String?
+   355→  recordedAt DateTime @default(now())
+   356→
+   357→  class     Class    @relation(fields: [classId], references: [id], onDelete: Cascade)
+   358→  student   Student  @relation(fields: [studentId], references: [id])
+   359→
+   360→  @@unique([classId, studentId])
+   361→  @@map("attendance")
+   362→}
+   363→
+   364→enum AttendanceStatus {
+   365→  PRESENT
+   366→  ABSENT
+   367→  LATE
+   368→  EXCUSED
+   369→  @@map("attendance_statuses")
+   370→}
+   371→
+   372→// ─── لایه 3: CRM آموزشی ────────────────────────────────────
+   373→
+   374→model Lead {
+   375→  id               String       @id @default(cuid())
+   376→  name             String
+   377→  phone            String
+   378→  email            String?
+   379→  childName        String?
+   380→  childAge         Int?
+   381→  interestedCourse String?
+   382→  province         String?
+   383→  city             String?
+   384→  source           LeadSource   @default(WEBSITE_FORM)
+   385→  status           LeadStatus   @default(NEW)
+   386→  priority         LeadPriority @default(MEDIUM)
+   387→  notes            String?
+   388→  referralCode     String?
+   389→  assignedToId     String?
+   390→  branchId         String?
+   391→  createdAt        DateTime     @default(now())
+   392→  updatedAt        DateTime     @updatedAt
+   393→
+   394→  assignedTo       User?        @relation("LeadCreator", fields: [assignedToId], references: [id])
+   395→  branch           Branch?      @relation(fields: [branchId], references: [id])
+   396→  followUps        FollowUp[]
+   397→  leadNotes        LeadNote[]
+   398→  consultation     Consultation?
+   399→
+   400→  @@map("leads")
+   401→}
+   402→
+   403→enum LeadSource {
+   404→  WEBSITE_FORM
+   405→  WHATSAPP
+   406→  PHONE_CALL
+   407→  INSTAGRAM
+   408→  TELEGRAM
+   409→  REFERRAL
+   410→  WALK_IN
+   411→  ADVERTISEMENT
+   412→  CAMPAIGN
+   413→  OTHER
+   414→  @@map("lead_sources")
+   415→}
+   416→
+   417→enum LeadStatus {
+   418→  NEW
+   419→  CONTACTED
+   420→  CONSULTATION_SCHEDULED
+   421→  CONSULTATION_DONE
+   422→  TRIAL_CLASS_SCHEDULED
+   423→  TRIAL_CLASS_DONE
+   424→  ENROLLMENT_OFFERED
+   425→  ENROLLED
+   426→  LOST
+   427→  NOT_INTERESTED
+   428→  @@map("lead_statuses")
+   429→}
+   430→
+   431→enum LeadPriority {
+   432→  LOW
+   433→  MEDIUM
+   434→  HIGH
+   435→  URGENT
+   436→  @@map("lead_priorities")
+   437→}
+   438→
+   439→model FollowUp {
+   440→  id          String          @id @default(cuid())
+   441→  leadId      String
+   442→  type        FollowUpType    @default(CALL)
+   443→  note        String?
+   444→  scheduledAt DateTime
+   445→  completed   Boolean         @default(false)
+   446→  completedAt DateTime?
+   447→  createdAt   DateTime        @default(now())
+   448→
+   449→  lead        Lead            @relation(fields: [leadId], references: [id], onDelete: Cascade)
+   450→
+   451→  @@map("follow_ups")
+   452→}
+   453→
+   454→enum FollowUpType {
+   455→  CALL
+   456→  WHATSAPP
+   457→  MEETING
+   458→  EMAIL
+   459→  SMS
+   460→  @@map("followup_types")
+   461→}
+   462→
+   463→model LeadNote {
+   464→  id        String   @id @default(cuid())
+   465→  leadId    String
+   466→  content   String
+   467→  type      String   @default("general")
+   468→  createdBy String?
+   469→  createdAt DateTime @default(now())
+   470→
+   471→  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+   472→
+   473→  @@map("lead_notes")
+   474→}
+   475→
+   476→model Consultation {
+   477→  id              String   @id @default(cuid())
+   478→  leadId          String   @unique
+   479→  consultantId    String?
+   480→  scheduledAt     DateTime
+   481→  completedAt     DateTime?
+   482→  result          String?
+   483→  recommendedCourse String?
+   484→  notes           String?
+   485→  createdAt       DateTime @default(now())
+   486→  updatedAt       DateTime @updatedAt
+   487→
+   488→  lead            Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+   489→
+   490→  @@map("consultations")
+   491→}
+   492→
+   493→model Campaign {
+   494→  id          String   @id @default(cuid())
+   495→  title       String
+   496→  type        String   @default("sms") // sms, whatsapp, email
+   497→  status      String   @default("draft")
+   498→  targetGroup String?
+   499→  message     String
+   500→  scheduledAt DateTime?
+   501→  sentAt      DateTime?
+   502→  totalSent   Int      @default(0)
+   503→  totalOpened Int      @default(0)
+   504→  totalClicked Int     @default(0)
+   505→  createdAt   DateTime @default(now())
+   506→  updatedAt   DateTime @updatedAt
+   507→
+   508→  @@map("campaigns")
+   509→}
+   510→
+   511→// ─── لایه 4: مالی ───────────────────────────────────────────
+   512→
+   513→model Revenue {
+   514→  id          String       @id @default(cuid())
+   515→  amount      Int
+   516→  category    RevenueCategory @default(TUITION)
+   517→  description String?
+   518→  branchId    String?
+   519→  receivedAt  DateTime     @default(now())
+   520→  createdAt   DateTime     @default(now())
+   521→  updatedAt   DateTime     @updatedAt
+   522→
+   523→  branch      Branch?      @relation(fields: [branchId], references: [id])
+   524→
+   525→  @@map("revenues")
+   526→}
+   527→
+   528→enum RevenueCategory {
+   529→  TUITION
+   530→  EXAM_FEE
+   531→  CERTIFICATE_FEE
+   532→  CONSULTATION_FEE
+   533→  MATERIAL_SALE
+   534→  OTHER
+   535→  @@map("revenue_categories")
+   536→}
+   537→
+   538→model Expense {
+   539→  id          String        @id @default(cuid())
+   540→  amount      Int
+   541→  category    ExpenseCategory @default(OPERATIONAL)
+   542→  description String?
+   543→  branchId    String?
+   544→  payee       String?
+   545→  receiptUrl  String?
+   546→  paidAt      DateTime      @default(now())
+   547→  createdAt   DateTime      @default(now())
+   548→  updatedAt   DateTime      @updatedAt
+   549→
+   550→  branch      Branch?       @relation(fields: [branchId], references: [id])
+   551→
+   552→  @@map("expenses")
+   553→}
+   554→
+   555→enum ExpenseCategory {
+   556→  OPERATIONAL
+   557→  SALARY
+   558→  RENT
+   559→  UTILITIES
+   560→  MARKETING
+   561→  EQUIPMENT
+   562→  MATERIALS
+   563→  OTHER
+   564→  @@map("expense_categories")
+   565→}
+   566→
+   567→model Tuition {
+   568→  id            String          @id @default(cuid())
+   569→  studentId     String
+   570→  courseId      String
+   571→  totalAmount   Int
+   572→  paidAmount    Int             @default(0)
+   573→  discount      Int             @default(0)
+   574→  paymentType   PaymentType     @default(CASH)
+   575→  installments  Int             @default(1)
+   576→  status        TuitionStatus   @default(PENDING)
+   577→  dueDate       DateTime?
+   578→  createdAt     DateTime        @default(now())
+   579→  updatedAt     DateTime        @updatedAt
+   580→
+   581→  student       Student         @relation(fields: [studentId], references: [id])
+   582→  course        Course          @relation(fields: [courseId], references: [id])
+   583→  payments      Payment[]
+   584→
+   585→  @@map("tuitions")
+   586→}
+   587→
+   588→enum PaymentType {
+   589→  CASH
+   590→  INSTALLMENT
+   591→  ONLINE
+   592→  TRANSFER
+   593→  @@map("payment_types")
+   594→}
+   595→
+   596→enum TuitionStatus {
+   597→  PENDING
+   598→  PARTIAL
+   599→  PAID
+   600→  OVERDUE
+   601→  CANCELLED
+   602→  @@map("tuition_statuses")
+   603→}
+   604→
+   605→model Payment {
+   606→  id            String      @id @default(cuid())
+   607→  tuitionId     String
+   608→  amount        Int
+   609→  method        PaymentMethod @default(CASH)
+   610→  reference     String?
+   611→  receiptUrl    String?
+   612→  paidAt        DateTime    @default(now())
+   613→  createdAt     DateTime    @default(now())
+   614→
+   615→  tuition       Tuition     @relation(fields: [tuitionId], references: [id], onDelete: Cascade)
+   616→
+   617→  @@map("payments")
+   618→}
+   619→
+   620→enum PaymentMethod {
+   621→  CASH
+   622→  CARD
+   623→  TRANSFER
+   624→  ONLINE
+   625→  CHEQUE
+   626→  @@map("payment_methods")
+   627→}
+   628→
+   629→model Invoice {
+   630→  id          String   @id @default(cuid())
+   631→  number      String   @unique
+   632→  studentId   String
+   633→  tuitionId   String?
+   634→  items       String   @default("[]") // JSON array of line items
+   635→  totalAmount Int
+   636→  taxAmount   Int      @default(0)
+   637→  status      String   @default("issued")
+   638→  dueDate     DateTime?
+   639→  issuedAt    DateTime @default(now())
+   640→  paidAt      DateTime?
+   641→
+   642→  @@map("invoices")
+   643→}
+   644→
+   645→model SalaryRecord {
+   646→  id          String   @id @default(cuid())
+   647→  instructorId String
+   648→  month       String   // "1404-03"
+   649→  baseSalary  Int
+   650→  bonuses     Int      @default(0)
+   651→  deductions  Int      @default(0)
+   652→  totalAmount Int
+   653→  status      String   @default("pending")
+   654→  paidAt      DateTime?
+   655→  createdAt   DateTime @default(now())
+   656→  updatedAt   DateTime @updatedAt
+   657→
+   658→  instructor  Instructor @relation(fields: [instructorId], references: [id])
+   659→
+   660→  @@map("salary_records")
+   661→}
+   662→
+   663→// ─── لایه 5: کارآموزان و ثبت‌نام ───────────────────────────
+   664→
+   665→model Student {
+   666→  id            String        @id @default(cuid())
+   667→  userId        String?       @unique
+   668→  name          String
+   669→  phone         String
+   670→  email         String?
+   671→  age           Int           @default(7)
+   672→  parentName    String?
+   673→  parentPhone   String?
+   674→  level         StudentLevel  @default(BEGINNER)
+   675→  province      String?
+   676→  city          String?
+   677→  address       String?
+   678→  referralCode  String?       @unique
+   679→  referredBy    String?
+   680→  isActive      Boolean       @default(true)
+   681→  branchId      String?
+   682→  enrolledAt    DateTime      @default(now())
+   683→  createdAt     DateTime      @default(now())
+   684→  updatedAt     DateTime      @updatedAt
+   685→
+   686→  user          User?         @relation(fields: [userId], references: [id])
+   687→  branch        Branch?       @relation(fields: [branchId], references: [id])
+   688→  enrollments   Enrollment[]
+   689→  attendance    Attendance[]
+   690→  tuitions      Tuition[]
+   691→  examAttempts  ExamAttempt[]
+   692→  certificates  Certificate[]
+   693→  submissions   AssignmentSubmission[]
+   694→  referralFrom  Referral[]    @relation("ReferredBy")
+   695→  referralTo    Referral[]    @relation("Referrer")
+   696→
+   697→  @@map("students")
+   698→}
+   699→
+   700→enum StudentLevel {
+   701→  BEGINNER
+   702→  INTERMEDIATE
+   703→  ADVANCED
+   704→  COMPETITION
+   705→  @@map("student_levels")
+   706→}
+   707→
+   708→model Enrollment {
+   709→  id            String            @id @default(cuid())
+   710→  studentId     String
+   711→  courseId      String
+   712→  branchId      String?
+   713→  status        EnrollmentStatus  @default(ACTIVE)
+   714→  enrolledAt    DateTime          @default(now())
+   715→  completedAt   DateTime?
+   716→  progress      Int               @default(0)
+   717→  notes         String?
+   718→  discountCode  String?
+   719→  referralCode  String?
+   720→
+   721→  student       Student           @relation(fields: [studentId], references: [id])
+   722→  course        Course            @relation(fields: [courseId], references: [id])
+   723→  branch        Branch?           @relation(fields: [branchId], references: [id])
+   724→
+   725→  @@map("enrollments")
+   726→}
+   727→
+   728→enum EnrollmentStatus {
+   729→  PENDING
+   730→  ACTIVE
+   731→  PAUSED
+   732→  COMPLETED
+   733→  CANCELLED
+   734→  @@map("enrollment_statuses")
+   735→}
+   736→
+   737→// ─── لایه 7: آزمون هوشمند ───────────────────────────────────
+   738→
+   739→model Exam {
+   740→  id            String       @id @default(cuid())
+   741→  title         String
+   742→  description   String?
+   743→  type          ExamType     @default(PRACTICE)
+   744→  level         StudentLevel @default(BEGINNER)
+   745→  courseId      String?
+   746→  duration      Int          @default(30) // minutes
+   747→  totalScore    Int          @default(100)
+   748→  passingScore  Int          @default(60)
+   749→  status        ExamStatus   @default(DRAFT)
+   750→  questions     String       @default("[]") // JSON array of question IDs
+   751→  availableFrom DateTime?
+   752→  availableTo   DateTime?
+   753→  creatorId     String?
+   754→  createdAt     DateTime     @default(now())
+   755→  updatedAt     DateTime     @updatedAt
+   756→
+   757→  course        Course?      @relation(fields: [courseId], references: [id])
+   758→  creator       Instructor?  @relation(fields: [creatorId], references: [id])
+   759→  attempts      ExamAttempt[]
+   760→
+   761→  @@map("exams")
+   762→}
+   763→
+   764→enum ExamType {
+   765→  PLACEMENT
+   766→  LESSON_QUIZ
+   767→  MIDTERM
+   768→  FINAL
+   769→  COMPETITION
+   770→  PRACTICE
+   771→  @@map("exam_types")
+   772→}
+   773→
+   774→enum ExamStatus {
+   775→  DRAFT
+   776→  PUBLISHED
+   777→  ACTIVE
+   778→  CLOSED
+   779→  ARCHIVED
+   780→  @@map("exam_statuses")
+   781→}
+   782→
+   783→model QuestionBank {
+   784→  id          String            @id @default(cuid())
+   785→  question    String
+   786→  type        QuestionType      @default(MULTIPLE_CHOICE)
+   787→  options     String?           // JSON array
+   788→  correctAnswer String?
+   789→  points      Int               @default(10)
+   790→  difficulty  QuestionDifficulty @default(MEDIUM)
+   791→  category    String?
+   792→  subject     String?
+   793→  explanation String?
+   794→  imageUrl    String?
+   795→  aiGenerated Boolean           @default(false)
+   796→  qualityScore Float?
+   797→  usageCount  Int               @default(0)
+   798→  createdAt   DateTime          @default(now())
+   799→  updatedAt   DateTime          @updatedAt
+   800→
+   801→  @@map("question_bank")
+   802→}
+   803→
+   804→enum QuestionType {
+   805→  MULTIPLE_CHOICE
+   806→  TRUE_FALSE
+   807→  FILL_BLANK
+   808→  MENTAL_CALCULATION
+   809→  ABACUS_READING
+   810→  NUMBER_SEQUENCE
+   811→  @@map("question_types")
+   812→}
+   813→
+   814→enum QuestionDifficulty {
+   815→  EASY
+   816→  MEDIUM
+   817→  HARD
+   818→  EXPERT
+   819→  @@map("question_difficulties")
+   820→}
+   821→
+   822→model ExamAttempt {
+   823→  id           String         @id @default(cuid())
+   824→  examId       String
+   825→  studentId    String
+   826→  userId       String?
+   827→  answers      String         @default("[]") // JSON array
+   828→  score        Int            @default(0)
+   829→  maxScore     Int            @default(100)
+   830→  percentage   Float          @default(0)
+   831→  passed       Boolean        @default(false)
+   832→  startedAt    DateTime       @default(now())
+   833→  completedAt  DateTime?
+   834→  duration     Int            @default(0) // seconds
+   835→  status       AttemptStatus  @default(IN_PROGRESS)
+   836→
+   837→  exam         Exam           @relation(fields: [examId], references: [id])
+   838→  student      Student        @relation(fields: [studentId], references: [id])
+   839→  user         User?          @relation(fields: [userId], references: [id])
+   840→
+   841→  @@map("exam_attempts")
+   842→}
+   843→
+   844→enum AttemptStatus {
+   845→  IN_PROGRESS
+   846→  COMPLETED
+   847→  TIMEOUT
+   848→  ABANDONED
+   849→  @@map("attempt_statuses")
+   850→}
+   851→
+   852→model Certificate {
+   853→  id                String       @id @default(cuid())
+   854→  studentId         String
+   855→  courseId          String
+   856→  studentName       String
+   857→  courseName        String
+   858→  level             StudentLevel
+   859→  completedAt       DateTime
+   860→  issuedAt          DateTime     @default(now())
+   861→  certificateNumber String       @unique
+   862→  verificationUrl   String?
+   863→
+   864→  student           Student      @relation(fields: [studentId], references: [id])
+   865→
+   866→  @@map("certificates")
+   867→}
+   868→
+   869→// ─── سیستم معرف ─────────────────────────────────────────────
+   870→
+   871→model Referral {
+   872→  id              String          @id @default(cuid())
+   873→  referrerCode    String
+   874→  referrerId      String
+   875→  referrerName    String
+   876→  referredId      String?
+   877→  referredName    String?
+   878→  referredPhone   String?
+   879→  status          ReferralStatus  @default(REGISTERED)
+   880→  reward          String?         // JSON
+   881→  courseEnrolled  String?
+   882→  createdAt       DateTime        @default(now())
+   883→  convertedAt     DateTime?
+   884→  rewardClaimedAt DateTime?
+   885→
+   886→  referrer        Student         @relation("Referrer", fields: [referrerId], references: [id])
+   887→  referred        Student?        @relation("ReferredBy", fields: [referredId], references: [id])
+   888→
+   889→  @@map("referrals")
+   890→}
+   891→
+   892→enum ReferralStatus {
+   893→  REGISTERED
+   894→  CONSULTATION
+   895→  TRIAL_DONE
+   896→  ENROLLED
+   897→  REWARD_PENDING
+   898→  REWARD_CLAIMED
+   899→  EXPIRED
+   900→  @@map("referral_statuses")
+   901→}
+   902→
+   903→// ─── تیکت پشتیبانی ──────────────────────────────────────────
+   904→
+   905→model Ticket {
+   906→  id          String       @id @default(cuid())
+   907→  title       String
+   908→  category    String       @default("general")
+   909→  status      TicketStatus @default(OPEN)
+   910→  priority    String       @default("medium")
+   911→  creatorId   String
+   912→  assignedToId String?
+   913→  createdAt   DateTime     @default(now())
+   914→  updatedAt   DateTime     @updatedAt
+   915→  closedAt    DateTime?
+   916→
+   917→  creator     User         @relation("TicketCreator", fields: [creatorId], references: [id])
+   918→  messages    TicketMessage[]
+   919→
+   920→  @@map("tickets")
+   921→}
+   922→
+   923→enum TicketStatus {
+   924→  OPEN
+   925→  IN_PROGRESS
+   926→  WAITING
+   927→  RESOLVED
+   928→  CLOSED
+   929→  @@map("ticket_statuses")
+   930→}
+   931→
+   932→model TicketMessage {
+   933→  id        String   @id @default(cuid())
+   934→  ticketId  String
+   935→  senderId  String
+   936→  content   String
+   937→  attachments String? // JSON
+   938→  createdAt DateTime @default(now())
+   939→
+   940→  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+   941→  sender    User     @relation(fields: [senderId], references: [id])
+   942→
+   943→  @@map("ticket_messages")
+   944→}
+   945→
+   946→// ─── تنظیمات سیستم ──────────────────────────────────────────
+   947→
+   948→model Setting {
+   949→  id    String @id @default(cuid())
+   950→  key   String @unique
+   951→  value String
+   952→  label String?
+   953→
+   954→  @@map("settings")
+   955→}
+   956→
