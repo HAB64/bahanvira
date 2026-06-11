@@ -28,6 +28,21 @@ interface Question {
   createdAt: string;
 }
 
+const STORAGE_KEY = 'vira_questions';
+
+function getLocalQuestions(): Question[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const item = localStorage.getItem(STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch { return []; }
+}
+
+function saveLocalQuestions(questions: Question[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(questions));
+}
+
 const typeOptions = [
   { value: 'MULTIPLE_CHOICE', label: 'چندگزینه‌ای' },
   { value: 'TRUE_FALSE', label: 'صحیح/غلط' },
@@ -62,27 +77,35 @@ export default function QuestionsPanel() {
     points: '10', difficulty: 'MEDIUM', category: '', subject: '', explanation: '',
   });
 
-  const fetchQuestions = useCallback(async () => {
+  const loadQuestions = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      if (typeFilter) params.set('type', typeFilter);
-      if (difficultyFilter) params.set('difficulty', difficultyFilter);
-      const res = await fetch(`/api/questions?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setItems(json.data || []);
-        setCount(json.count || 0);
+      let allQuestions = getLocalQuestions();
+
+      if (search) {
+        const q = search.toLowerCase();
+        allQuestions = allQuestions.filter(item => item.question?.toLowerCase().includes(q));
       }
+      if (typeFilter) {
+        allQuestions = allQuestions.filter(item => item.type === typeFilter);
+      }
+      if (difficultyFilter) {
+        allQuestions = allQuestions.filter(item => item.difficulty === difficultyFilter);
+      }
+
+      setCount(allQuestions.length);
+      const start = (page - 1) * pageSize;
+      setItems(allQuestions.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch questions:', err);
+      console.error('Failed to load questions:', err);
+      setItems([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search, typeFilter, difficultyFilter]);
 
-  useEffect(() => { fetchQuestions(); }, [fetchQuestions]);
+  useEffect(() => { loadQuestions(); }, [loadQuestions]);
 
   const openAddDialog = () => {
     setEditingItem(null);
@@ -101,26 +124,32 @@ export default function QuestionsPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      const body = {
+      const all = getLocalQuestions();
+      const data = {
         question: form.question, type: form.type, options: form.options || null,
         correctAnswer: form.correctAnswer || null, points: parseInt(form.points) || 10,
         difficulty: form.difficulty, category: form.category || null,
         subject: form.subject || null, explanation: form.explanation || null,
       };
       if (editingItem) {
-        await fetch(`/api/questions/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        const idx = all.findIndex(q => q.id === editingItem.id);
+        if (idx !== -1) {
+          all[idx] = { ...all[idx], ...data };
+        }
       } else {
-        await fetch('/api/questions', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        all.unshift({
+          id: `q_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...data,
+          usageCount: 0,
+          createdAt: new Date().toISOString(),
         });
       }
+      saveLocalQuestions(all);
       setDialogOpen(false);
-      fetchQuestions();
+      loadQuestions();
     } catch (err) {
       console.error('Failed to save question:', err);
     } finally {
@@ -128,11 +157,11 @@ export default function QuestionsPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این سوال اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/questions/${id}`, { method: 'DELETE' });
-      fetchQuestions();
+      saveLocalQuestions(getLocalQuestions().filter(q => q.id !== id));
+      loadQuestions();
     } catch (err) {
       console.error('Failed to delete question:', err);
     }
@@ -188,7 +217,11 @@ export default function QuestionsPanel() {
               </TableHeader>
               <TableBody>
                 {items.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-gray-400">سوالی یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-gray-400">
+                    {search || typeFilter || difficultyFilter
+                      ? 'سوالی با این فیلترها یافت نشد.'
+                      : 'هنوز سوالی ثبت نشده است. با کلیک روی «افزودن سوال» بانک سوال را بسازید.'}
+                  </TableCell></TableRow>
                 ) : items.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium max-w-[250px] truncate">{item.question}</TableCell>

@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Target, Plus, Search, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { formatNumber, formatDate, getStatusBadgeClass, getStatusLabel } from './utils';
+import { getLeads, addLead, updateLead, deleteLead, getStaff } from '@/lib/storage';
 
 interface Lead {
   id: string;
@@ -89,35 +90,54 @@ export default function LeadsPanel() {
     status: 'NEW', priority: 'MEDIUM', notes: '', assignedToId: '', branchId: '',
   });
 
-  const fetchLeads = useCallback(async () => {
+  const loadLeads = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      if (statusFilter) params.set('status', statusFilter);
-      if (sourceFilter) params.set('source', sourceFilter);
-      const res = await fetch(`/api/leads?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setLeads(json.data || []);
-        setCount(json.count || 0);
+      let allLeads = getLeads() as Lead[];
+
+      // Apply search filter
+      if (search) {
+        const q = search.toLowerCase();
+        allLeads = allLeads.filter(l =>
+          l.name?.toLowerCase().includes(q) || l.phone?.toLowerCase().includes(q)
+        );
       }
+      // Apply status filter
+      if (statusFilter) {
+        allLeads = allLeads.filter(l => l.status === statusFilter);
+      }
+      // Apply source filter
+      if (sourceFilter) {
+        allLeads = allLeads.filter(l => l.source === sourceFilter);
+      }
+
+      setCount(allLeads.length);
+      // Apply pagination
+      const start = (page - 1) * pageSize;
+      const paged = allLeads.slice(start, start + pageSize);
+      setLeads(paged);
     } catch (err) {
-      console.error('Failed to fetch leads:', err);
+      console.error('Failed to load leads:', err);
+      setLeads([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search, statusFilter, sourceFilter]);
 
-  useEffect(() => { fetchLeads(); }, [fetchLeads]);
+  useEffect(() => { loadLeads(); }, [loadLeads]);
+
+  // Load users (staff) and branches from localStorage
   useEffect(() => {
-    Promise.all([
-      fetch('/api/users?limit=100').then(r => r.json()),
-      fetch('/api/branches?limit=100').then(r => r.json()),
-    ]).then(([u, b]) => {
-      setUsers(u.data || []);
-      setBranches(b.data || []);
-    }).catch(() => {});
+    try {
+      const staff = getStaff();
+      setUsers(staff.map(s => ({ id: s.id, name: s.name })));
+      // Branches stored in localStorage key 'vira_branches'
+      const storedBranches = localStorage.getItem('vira_branches');
+      if (storedBranches) {
+        setBranches(JSON.parse(storedBranches).map((b: { id: string; name: string }) => ({ id: b.id, name: b.name })));
+      }
+    } catch {}
   }, []);
 
   const openAddDialog = () => {
@@ -138,7 +158,7 @@ export default function LeadsPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
       const body = {
@@ -150,16 +170,17 @@ export default function LeadsPanel() {
         branchId: form.branchId || null,
       };
       if (editingItem) {
-        await fetch(`/api/leads/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        updateLead(editingItem.id, body);
       } else {
-        await fetch('/api/leads', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        addLead({
+          id: `lead_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...body,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        } as any);
       }
       setDialogOpen(false);
-      fetchLeads();
+      loadLeads();
     } catch (err) {
       console.error('Failed to save lead:', err);
     } finally {
@@ -167,11 +188,11 @@ export default function LeadsPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این سرنخ اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/leads/${id}`, { method: 'DELETE' });
-      fetchLeads();
+      deleteLead(id);
+      loadLeads();
     } catch (err) {
       console.error('Failed to delete lead:', err);
     }
@@ -229,7 +250,11 @@ export default function LeadsPanel() {
               </TableHeader>
               <TableBody>
                 {leads.length === 0 ? (
-                  <TableRow><TableCell colSpan={9} className="text-center py-8 text-gray-400">سرنخی یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={9} className="text-center py-8 text-gray-400">
+                    {search || statusFilter || sourceFilter
+                      ? 'سرنخی با این فیلترها یافت نشد. فیلترها را تغییر دهید.'
+                      : 'هنوز سرنخی ثبت نشده است. با کلیک روی «افزودن سرنخ» شروع کنید.'}
+                  </TableCell></TableRow>
                 ) : leads.map((lead) => (
                   <TableRow key={lead.id}>
                     <TableCell>

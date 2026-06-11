@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Building2, Plus, Search, Pencil, Trash2, Loader2 } from 'lucide-react';
@@ -30,6 +29,21 @@ interface Branch {
   };
 }
 
+const STORAGE_KEY = 'vira_branches';
+
+function getBranches(): Branch[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const item = localStorage.getItem(STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch { return []; }
+}
+
+function saveBranches(branches: Branch[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(branches));
+}
+
 export default function BranchesPanel() {
   const [branches, setBranches] = useState<Branch[]>([]);
   const [count, setCount] = useState(0);
@@ -45,25 +59,31 @@ export default function BranchesPanel() {
     name: '', code: '', province: '', city: '', address: '', phone: '', managerName: '', isActive: true,
   });
 
-  const fetchBranches = useCallback(async () => {
+  const loadBranches = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      const res = await fetch(`/api/branches?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setBranches(json.data || []);
-        setCount(json.count || 0);
+      let allBranches = getBranches();
+
+      if (search) {
+        const q = search.toLowerCase();
+        allBranches = allBranches.filter(b =>
+          b.name?.toLowerCase().includes(q) || b.code?.toLowerCase().includes(q) || b.city?.toLowerCase().includes(q)
+        );
       }
+
+      setCount(allBranches.length);
+      const start = (page - 1) * pageSize;
+      setBranches(allBranches.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch branches:', err);
+      console.error('Failed to load branches:', err);
+      setBranches([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search]);
 
-  useEffect(() => { fetchBranches(); }, [fetchBranches]);
+  useEffect(() => { loadBranches(); }, [loadBranches]);
 
   const openAddDialog = () => {
     setEditingBranch(null);
@@ -81,26 +101,31 @@ export default function BranchesPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      const body = {
-        name: form.name, code: form.code, province: form.province, city: form.city,
-        address: form.address || null, phone: form.phone || null, managerName: form.managerName || null,
-        isActive: form.isActive,
-      };
-
+      const all = getBranches();
       if (editingBranch) {
-        await fetch(`/api/branches/${editingBranch.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        const idx = all.findIndex(b => b.id === editingBranch.id);
+        if (idx !== -1) {
+          all[idx] = {
+            ...all[idx],
+            name: form.name, code: form.code, province: form.province, city: form.city,
+            address: form.address || null, phone: form.phone || null, managerName: form.managerName || null,
+            isActive: form.isActive,
+          };
+        }
       } else {
-        await fetch('/api/branches', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        all.unshift({
+          id: `branch_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          name: form.name, code: form.code, province: form.province, city: form.city,
+          address: form.address || null, phone: form.phone || null, managerName: form.managerName || null,
+          isActive: form.isActive, createdAt: new Date().toISOString(),
         });
       }
+      saveBranches(all);
       setDialogOpen(false);
-      fetchBranches();
+      loadBranches();
     } catch (err) {
       console.error('Failed to save branch:', err);
     } finally {
@@ -108,11 +133,11 @@ export default function BranchesPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این شعبه اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/branches/${id}`, { method: 'DELETE' });
-      fetchBranches();
+      saveBranches(getBranches().filter(b => b.id !== id));
+      loadBranches();
     } catch (err) {
       console.error('Failed to delete branch:', err);
     }
@@ -153,7 +178,11 @@ export default function BranchesPanel() {
               </TableHeader>
               <TableBody>
                 {branches.length === 0 ? (
-                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">شعبه‌ای یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">
+                    {search
+                      ? 'شعبه‌ای با این عبارت یافت نشد.'
+                      : 'هنوز شعبه‌ای ثبت نشده است. با کلیک روی «افزودن شعبه» شروع کنید.'}
+                  </TableCell></TableRow>
                 ) : branches.map((branch) => (
                   <TableRow key={branch.id}>
                     <TableCell className="font-medium">{branch.name}</TableCell>

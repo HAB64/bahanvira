@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CreditCard, Plus, Search, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { formatNumber, formatCurrency, formatCurrencyFull, getStatusBadgeClass, getStatusLabel } from './utils';
+import { getInvoices, addInvoice, updateInvoice, deleteInvoice, getInstallmentPlans, getStudents } from '@/lib/storage';
 
 interface Tuition {
   id: string;
@@ -30,6 +31,21 @@ interface Tuition {
 
 interface SimpleStudent { id: string; name: string }
 interface SimpleCourse { id: string; title: string }
+
+const STORAGE_KEY = 'vira_tuitions';
+
+function getLocalTuitions(): Tuition[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const item = localStorage.getItem(STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch { return []; }
+}
+
+function saveLocalTuitions(items: Tuition[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
 
 const paymentTypeOptions = [
   { value: 'CASH', label: 'نقدی' },
@@ -67,36 +83,74 @@ export default function TuitionPanel() {
     paymentType: 'CASH', installments: '1', dueDate: '',
   });
 
-  const fetchTuitions = useCallback(async () => {
+  const loadTuitions = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      if (statusFilter) params.set('status', statusFilter);
-      const res = await fetch(`/api/tuitions?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setItems(json.data || []);
-        setCount(json.count || 0);
-        setTotalAmount(json.totalAmount || 0);
-        setTotalPaid(json.totalPaid || 0);
+      let allItems = getLocalTuitions();
+
+      // Also derive from invoices
+      const invoices = getInvoices();
+      const invoiceTuitions: Tuition[] = invoices.map(inv => ({
+        id: `inv_tui_${inv.id}`,
+        studentId: inv.studentId || '',
+        courseId: inv.courseId || '',
+        totalAmount: inv.total || inv.amount || 0,
+        paidAmount: inv.status === 'paid' ? (inv.total || inv.amount || 0) : (inv.paidAmount || 0),
+        discount: inv.discount || 0,
+        paymentType: inv.paymentType || 'CASH',
+        installments: inv.installments || 1,
+        status: inv.status === 'paid' ? 'PAID' : inv.status === 'partial' ? 'PARTIAL' : inv.status === 'overdue' ? 'OVERDUE' : 'PENDING',
+        dueDate: inv.dueDate || null,
+        createdAt: inv.createdAt || new Date().toISOString(),
+        student: inv.studentId ? { id: inv.studentId, name: inv.studentName || '', phone: '' } : { id: '', name: '', phone: '' },
+        course: inv.courseId ? { id: inv.courseId, title: inv.courseName || '' } : { id: '', title: '' },
+      }));
+
+      // Merge: avoid duplicates
+      const existingIds = new Set(allItems.map(t => t.id));
+      for (const it of invoiceTuitions) {
+        if (!existingIds.has(it.id)) {
+          allItems.push(it);
+        }
       }
+
+      if (search) {
+        const q = search.toLowerCase();
+        allItems = allItems.filter(t =>
+          t.student?.name?.toLowerCase().includes(q) || t.course?.title?.toLowerCase().includes(q)
+        );
+      }
+      if (statusFilter) {
+        allItems = allItems.filter(t => t.status === statusFilter);
+      }
+
+      setCount(allItems.length);
+      setTotalAmount(allItems.reduce((sum, t) => sum + (t.totalAmount || 0), 0));
+      setTotalPaid(allItems.reduce((sum, t) => sum + (t.paidAmount || 0), 0));
+      const start = (page - 1) * pageSize;
+      setItems(allItems.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch tuitions:', err);
+      console.error('Failed to load tuitions:', err);
+      setItems([]);
+      setCount(0);
+      setTotalAmount(0);
+      setTotalPaid(0);
     } finally {
       setLoading(false);
     }
   }, [page, search, statusFilter]);
 
-  useEffect(() => { fetchTuitions(); }, [fetchTuitions]);
+  useEffect(() => { loadTuitions(); }, [loadTuitions]);
+
   useEffect(() => {
-    Promise.all([
-      fetch('/api/students?limit=100').then(r => r.json()),
-      fetch('/api/courses?limit=100').then(r => r.json()),
-    ]).then(([s, c]) => {
-      setStudents(s.data || []);
-      setCourses(c.data || []);
-    }).catch(() => {});
+    try {
+      const allStudents = getStudents();
+      setStudents(allStudents.map(s => ({ id: s.id, name: s.name })));
+      const storedCourses = localStorage.getItem('vira_courses');
+      if (storedCourses) {
+        setCourses(JSON.parse(storedCourses).map((c: any) => ({ id: c.id, title: c.title })));
+      }
+    } catch {}
   }, []);
 
   const openAddDialog = () => {
@@ -115,26 +169,37 @@ export default function TuitionPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      const body = {
+      const all = getLocalTuitions();
+      const student = form.studentId ? students.find(s => s.id === form.studentId) : null;
+      const course = form.courseId ? courses.find(c => c.id === form.courseId) : null;
+      const data = {
         studentId: form.studentId, courseId: form.courseId,
         totalAmount: parseInt(form.totalAmount) || 0, discount: parseInt(form.discount) || 0,
         paymentType: form.paymentType, installments: parseInt(form.installments) || 1,
         dueDate: form.dueDate ? new Date(form.dueDate).toISOString() : null,
+        student: student ? { id: student.id, name: student.name, phone: '' } : { id: '', name: '', phone: '' },
+        course: course ? { id: course.id, title: course.title } : { id: '', title: '' },
+        paidAmount: 0,
+        status: 'PENDING',
       };
       if (editingItem) {
-        await fetch(`/api/tuitions/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        const idx = all.findIndex(t => t.id === editingItem.id);
+        if (idx !== -1) {
+          all[idx] = { ...all[idx], ...data };
+        }
       } else {
-        await fetch('/api/tuitions', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        all.unshift({
+          id: `tui_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...data,
+          createdAt: new Date().toISOString(),
         });
       }
+      saveLocalTuitions(all);
       setDialogOpen(false);
-      fetchTuitions();
+      loadTuitions();
     } catch (err) {
       console.error('Failed to save tuition:', err);
     } finally {
@@ -142,11 +207,11 @@ export default function TuitionPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این شهریه اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/tuitions/${id}`, { method: 'DELETE' });
-      fetchTuitions();
+      saveLocalTuitions(getLocalTuitions().filter(t => t.id !== id));
+      loadTuitions();
     } catch (err) {
       console.error('Failed to delete tuition:', err);
     }
@@ -233,7 +298,11 @@ export default function TuitionPanel() {
               </TableHeader>
               <TableBody>
                 {items.length === 0 ? (
-                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">شهریه‌ای یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">
+                    {search || statusFilter
+                      ? 'شهریه‌ای با این فیلترها یافت نشد.'
+                      : 'هنوز شهریه‌ای ثبت نشده است. با ثبت فاکتور یا کلیک روی «ثبت شهریه» شروع کنید.'}
+                  </TableCell></TableRow>
                 ) : items.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.student?.name || '—'}</TableCell>

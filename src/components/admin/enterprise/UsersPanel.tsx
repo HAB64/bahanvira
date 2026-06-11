@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Users, Plus, Search, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { formatNumber, formatDate, getStatusBadgeClass, getStatusLabel } from './utils';
+import { getStaff, addStaff, updateStaff, deleteStaff, getStudents, saveStudents } from '@/lib/storage';
 
 interface User {
   id: string;
@@ -21,6 +22,21 @@ interface User {
   isActive: boolean;
   createdAt: string;
   lastLoginAt: string | null;
+}
+
+const STORAGE_KEY = 'vira_users';
+
+function getLocalUsers(): User[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const item = localStorage.getItem(STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch { return []; }
+}
+
+function saveLocalUsers(users: User[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
 }
 
 const roleOptions = [
@@ -54,32 +70,80 @@ export default function UsersPanel() {
     isActive: true,
   });
 
-  const fetchUsers = useCallback(async () => {
+  const loadUsers = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: String(pageSize),
-      });
-      if (search) params.set('search', search);
-      if (roleFilter) params.set('role', roleFilter);
+      let allUsers = getLocalUsers();
 
-      const res = await fetch(`/api/users?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setUsers(json.data || []);
-        setCount(json.count || 0);
+      // Also derive users from staff and students
+      const staff = getStaff();
+      const students = getStudents();
+
+      // Map staff to User format
+      const staffUsers: User[] = staff.map(s => ({
+        id: s.id,
+        name: s.name,
+        email: s.email || '',
+        phone: s.phone || null,
+        role: s.role === 'instructor' ? 'INSTRUCTOR' : s.role === 'admin' ? 'ADMIN' : (s.role || 'STAFF').toUpperCase(),
+        isActive: s.isActive !== false,
+        createdAt: s.createdAt || new Date().toISOString(),
+        lastLoginAt: null,
+      }));
+
+      // Map students to User format
+      const studentUsers: User[] = students.map(s => ({
+        id: s.id,
+        name: s.name,
+        email: s.email || '',
+        phone: s.phone || null,
+        role: 'STUDENT',
+        isActive: true,
+        createdAt: s.createdAt || new Date().toISOString(),
+        lastLoginAt: null,
+      }));
+
+      // Merge: local users first, then staff, then students (avoid duplicates by id)
+      const existingIds = new Set(allUsers.map(u => u.id));
+      for (const su of staffUsers) {
+        if (!existingIds.has(su.id)) {
+          allUsers.push(su);
+          existingIds.add(su.id);
+        }
       }
+      for (const stu of studentUsers) {
+        if (!existingIds.has(stu.id)) {
+          allUsers.push(stu);
+          existingIds.add(stu.id);
+        }
+      }
+
+      // Apply filters
+      if (search) {
+        const q = search.toLowerCase();
+        allUsers = allUsers.filter(u =>
+          u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q) || u.phone?.toLowerCase().includes(q)
+        );
+      }
+      if (roleFilter) {
+        allUsers = allUsers.filter(u => u.role === roleFilter);
+      }
+
+      setCount(allUsers.length);
+      const start = (page - 1) * pageSize;
+      setUsers(allUsers.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch users:', err);
+      console.error('Failed to load users:', err);
+      setUsers([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search, roleFilter]);
 
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    loadUsers();
+  }, [loadUsers]);
 
   const openAddDialog = () => {
     setEditingUser(null);
@@ -100,35 +164,56 @@ export default function UsersPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      const body: Record<string, unknown> = {
+      const all = getLocalUsers();
+      const data = {
         name: form.name,
         email: form.email,
         phone: form.phone || null,
         role: form.role,
         isActive: form.isActive,
       };
-
       if (editingUser) {
-        if (form.password) body.passwordHash = form.password;
-        await fetch(`/api/users/${editingUser.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
+        const idx = all.findIndex(u => u.id === editingUser.id);
+        if (idx !== -1) {
+          all[idx] = { ...all[idx], ...data };
+        }
+        // Also update in staff/student storage
+        if (['INSTRUCTOR', 'STAFF', 'ADMIN', 'BRANCH_MANAGER', 'SUPER_ADMIN'].includes(form.role)) {
+          updateStaff(editingUser.id, {
+            name: form.name,
+            email: form.email || '',
+            phone: form.phone || '',
+            role: form.role === 'INSTRUCTOR' ? 'instructor' : 'staff',
+            isActive: form.isActive,
+          });
+        }
       } else {
-        body.passwordHash = form.password || '123456';
-        await fetch('/api/users', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
+        all.unshift({
+          id: `user_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...data,
+          createdAt: new Date().toISOString(),
+          lastLoginAt: null,
         });
+        // Also add to staff storage if role is staff/instructor
+        if (['INSTRUCTOR', 'STAFF', 'ADMIN', 'BRANCH_MANAGER', 'SUPER_ADMIN'].includes(form.role)) {
+          addStaff({
+            id: `user_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+            name: form.name,
+            email: form.email || '',
+            phone: form.phone || '',
+            role: form.role === 'INSTRUCTOR' ? 'instructor' : 'staff',
+            isActive: form.isActive,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          } as any);
+        }
       }
-
+      saveLocalUsers(all);
       setDialogOpen(false);
-      fetchUsers();
+      loadUsers();
     } catch (err) {
       console.error('Failed to save user:', err);
     } finally {
@@ -136,11 +221,11 @@ export default function UsersPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این کاربر اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/users/${id}`, { method: 'DELETE' });
-      fetchUsers();
+      saveLocalUsers(getLocalUsers().filter(u => u.id !== id));
+      loadUsers();
     } catch (err) {
       console.error('Failed to delete user:', err);
     }
@@ -204,7 +289,9 @@ export default function UsersPanel() {
                 {users.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={7} className="text-center py-8 text-gray-400">
-                      کاربری یافت نشد
+                      {search || roleFilter
+                        ? 'کاربری با این فیلترها یافت نشد. فیلترها را تغییر دهید.'
+                        : 'هنوز کاربری ثبت نشده است. با افزودن استاد یا کارآموز، کاربران ساخته می‌شوند.'}
                     </TableCell>
                   </TableRow>
                 ) : (

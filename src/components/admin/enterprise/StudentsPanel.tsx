@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { UserCheck, Plus, Search, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { formatNumber, formatDate, getStatusBadgeClass, getStatusLabel } from './utils';
+import { getStudents, addStudent, updateStudent, saveStudents } from '@/lib/storage';
 
 interface Student {
   id: string;
@@ -61,28 +62,43 @@ export default function StudentsPanel() {
     level: 'BEGINNER', province: '', city: '', branchId: '', isActive: true,
   });
 
-  const fetchStudents = useCallback(async () => {
+  const loadStudents = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      if (levelFilter) params.set('level', levelFilter);
-      const res = await fetch(`/api/students?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setStudents(json.data || []);
-        setCount(json.count || 0);
+      let allStudents = getStudents() as Student[];
+
+      if (search) {
+        const q = search.toLowerCase();
+        allStudents = allStudents.filter(s =>
+          s.name?.toLowerCase().includes(q) || s.phone?.toLowerCase().includes(q)
+        );
       }
+      if (levelFilter) {
+        allStudents = allStudents.filter(s => s.level === levelFilter);
+      }
+
+      setCount(allStudents.length);
+      const start = (page - 1) * pageSize;
+      const paged = allStudents.slice(start, start + pageSize);
+      setStudents(paged);
     } catch (err) {
-      console.error('Failed to fetch students:', err);
+      console.error('Failed to load students:', err);
+      setStudents([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search, levelFilter]);
 
-  useEffect(() => { fetchStudents(); }, [fetchStudents]);
+  useEffect(() => { loadStudents(); }, [loadStudents]);
+
   useEffect(() => {
-    fetch('/api/branches?limit=100').then(r => r.json()).then(j => setBranches(j.data || [])).catch(() => {});
+    try {
+      const storedBranches = localStorage.getItem('vira_branches');
+      if (storedBranches) {
+        setBranches(JSON.parse(storedBranches));
+      }
+    } catch {}
   }, []);
 
   const openAddDialog = () => {
@@ -102,7 +118,7 @@ export default function StudentsPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
       const body = {
@@ -112,16 +128,18 @@ export default function StudentsPanel() {
         branchId: form.branchId || null, isActive: form.isActive,
       };
       if (editingItem) {
-        await fetch(`/api/students/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        updateStudent(editingItem.id, body);
       } else {
-        await fetch('/api/students', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        addStudent({
+          id: `stu_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...body,
+          enrolledCourses: [],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        } as any);
       }
       setDialogOpen(false);
-      fetchStudents();
+      loadStudents();
     } catch (err) {
       console.error('Failed to save student:', err);
     } finally {
@@ -129,11 +147,12 @@ export default function StudentsPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این کارآموز اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/students/${id}`, { method: 'DELETE' });
-      fetchStudents();
+      const all = getStudents().filter(s => s.id !== id);
+      saveStudents(all);
+      loadStudents();
     } catch (err) {
       console.error('Failed to delete student:', err);
     }
@@ -183,7 +202,11 @@ export default function StudentsPanel() {
               </TableHeader>
               <TableBody>
                 {students.length === 0 ? (
-                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">کارآموزی یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">
+                    {search || levelFilter
+                      ? 'کارآموزی با این فیلترها یافت نشد. فیلترها را تغییر دهید.'
+                      : 'هنوز کارآموزی ثبت نشده است. با کلیک روی «افزودن کارآموز» شروع کنید.'}
+                  </TableCell></TableRow>
                 ) : students.map((st) => (
                   <TableRow key={st.id}>
                     <TableCell className="font-medium">{st.name}</TableCell>

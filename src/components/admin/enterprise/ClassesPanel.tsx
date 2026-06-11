@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Calendar, Plus, Search, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { formatNumber, getStatusBadgeClass, getStatusLabel } from './utils';
+import { getStaff } from '@/lib/storage';
 
 interface ClassItem {
   id: string;
@@ -30,8 +31,23 @@ interface ClassItem {
 }
 
 interface SimpleCourse { id: string; title: string }
-interface SimpleInstructor { id: string; user: { name: string } }
+interface SimpleInstructor { id: string; name: string }
 interface SimpleBranch { id: string; name: string }
+
+const STORAGE_KEY = 'vira_classes';
+
+function getLocalClasses(): ClassItem[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const item = localStorage.getItem(STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch { return []; }
+}
+
+function saveLocalClasses(items: ClassItem[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
 
 const dayOptions = [
   { value: 'SATURDAY', label: 'شنبه' },
@@ -62,35 +78,49 @@ export default function ClassesPanel() {
     startTime: '16:00', endTime: '17:30', location: '', isOnline: false,
   });
 
-  const fetchClasses = useCallback(async () => {
+  const loadClasses = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      const res = await fetch(`/api/classes?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setItems(json.data || []);
-        setCount(json.count || 0);
+      let allItems = getLocalClasses();
+
+      if (search) {
+        const q = search.toLowerCase();
+        allItems = allItems.filter(c =>
+          c.course?.title?.toLowerCase().includes(q) || c.location?.toLowerCase().includes(q)
+        );
       }
+
+      setCount(allItems.length);
+      const start = (page - 1) * pageSize;
+      setItems(allItems.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch classes:', err);
+      console.error('Failed to load classes:', err);
+      setItems([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search]);
 
-  useEffect(() => { fetchClasses(); }, [fetchClasses]);
+  useEffect(() => { loadClasses(); }, [loadClasses]);
+
+  // Load dropdown data from localStorage
   useEffect(() => {
-    Promise.all([
-      fetch('/api/courses?limit=100').then(r => r.json()),
-      fetch('/api/instructors?limit=100').then(r => r.json()),
-      fetch('/api/branches?limit=100').then(r => r.json()),
-    ]).then(([c, i, b]) => {
-      setCourses(c.data || []);
-      setInstructors(i.data || []);
-      setBranches(b.data || []);
-    }).catch(() => {});
+    try {
+      // Courses
+      const storedCourses = localStorage.getItem('vira_courses');
+      if (storedCourses) {
+        setCourses(JSON.parse(storedCourses).map((c: any) => ({ id: c.id, title: c.title })));
+      }
+      // Instructors (from staff with role=instructor)
+      const staff = getStaff().filter(s => s.role === 'instructor');
+      setInstructors(staff.map(s => ({ id: s.id, name: s.name })));
+      // Branches
+      const storedBranches = localStorage.getItem('vira_branches');
+      if (storedBranches) {
+        setBranches(JSON.parse(storedBranches).map((b: any) => ({ id: b.id, name: b.name })));
+      }
+    } catch {}
   }, []);
 
   const openAddDialog = () => {
@@ -109,26 +139,40 @@ export default function ClassesPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      const body = {
+      const all = getLocalClasses();
+      const course = courses.find(c => c.id === form.courseId);
+      const instructor = form.instructorId ? instructors.find(i => i.id === form.instructorId) : null;
+      const branch = form.branchId ? branches.find(b => b.id === form.branchId) : null;
+
+      const data = {
         courseId: form.courseId, instructorId: form.instructorId || null,
         branchId: form.branchId || null, dayOfWeek: form.dayOfWeek,
         startTime: form.startTime, endTime: form.endTime,
         location: form.location || null, isOnline: form.isOnline,
+        course: course ? { id: course.id, title: course.title, level: '' } : { id: '', title: '', level: '' },
+        instructor: instructor ? { id: instructor.id, user: { name: instructor.name } } : null,
+        branch: branch ? { id: branch.id, name: branch.name } : null,
       };
+
       if (editingItem) {
-        await fetch(`/api/classes/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        const idx = all.findIndex(c => c.id === editingItem.id);
+        if (idx !== -1) {
+          all[idx] = { ...all[idx], ...data };
+        }
       } else {
-        await fetch('/api/classes', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        all.unshift({
+          id: `class_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...data,
+          status: 'SCHEDULED',
+          createdAt: new Date().toISOString(),
         });
       }
+      saveLocalClasses(all);
       setDialogOpen(false);
-      fetchClasses();
+      loadClasses();
     } catch (err) {
       console.error('Failed to save class:', err);
     } finally {
@@ -136,11 +180,11 @@ export default function ClassesPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این کلاس اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/classes/${id}`, { method: 'DELETE' });
-      fetchClasses();
+      saveLocalClasses(getLocalClasses().filter(c => c.id !== id));
+      loadClasses();
     } catch (err) {
       console.error('Failed to delete class:', err);
     }
@@ -181,7 +225,11 @@ export default function ClassesPanel() {
               </TableHeader>
               <TableBody>
                 {items.length === 0 ? (
-                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">کلاسی یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">
+                    {search
+                      ? 'کلاسی با این عبارت یافت نشد.'
+                      : 'هنوز کلاسی ثبت نشده است. ابتدا دوره و استاد اضافه کنید، سپس کلاس تعریف کنید.'}
+                  </TableCell></TableRow>
                 ) : items.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium">{item.course?.title || '—'}</TableCell>
@@ -237,7 +285,7 @@ export default function ClassesPanel() {
                   <SelectTrigger className="w-full"><SelectValue placeholder="انتخاب استاد" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="NONE">بدون استاد</SelectItem>
-                    {instructors.map(i => (<SelectItem key={i.id} value={i.id}>{i.user?.name}</SelectItem>))}
+                    {instructors.map(i => (<SelectItem key={i.id} value={i.id}>{i.name}</SelectItem>))}
                   </SelectContent>
                 </Select>
               </div>

@@ -37,6 +37,21 @@ interface SimpleBranch {
   name: string;
 }
 
+const STORAGE_KEY = 'vira_courses';
+
+function getLocalCourses(): Course[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const item = localStorage.getItem(STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch { return []; }
+}
+
+function saveLocalCourses(courses: Course[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(courses));
+}
+
 const levelOptions = [
   { value: 'BEGINNER', label: 'مقدماتی' },
   { value: 'INTERMEDIATE', label: 'متوسط' },
@@ -70,28 +85,38 @@ export default function CoursesPanel() {
     capacity: '15', branchId: '', status: 'ACTIVE',
   });
 
-  const fetchCourses = useCallback(async () => {
+  const loadCourses = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      if (statusFilter) params.set('status', statusFilter);
-      const res = await fetch(`/api/courses?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setCourses(json.data || []);
-        setCount(json.count || 0);
+      let allCourses = getLocalCourses();
+
+      if (search) {
+        const q = search.toLowerCase();
+        allCourses = allCourses.filter(c => c.title?.toLowerCase().includes(q));
       }
+      if (statusFilter) {
+        allCourses = allCourses.filter(c => c.status === statusFilter);
+      }
+
+      setCount(allCourses.length);
+      const start = (page - 1) * pageSize;
+      setCourses(allCourses.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch courses:', err);
+      console.error('Failed to load courses:', err);
+      setCourses([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search, statusFilter]);
 
-  useEffect(() => { fetchCourses(); }, [fetchCourses]);
+  useEffect(() => { loadCourses(); }, [loadCourses]);
+
   useEffect(() => {
-    fetch('/api/branches?limit=100').then(r => r.json()).then(j => setBranches(j.data || [])).catch(() => {});
+    try {
+      const storedBranches = localStorage.getItem('vira_branches');
+      if (storedBranches) setBranches(JSON.parse(storedBranches));
+    } catch {}
   }, []);
 
   const openAddDialog = () => {
@@ -112,11 +137,12 @@ export default function CoursesPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
+      const all = getLocalCourses();
       const slug = form.slug || form.title.replace(/\s+/g, '-').replace(/[^\w\u0600-\u06FF-]/g, '');
-      const body = {
+      const data = {
         title: form.title, slug, description: form.description || null, level: form.level,
         ageRange: form.ageRange || null, sessions: parseInt(form.sessions) || 12,
         sessionsPerWeek: parseInt(form.sessionsPerWeek) || 2,
@@ -125,16 +151,23 @@ export default function CoursesPanel() {
         branchId: form.branchId || null, status: form.status,
       };
       if (editingItem) {
-        await fetch(`/api/courses/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        const idx = all.findIndex(c => c.id === editingItem.id);
+        if (idx !== -1) {
+          all[idx] = { ...all[idx], ...data };
+        }
       } else {
-        await fetch('/api/courses', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        all.unshift({
+          id: `course_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...data,
+          enrolledCount: 0,
+          branch: null,
+          createdAt: new Date().toISOString(),
+          _count: { enrollments: 0, classes: 0 },
         });
       }
+      saveLocalCourses(all);
       setDialogOpen(false);
-      fetchCourses();
+      loadCourses();
     } catch (err) {
       console.error('Failed to save course:', err);
     } finally {
@@ -142,11 +175,11 @@ export default function CoursesPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این دوره اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/courses/${id}`, { method: 'DELETE' });
-      fetchCourses();
+      saveLocalCourses(getLocalCourses().filter(c => c.id !== id));
+      loadCourses();
     } catch (err) {
       console.error('Failed to delete course:', err);
     }
@@ -196,7 +229,11 @@ export default function CoursesPanel() {
               </TableHeader>
               <TableBody>
                 {courses.length === 0 ? (
-                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">دوره‌ای یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">
+                    {search || statusFilter
+                      ? 'دوره‌ای با این فیلترها یافت نشد.'
+                      : 'هنوز دوره‌ای ثبت نشده است. با کلیک روی «افزودن دوره» شروع کنید.'}
+                  </TableCell></TableRow>
                 ) : courses.map((course) => (
                   <TableRow key={course.id}>
                     <TableCell className="font-medium">{course.title}</TableCell>

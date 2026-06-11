@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TrendingDown, Plus, Search, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { formatNumber, formatDate, formatCurrency, formatCurrencyFull, getStatusLabel } from './utils';
+import { getSalaryRecords, addSalaryRecord, updateSalaryRecord, saveSalaryRecords } from '@/lib/storage';
 
 interface Expense {
   id: string;
@@ -25,6 +26,21 @@ interface Expense {
 }
 
 interface SimpleBranch { id: string; name: string }
+
+const STORAGE_KEY = 'vira_expenses';
+
+function getLocalExpenses(): Expense[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const item = localStorage.getItem(STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch { return []; }
+}
+
+function saveLocalExpenses(items: Expense[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
 
 const categoryOptions = [
   { value: 'OPERATIONAL', label: 'عملیاتی' },
@@ -55,29 +71,64 @@ export default function ExpensesPanel() {
     amount: '', category: 'OPERATIONAL', description: '', branchId: '', payee: '', paidAt: '',
   });
 
-  const fetchExpenses = useCallback(async () => {
+  const loadExpenses = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      if (categoryFilter) params.set('category', categoryFilter);
-      const res = await fetch(`/api/expenses?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setItems(json.data || []);
-        setCount(json.count || 0);
-        setTotalAmount(json.totalAmount || 0);
+      let allItems = getLocalExpenses();
+
+      // Also derive expenses from salary records
+      const salaries = getSalaryRecords();
+      const salaryExpenses: Expense[] = salaries.map(s => ({
+        id: `sal_exp_${s.id}`,
+        amount: s.baseAmount || s.amount || 0,
+        category: 'SALARY',
+        description: `حقوق ${s.staffName || s.staffId || ''} - ${s.month || ''}`,
+        branchId: null,
+        payee: s.staffName || null,
+        paidAt: s.paidAt || s.createdAt || new Date().toISOString(),
+        createdAt: s.createdAt || new Date().toISOString(),
+        branch: null,
+      }));
+
+      // Merge: avoid duplicates
+      const existingIds = new Set(allItems.map(e => e.id));
+      for (const se of salaryExpenses) {
+        if (!existingIds.has(se.id)) {
+          allItems.push(se);
+        }
       }
+
+      if (search) {
+        const q = search.toLowerCase();
+        allItems = allItems.filter(e =>
+          e.description?.toLowerCase().includes(q) || e.payee?.toLowerCase().includes(q)
+        );
+      }
+      if (categoryFilter) {
+        allItems = allItems.filter(e => e.category === categoryFilter);
+      }
+
+      setCount(allItems.length);
+      setTotalAmount(allItems.reduce((sum, e) => sum + (e.amount || 0), 0));
+      const start = (page - 1) * pageSize;
+      setItems(allItems.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch expenses:', err);
+      console.error('Failed to load expenses:', err);
+      setItems([]);
+      setCount(0);
+      setTotalAmount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search, categoryFilter]);
 
-  useEffect(() => { fetchExpenses(); }, [fetchExpenses]);
+  useEffect(() => { loadExpenses(); }, [loadExpenses]);
+
   useEffect(() => {
-    fetch('/api/branches?limit=100').then(r => r.json()).then(j => setBranches(j.data || [])).catch(() => {});
+    try {
+      const storedBranches = localStorage.getItem('vira_branches');
+      if (storedBranches) setBranches(JSON.parse(storedBranches));
+    } catch {}
   }, []);
 
   const openAddDialog = () => {
@@ -96,26 +147,33 @@ export default function ExpensesPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      const body = {
+      const all = getLocalExpenses();
+      const branch = form.branchId ? branches.find(b => b.id === form.branchId) : null;
+      const data = {
         amount: parseInt(form.amount) || 0, category: form.category,
         description: form.description || null, branchId: form.branchId || null,
         payee: form.payee || null,
         paidAt: form.paidAt ? new Date(form.paidAt).toISOString() : new Date().toISOString(),
+        branch: branch ? { id: branch.id, name: branch.name } : null,
       };
       if (editingItem) {
-        await fetch(`/api/expenses/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        const idx = all.findIndex(e => e.id === editingItem.id);
+        if (idx !== -1) {
+          all[idx] = { ...all[idx], ...data };
+        }
       } else {
-        await fetch('/api/expenses', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        all.unshift({
+          id: `exp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...data,
+          createdAt: new Date().toISOString(),
         });
       }
+      saveLocalExpenses(all);
       setDialogOpen(false);
-      fetchExpenses();
+      loadExpenses();
     } catch (err) {
       console.error('Failed to save expense:', err);
     } finally {
@@ -123,11 +181,11 @@ export default function ExpensesPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این هزینه اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/expenses/${id}`, { method: 'DELETE' });
-      fetchExpenses();
+      saveLocalExpenses(getLocalExpenses().filter(e => e.id !== id));
+      loadExpenses();
     } catch (err) {
       console.error('Failed to delete expense:', err);
     }
@@ -192,7 +250,11 @@ export default function ExpensesPanel() {
               </TableHeader>
               <TableBody>
                 {items.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-gray-400">هزینه‌ای یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-gray-400">
+                    {search || categoryFilter
+                      ? 'هزینه‌ای با این فیلترها یافت نشد.'
+                      : 'هنوز هزینه‌ای ثبت نشده است. با ثبت حقوق کارکنان یا کلیک روی «ثبت هزینه» شروع کنید.'}
+                  </TableCell></TableRow>
                 ) : items.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium text-red-700">{formatCurrencyFull(item.amount)}</TableCell>

@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ClipboardList, Plus, Search, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { formatNumber, getStatusBadgeClass, getStatusLabel } from './utils';
+import { getExamAttempts, addExamAttempt, saveExamAttempts } from '@/lib/storage';
 
 interface Exam {
   id: string;
@@ -29,6 +30,21 @@ interface Exam {
 }
 
 interface SimpleCourse { id: string; title: string }
+
+const STORAGE_KEY = 'vira_exams';
+
+function getLocalExams(): Exam[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const item = localStorage.getItem(STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch { return []; }
+}
+
+function saveLocalExams(exams: Exam[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(exams));
+}
 
 const typeOptions = [
   { value: 'PLACEMENT', label: 'سنجش' },
@@ -72,28 +88,44 @@ export default function ExamsPanel() {
     courseId: '', duration: '30', totalScore: '100', passingScore: '60', status: 'DRAFT',
   });
 
-  const fetchExams = useCallback(async () => {
+  const loadExams = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      if (statusFilter) params.set('status', statusFilter);
-      const res = await fetch(`/api/exams?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setItems(json.data || []);
-        setCount(json.count || 0);
+      let allExams = getLocalExams();
+
+      // Also try to populate from exam attempts
+      const attempts = getExamAttempts();
+      // We don't replace local exams with attempts, but they can be a source of info
+
+      if (search) {
+        const q = search.toLowerCase();
+        allExams = allExams.filter(e => e.title?.toLowerCase().includes(q));
       }
+      if (statusFilter) {
+        allExams = allExams.filter(e => e.status === statusFilter);
+      }
+
+      setCount(allExams.length);
+      const start = (page - 1) * pageSize;
+      setItems(allExams.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch exams:', err);
+      console.error('Failed to load exams:', err);
+      setItems([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search, statusFilter]);
 
-  useEffect(() => { fetchExams(); }, [fetchExams]);
+  useEffect(() => { loadExams(); }, [loadExams]);
+
   useEffect(() => {
-    fetch('/api/courses?limit=100').then(r => r.json()).then(j => setCourses(j.data || [])).catch(() => {});
+    try {
+      const storedCourses = localStorage.getItem('vira_courses');
+      if (storedCourses) {
+        setCourses(JSON.parse(storedCourses).map((c: any) => ({ id: c.id, title: c.title })));
+      }
+    } catch {}
   }, []);
 
   const openAddDialog = () => {
@@ -112,26 +144,34 @@ export default function ExamsPanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      const body = {
+      const all = getLocalExams();
+      const course = form.courseId ? courses.find(c => c.id === form.courseId) : null;
+      const data = {
         title: form.title, description: form.description || null, type: form.type, level: form.level,
         courseId: form.courseId || null, duration: parseInt(form.duration) || 30,
         totalScore: parseInt(form.totalScore) || 100, passingScore: parseInt(form.passingScore) || 60,
         status: form.status,
+        course: course ? { id: course.id, title: course.title } : null,
       };
       if (editingItem) {
-        await fetch(`/api/exams/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        const idx = all.findIndex(e => e.id === editingItem.id);
+        if (idx !== -1) {
+          all[idx] = { ...all[idx], ...data };
+        }
       } else {
-        await fetch('/api/exams', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        all.unshift({
+          id: `exam_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...data,
+          createdAt: new Date().toISOString(),
+          _count: { attempts: 0 },
         });
       }
+      saveLocalExams(all);
       setDialogOpen(false);
-      fetchExams();
+      loadExams();
     } catch (err) {
       console.error('Failed to save exam:', err);
     } finally {
@@ -139,11 +179,11 @@ export default function ExamsPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این آزمون اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/exams/${id}`, { method: 'DELETE' });
-      fetchExams();
+      saveLocalExams(getLocalExams().filter(e => e.id !== id));
+      loadExams();
     } catch (err) {
       console.error('Failed to delete exam:', err);
     }
@@ -193,7 +233,11 @@ export default function ExamsPanel() {
               </TableHeader>
               <TableBody>
                 {items.length === 0 ? (
-                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">آزمونی یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={8} className="text-center py-8 text-gray-400">
+                    {search || statusFilter
+                      ? 'آزمونی با این فیلترها یافت نشد.'
+                      : 'هنوز آزمونی ثبت نشده است. با کلیک روی «افزودن آزمون» شروع کنید.'}
+                  </TableCell></TableRow>
                 ) : items.map((exam) => (
                   <TableRow key={exam.id}>
                     <TableCell className="font-medium">{exam.title}</TableCell>

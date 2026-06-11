@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { GraduationCap, Plus, Search, Pencil, Trash2, Loader2, Star } from 'lucide-react';
 import { formatNumber } from './utils';
+import { getStaff, addStaff, updateStaff, deleteStaff } from '@/lib/storage';
 
 interface Instructor {
   id: string;
@@ -28,12 +29,6 @@ interface Instructor {
   _count: { classInstructor: number };
 }
 
-interface SimpleUser {
-  id: string;
-  name: string;
-  email: string;
-}
-
 interface SimpleBranch {
   id: string;
   name: string;
@@ -42,7 +37,6 @@ interface SimpleBranch {
 
 export default function InstructorsPanel() {
   const [instructors, setInstructors] = useState<Instructor[]>([]);
-  const [users, setUsers] = useState<SimpleUser[]>([]);
   const [branches, setBranches] = useState<SimpleBranch[]>([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -54,76 +48,105 @@ export default function InstructorsPanel() {
   const pageSize = 10;
 
   const [form, setForm] = useState({
-    userId: '', specialties: '', bio: '', branchId: '', salaryBase: '', isActive: true,
+    name: '', phone: '', specialties: '', bio: '', branchId: '', salaryBase: '', isActive: true,
   });
 
-  const fetchInstructors = useCallback(async () => {
+  const loadInstructors = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      const res = await fetch(`/api/instructors?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setInstructors(json.data || []);
-        setCount(json.count || 0);
+      // Filter staff by role='instructor'
+      let allStaff = getStaff().filter(s => s.role === 'instructor') as any[];
+
+      if (search) {
+        const q = search.toLowerCase();
+        allStaff = allStaff.filter(s => s.name?.toLowerCase().includes(q));
       }
+
+      // Map staff to Instructor interface
+      const mapped: Instructor[] = allStaff.map(s => ({
+        id: s.id,
+        userId: s.id,
+        specialties: s.specialties ? (Array.isArray(s.specialties) ? JSON.stringify(s.specialties) : s.specialties) : '[]',
+        bio: s.bio || null,
+        rating: s.rating || 0,
+        totalClasses: s.totalClasses || 0,
+        salaryBase: s.salaryBase || 0,
+        isActive: s.isActive !== false,
+        branchId: s.branchId || null,
+        createdAt: s.createdAt || new Date().toISOString(),
+        user: { id: s.id, name: s.name, email: s.email || '', phone: s.phone || null, avatar: null },
+        branch: s.branchId ? { id: s.branchId, name: s.branchName || '—', city: '' } : null,
+        _count: { classInstructor: 0 },
+      }));
+
+      setCount(mapped.length);
+      const start = (page - 1) * pageSize;
+      setInstructors(mapped.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch instructors:', err);
+      console.error('Failed to load instructors:', err);
+      setInstructors([]);
+      setCount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search]);
 
-  const fetchDropdowns = async () => {
-    try {
-      const [uRes, bRes] = await Promise.all([
-        fetch('/api/users?limit=100&role=INSTRUCTOR'),
-        fetch('/api/branches?limit=100'),
-      ]);
-      if (uRes.ok) { const j = await uRes.json(); setUsers(j.data || []); }
-      if (bRes.ok) { const j = await bRes.json(); setBranches(j.data || []); }
-    } catch (err) {
-      console.error('Failed to fetch dropdowns:', err);
-    }
-  };
+  useEffect(() => { loadInstructors(); }, [loadInstructors]);
 
-  useEffect(() => { fetchInstructors(); }, [fetchInstructors]);
-  useEffect(() => { fetchDropdowns(); }, []);
+  useEffect(() => {
+    try {
+      const storedBranches = localStorage.getItem('vira_branches');
+      if (storedBranches) setBranches(JSON.parse(storedBranches));
+    } catch {}
+  }, []);
 
   const openAddDialog = () => {
     setEditingItem(null);
-    setForm({ userId: '', specialties: '', bio: '', branchId: '', salaryBase: '', isActive: true });
+    setForm({ name: '', phone: '', specialties: '', bio: '', branchId: '', salaryBase: '', isActive: true });
     setDialogOpen(true);
   };
 
   const openEditDialog = (item: Instructor) => {
     setEditingItem(item);
     setForm({
-      userId: item.userId, specialties: item.specialties, bio: item.bio || '',
+      name: item.user?.name || '', phone: item.user?.phone || '',
+      specialties: item.specialties, bio: item.bio || '',
       branchId: item.branchId || '', salaryBase: String(item.salaryBase), isActive: item.isActive,
     });
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      const body = {
-        userId: form.userId, specialties: form.specialties || '[]', bio: form.bio || null,
-        branchId: form.branchId || null, salaryBase: parseInt(form.salaryBase) || 0, isActive: form.isActive,
-      };
       if (editingItem) {
-        await fetch(`/api/instructors/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        updateStaff(editingItem.id, {
+          name: form.name,
+          phone: form.phone || null,
+          specialties: form.specialties || '[]',
+          bio: form.bio || null,
+          branchId: form.branchId || null,
+          salaryBase: parseInt(form.salaryBase) || 0,
+          isActive: form.isActive,
         });
       } else {
-        await fetch('/api/instructors', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        addStaff({
+          id: `staff_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          name: form.name,
+          phone: form.phone || '',
+          email: '',
+          role: 'instructor',
+          specialties: form.specialties || '[]',
+          bio: form.bio || null,
+          branchId: form.branchId || null,
+          salaryBase: parseInt(form.salaryBase) || 0,
+          isActive: form.isActive,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        } as any);
       }
       setDialogOpen(false);
-      fetchInstructors();
+      loadInstructors();
     } catch (err) {
       console.error('Failed to save instructor:', err);
     } finally {
@@ -131,11 +154,11 @@ export default function InstructorsPanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این استاد اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/instructors/${id}`, { method: 'DELETE' });
-      fetchInstructors();
+      deleteStaff(id);
+      loadInstructors();
     } catch (err) {
       console.error('Failed to delete instructor:', err);
     }
@@ -179,7 +202,11 @@ export default function InstructorsPanel() {
               </TableHeader>
               <TableBody>
                 {instructors.length === 0 ? (
-                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-gray-400">استادی یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={7} className="text-center py-8 text-gray-400">
+                    {search
+                      ? 'استادی با این عبارت یافت نشد.'
+                      : 'هنوز استادی ثبت نشده است. با کلیک روی «افزودن استاد» شروع کنید.'}
+                  </TableCell></TableRow>
                 ) : instructors.map((inst) => (
                   <TableRow key={inst.id}>
                     <TableCell className="font-medium">{inst.user?.name || '—'}</TableCell>
@@ -231,15 +258,8 @@ export default function InstructorsPanel() {
         <DialogContent className="max-w-md" dir="rtl">
           <DialogHeader><DialogTitle>{editingItem ? 'ویرایش استاد' : 'افزودن استاد جدید'}</DialogTitle></DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>کاربر</Label>
-              <Select value={form.userId} onValueChange={(v) => setForm(f => ({ ...f, userId: v }))}>
-                <SelectTrigger className="w-full"><SelectValue placeholder="انتخاب کاربر" /></SelectTrigger>
-                <SelectContent>
-                  {users.map(u => (<SelectItem key={u.id} value={u.id}>{u.name} ({u.email})</SelectItem>))}
-                </SelectContent>
-              </Select>
-            </div>
+            <div className="space-y-2"><Label>نام</Label><Input value={form.name} onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))} /></div>
+            <div className="space-y-2"><Label>تلفن</Label><Input dir="ltr" value={form.phone} onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))} /></div>
             <div className="space-y-2">
               <Label>تخصص‌ها (JSON)</Label>
               <Input dir="ltr" value={form.specialties} onChange={(e) => setForm(f => ({ ...f, specialties: e.target.value }))} placeholder='["چرتکه","حساب ذهنی"]' />

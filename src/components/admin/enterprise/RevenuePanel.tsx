@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TrendingUp, Plus, Search, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { formatNumber, formatDate, formatCurrency, formatCurrencyFull, getStatusLabel } from './utils';
+import { getInvoices, addInvoice, updateInvoice, deleteInvoice } from '@/lib/storage';
 
 interface Revenue {
   id: string;
@@ -24,6 +25,21 @@ interface Revenue {
 }
 
 interface SimpleBranch { id: string; name: string }
+
+const STORAGE_KEY = 'vira_revenues';
+
+function getLocalRevenues(): Revenue[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const item = localStorage.getItem(STORAGE_KEY);
+    return item ? JSON.parse(item) : [];
+  } catch { return []; }
+}
+
+function saveLocalRevenues(items: Revenue[]): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
 
 const categoryOptions = [
   { value: 'TUITION', label: 'شهریه' },
@@ -52,29 +68,61 @@ export default function RevenuePanel() {
     amount: '', category: 'TUITION', description: '', branchId: '', receivedAt: '',
   });
 
-  const fetchRevenues = useCallback(async () => {
+  const loadRevenues = useCallback(() => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({ page: String(page), limit: String(pageSize) });
-      if (search) params.set('search', search);
-      if (categoryFilter) params.set('category', categoryFilter);
-      const res = await fetch(`/api/revenues?${params}`);
-      if (res.ok) {
-        const json = await res.json();
-        setItems(json.data || []);
-        setCount(json.count || 0);
-        setTotalAmount(json.totalAmount || 0);
+      let allItems = getLocalRevenues();
+
+      // Also try to derive revenue from paid invoices
+      const invoices = getInvoices().filter(i => i.status === 'paid');
+      const invoiceRevenues: Revenue[] = invoices.map(inv => ({
+        id: `inv_rev_${inv.id}`,
+        amount: inv.total || inv.amount || 0,
+        category: 'TUITION',
+        description: `فاکتور ${inv.invoiceNumber || inv.id}`,
+        branchId: null,
+        receivedAt: inv.paidAt || inv.createdAt || new Date().toISOString(),
+        createdAt: inv.createdAt || new Date().toISOString(),
+        branch: null,
+      }));
+
+      // Merge: local revenues first, then invoice-derived (avoid duplicates)
+      const existingIds = new Set(allItems.map(r => r.id));
+      for (const ir of invoiceRevenues) {
+        if (!existingIds.has(ir.id)) {
+          allItems.push(ir);
+        }
       }
+
+      if (search) {
+        const q = search.toLowerCase();
+        allItems = allItems.filter(r => r.description?.toLowerCase().includes(q));
+      }
+      if (categoryFilter) {
+        allItems = allItems.filter(r => r.category === categoryFilter);
+      }
+
+      setCount(allItems.length);
+      setTotalAmount(allItems.reduce((sum, r) => sum + (r.amount || 0), 0));
+      const start = (page - 1) * pageSize;
+      setItems(allItems.slice(start, start + pageSize));
     } catch (err) {
-      console.error('Failed to fetch revenues:', err);
+      console.error('Failed to load revenues:', err);
+      setItems([]);
+      setCount(0);
+      setTotalAmount(0);
     } finally {
       setLoading(false);
     }
   }, [page, search, categoryFilter]);
 
-  useEffect(() => { fetchRevenues(); }, [fetchRevenues]);
+  useEffect(() => { loadRevenues(); }, [loadRevenues]);
+
   useEffect(() => {
-    fetch('/api/branches?limit=100').then(r => r.json()).then(j => setBranches(j.data || [])).catch(() => {});
+    try {
+      const storedBranches = localStorage.getItem('vira_branches');
+      if (storedBranches) setBranches(JSON.parse(storedBranches));
+    } catch {}
   }, []);
 
   const openAddDialog = () => {
@@ -92,25 +140,32 @@ export default function RevenuePanel() {
     setDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     try {
       setSaving(true);
-      const body = {
+      const all = getLocalRevenues();
+      const branch = form.branchId ? branches.find(b => b.id === form.branchId) : null;
+      const data = {
         amount: parseInt(form.amount) || 0, category: form.category,
         description: form.description || null, branchId: form.branchId || null,
         receivedAt: form.receivedAt ? new Date(form.receivedAt).toISOString() : new Date().toISOString(),
+        branch: branch ? { id: branch.id, name: branch.name } : null,
       };
       if (editingItem) {
-        await fetch(`/api/revenues/${editingItem.id}`, {
-          method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
-        });
+        const idx = all.findIndex(r => r.id === editingItem.id);
+        if (idx !== -1) {
+          all[idx] = { ...all[idx], ...data };
+        }
       } else {
-        await fetch('/api/revenues', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
+        all.unshift({
+          id: `rev_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          ...data,
+          createdAt: new Date().toISOString(),
         });
       }
+      saveLocalRevenues(all);
       setDialogOpen(false);
-      fetchRevenues();
+      loadRevenues();
     } catch (err) {
       console.error('Failed to save revenue:', err);
     } finally {
@@ -118,11 +173,11 @@ export default function RevenuePanel() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm('آیا از حذف این درآمد اطمینان دارید؟')) return;
     try {
-      await fetch(`/api/revenues/${id}`, { method: 'DELETE' });
-      fetchRevenues();
+      saveLocalRevenues(getLocalRevenues().filter(r => r.id !== id));
+      loadRevenues();
     } catch (err) {
       console.error('Failed to delete revenue:', err);
     }
@@ -186,7 +241,11 @@ export default function RevenuePanel() {
               </TableHeader>
               <TableBody>
                 {items.length === 0 ? (
-                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-gray-400">درآمدی یافت نشد</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-gray-400">
+                    {search || categoryFilter
+                      ? 'درآمدی با این فیلترها یافت نشد.'
+                      : 'هنوز درآمدی ثبت نشده است. با ثبت فاکتور پرداخت‌شده یا کلیک روی «ثبت درآمد» شروع کنید.'}
+                  </TableCell></TableRow>
                 ) : items.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell className="font-medium text-green-700">{formatCurrencyFull(item.amount)}</TableCell>
