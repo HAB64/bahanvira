@@ -12,10 +12,19 @@ export default function HeroSection() {
       className="relative min-h-screen flex items-center overflow-hidden"
       dir="rtl"
     >
-      {/* Child-friendly warm gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-bl from-amber-50 via-yellow-50/80 to-teal-50/60" />
+      {/* Background image from uploaded advertisement */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/bahanvira/images/hero-ad.jpg')" }}
+      />
 
-      {/* Animated child-friendly background */}
+      {/* Semi-transparent overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-bl from-amber-900/70 via-black/50 to-teal-900/60" />
+
+      {/* Subtle animated accent overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+
+      {/* Animated child-friendly background - subtle sparkles over image */}
       <ChildFriendlyBackground variant="hero" />
 
       {/* Soft wave divider at bottom */}
@@ -30,38 +39,38 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Content */}
           <div className="space-y-6 md:space-y-8 text-center lg:text-right">
-            {/* Badge - playful style */}
-            <div className="inline-flex items-center gap-2 bg-gradient-to-l from-amber-100 to-yellow-100 backdrop-blur-sm text-amber-800 px-5 py-2.5 rounded-full text-sm font-bold border border-amber-200 shadow-sm animate-bounce-gentle">
-              <Sparkles className="w-4 h-4 text-amber-500" />
+            {/* Badge - playful style with glass effect on dark bg */}
+            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md text-white px-5 py-2.5 rounded-full text-sm font-bold border border-white/25 shadow-lg animate-bounce-gentle">
+              <Sparkles className="w-4 h-4 text-amber-300" />
               <span>روش نوین آموزش چرتکه دهگانی</span>
-              <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+              <Star className="w-3 h-3 text-amber-300 fill-amber-300" />
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
-              <span className="text-gray-900">آموزش </span>
-              <span className="bg-gradient-to-l from-amber-600 via-orange-500 to-teal-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight drop-shadow-lg">
+              <span className="text-white">آموزش </span>
+              <span className="bg-gradient-to-l from-amber-300 via-orange-300 to-teal-300 bg-clip-text text-transparent">
                 چرتکه دهگانی
               </span>
               <br />
-              <span className="text-gray-900">و حساب ذهنی</span>
+              <span className="text-white">و حساب ذهنی</span>
             </h1>
 
-            <p className="text-base md:text-lg text-gray-600 leading-8 max-w-lg mx-auto lg:mx-0">
+            <p className="text-base md:text-lg text-white/85 leading-8 max-w-lg mx-auto lg:mx-0 drop-shadow">
               با آموزش تخصصی چرتکه دهگانی ویرا، فرزند شما علاوه بر تسلط بر محاسبات ذهنی،
               تمرکز، اعتماد به نفس و هوش ریاضی خود را به‌طور چشمگیری تقویت می‌کند.
             </p>
 
-            {/* Stats mini - playful pills */}
+            {/* Stats mini - glass pills on dark bg */}
             <div className="flex items-center justify-center lg:justify-start gap-4 text-sm">
-              <div className="flex items-center gap-1.5 bg-amber-100/80 text-amber-700 px-4 py-2 rounded-full border border-amber-200">
-                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+              <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white px-4 py-2 rounded-full border border-white/20">
+                <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
                 <span className="font-bold">۵۰۰+</span>
-                <span className="text-amber-600">کارآموز</span>
+                <span className="text-white/80">کارآموز</span>
               </div>
-              <div className="flex items-center gap-1.5 bg-teal-100/80 text-teal-700 px-4 py-2 rounded-full border border-teal-200">
-                <Star className="w-4 h-4 fill-teal-400 text-teal-400" />
+              <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white px-4 py-2 rounded-full border border-white/20">
+                <Star className="w-4 h-4 fill-teal-300 text-teal-300" />
                 <span className="font-bold">۴۵+</span>
-                <span className="text-teal-600">رتبه برتر</span>
+                <span className="text-white/80">رتبه برتر</span>
               </div>
             </div>
 
@@ -69,7 +78,7 @@ export default function HeroSection() {
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <Button
                 size="lg"
-                className="bg-gradient-to-l from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-2xl px-8 py-6 text-base font-bold shadow-lg shadow-amber-200/60 hover:shadow-xl hover:shadow-amber-300/60 transition-all hover:scale-105"
+                className="bg-gradient-to-l from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-white rounded-2xl px-8 py-6 text-base font-bold shadow-lg shadow-amber-500/40 hover:shadow-xl hover:shadow-amber-400/50 transition-all hover:scale-105"
                 onClick={() => {
                   document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
                 }}
@@ -80,7 +89,7 @@ export default function HeroSection() {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-2 border-amber-300 text-amber-700 hover:bg-amber-50 rounded-2xl px-8 py-6 text-base font-bold hover:scale-105 transition-all"
+                className="border-2 border-white/40 text-white hover:bg-white/15 backdrop-blur-sm rounded-2xl px-8 py-6 text-base font-bold hover:scale-105 transition-all"
                 onClick={() => {
                   document.querySelector('#courses')?.scrollIntoView({ behavior: 'smooth' });
                 }}
