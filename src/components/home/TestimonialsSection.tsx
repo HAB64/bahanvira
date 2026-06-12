@@ -7,7 +7,7 @@ import ChildFriendlyBackground from './ChildFriendlyBackground';
 export default function TestimonialsSection() {
   return (
     <section id="testimonials" className="py-16 md:py-24 relative overflow-hidden" dir="rtl">
-      <div className="absolute inset-0 bg-gradient-to-b from-pink-100/30 via-amber-50/30 to-yellow-50/30" />
+      <div className="absolute inset-0 bg-gradient-to-b from-amber-50/30 via-yellow-50/20 to-white" />
       <ChildFriendlyBackground variant="light" />
 
       <div className="container mx-auto px-4 relative z-10">

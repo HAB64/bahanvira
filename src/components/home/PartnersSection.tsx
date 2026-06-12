@@ -82,7 +82,7 @@ const benefits = [
 export default function PartnersSection() {
   return (
     <section id="partners" className="py-16 md:py-24 relative overflow-hidden" dir="rtl">
-      <div className="absolute inset-0 bg-gradient-to-b from-amber-100/40 via-orange-50/30 to-teal-50/30" />
+      <div className="absolute inset-0 bg-gradient-to-b from-teal-50/30 via-amber-50/20 to-white" />
       <ChildFriendlyBackground variant="light" />
 
       <div className="container mx-auto px-4 relative z-10">
