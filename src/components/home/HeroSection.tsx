@@ -12,10 +12,14 @@ export default function HeroSection() {
       className="relative min-h-screen flex items-center overflow-hidden"
       dir="rtl"
     >
-      {/* Background image from uploaded advertisement */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url('/bahanvira/images/hero-ad.jpg')" }}
+      {/* Background image from uploaded advertisement - using Image component for reliable basePath handling */}
+      <Image
+        src="/images/hero-ad.jpg"
+        alt=""
+        fill
+        className="object-cover object-center"
+        priority
+        quality={90}
       />
 
       {/* Semi-transparent overlay for text readability */}
