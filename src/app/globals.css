@@ -54,22 +54,24 @@
 :root {
   --radius: 0.75rem;
   /* Warm, child-friendly palette - based on child psychology:
-     - Warm amber/orange: energy, happiness, creativity
-     - Soft teal/green: growth, calm, safety
-     - Gentle pink: warmth, affection
-     - Light violet: imagination, wonder
+     - Warm amber/yellow: energy, happiness, creativity, optimism
+     - Soft orange: enthusiasm, friendship, warmth
+     - Soft teal/green: growth, calm, safety, balance
+     - Gentle pink: warmth, affection, kindness
+     - Light violet: imagination, wonder, creativity
+     NO pure white - children respond better to warm, colorful environments
   */
-  --background: oklch(0.99 0.005 85);
+  --background: oklch(0.98 0.015 85);
   --foreground: oklch(0.18 0.02 50);
-  --card: oklch(1 0 0);
+  --card: oklch(0.985 0.012 85);
   --card-foreground: oklch(0.18 0.02 50);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.985 0.012 85);
   --popover-foreground: oklch(0.18 0.02 50);
   --primary: oklch(0.55 0.18 55);
   --primary-foreground: oklch(0.99 0.005 85);
   --secondary: oklch(0.96 0.02 85);
   --secondary-foreground: oklch(0.30 0.05 55);
-  --muted: oklch(0.96 0.01 85);
+  --muted: oklch(0.955 0.018 85);
   --muted-foreground: oklch(0.50 0.02 55);
   --accent: oklch(0.96 0.02 165);
   --accent-foreground: oklch(0.30 0.05 165);
@@ -183,7 +185,7 @@ html {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #fef9ee;
+  background: #fef3c7;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {

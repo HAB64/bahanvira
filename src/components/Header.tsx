@@ -39,8 +39,8 @@ export default function Header() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-white/95 backdrop-blur-lg shadow-lg shadow-amber-100/50 border-b border-amber-100'
-          : 'bg-white/70 backdrop-blur-sm'
+          ? 'bg-amber-50/95 backdrop-blur-lg shadow-lg shadow-amber-200/50 border-b border-amber-200'
+          : 'bg-amber-50/60 backdrop-blur-sm'
       }`}
     >
       <div className="container mx-auto px-4">
@@ -149,7 +149,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="lg:hidden bg-white/95 backdrop-blur-lg border-t border-amber-100 shadow-xl">
+        <div className="lg:hidden bg-amber-50/95 backdrop-blur-lg border-t border-amber-200 shadow-xl">
           <div className="container mx-auto px-4 py-4 space-y-1">
             {navLinks.map((link) => (
               <button

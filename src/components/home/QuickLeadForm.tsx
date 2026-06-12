@@ -102,7 +102,7 @@ export default function QuickLeadForm() {
   if (submitted) {
     return (
       <section id="contact" className="py-16 md:py-24 relative overflow-hidden" dir="rtl">
-        <div className="absolute inset-0 bg-gradient-to-b from-teal-50/30 via-green-50/20 to-white" />
+        <div className="absolute inset-0 bg-gradient-to-b from-teal-100/40 via-emerald-50/30 to-amber-50/30" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-xl mx-auto text-center bg-white/90 backdrop-blur-sm rounded-3xl p-8 md:p-12 border-2 border-green-200 shadow-2xl">
             <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -132,7 +132,7 @@ export default function QuickLeadForm() {
 
   return (
     <section id="contact" className="py-16 md:py-24 relative overflow-hidden" dir="rtl">
-      <div className="absolute inset-0 bg-gradient-to-b from-amber-50/30 via-yellow-50/20 to-white" />
+      <div className="absolute inset-0 bg-gradient-to-b from-amber-100/40 via-orange-50/30 to-teal-50/30" />
       <ChildFriendlyBackground variant="light" />
 
       <div className="container mx-auto px-4 relative z-10">

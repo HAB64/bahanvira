@@ -25,7 +25,7 @@ export default function Home() {
   const [refCode, setRefCode] = useState<string | null>(getInitialRefCode);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-amber-50/30 via-white to-teal-50/20">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-amber-100/60 via-orange-50/40 to-teal-100/50">
       {refCode && (
         <div className="bg-gradient-to-l from-amber-500 via-orange-500 to-amber-500 text-white py-2.5 px-4 text-center text-sm relative overflow-hidden">
           <div className="absolute inset-0 opacity-20">

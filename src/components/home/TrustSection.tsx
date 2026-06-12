@@ -39,7 +39,7 @@ const statBgs = [
 export default function TrustSection() {
   return (
     <section id="about" className="py-16 md:py-24 relative overflow-hidden" dir="rtl">
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-teal-50/20 to-white" />
+      <div className="absolute inset-0 bg-gradient-to-b from-teal-100/40 via-emerald-50/30 to-amber-50/30" />
       <ChildFriendlyBackground variant="light" />
 
       <div className="container mx-auto px-4 relative z-10">

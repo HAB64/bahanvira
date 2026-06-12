@@ -33,7 +33,7 @@ export default function CompetencyClusters() {
   return (
     <section id="about" className="py-16 md:py-24 relative overflow-hidden" dir="rtl">
       {/* Warm background with floating shapes */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white via-amber-50/30 to-white" />
+      <div className="absolute inset-0 bg-gradient-to-b from-amber-100/50 via-yellow-50/40 to-orange-50/30" />
       <ChildFriendlyBackground variant="light" />
 
       <div className="container mx-auto px-4 relative z-10">

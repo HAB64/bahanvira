@@ -16,7 +16,7 @@ export default function FeaturedCourses() {
   return (
     <section id="courses" className="py-16 md:py-24 relative overflow-hidden" dir="rtl">
       {/* Child-friendly gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-amber-50/40 via-yellow-50/30 to-teal-50/20" />
+      <div className="absolute inset-0 bg-gradient-to-b from-teal-100/40 via-emerald-50/30 to-amber-50/30" />
       <ChildFriendlyBackground variant="section" />
 
       <div className="container mx-auto px-4 relative z-10">
