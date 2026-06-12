@@ -8,6 +8,7 @@ set -e
 PROJECT_DIR="/home/z/my-project"
 OUT_DIR="$PROJECT_DIR/out"
 DEPLOY_DIR="$PROJECT_DIR/out-deploy"
+# توکن از متغیر محیطی خوانده می‌شود - هرگز توکن را مستقیم ننویسید
 REPO_URL="https://${GITHUB_TOKEN}@github.com/HAB64/bahanvira.git"
 BASE_PATH="bahanvira"
 
