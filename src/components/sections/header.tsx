@@ -49,19 +49,19 @@ export default function Header() {
 
         <div className="hidden lg:flex items-center gap-3">
           <a
-            href="#"
+            href="/exam"
             className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground border border-border hover:bg-primary/5 hover:text-primary transition-colors"
           >
             آزمون آنلاین
           </a>
           <a
-            href="#"
+            href="/portal"
             className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground border border-border hover:bg-primary/5 hover:text-primary transition-colors"
           >
             پورتال کارآموز
           </a>
           <a
-            href="#"
+            href="/admin"
             className="rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground border border-border hover:bg-primary/5 hover:text-primary transition-colors"
           >
             پنل مدیریت
@@ -98,9 +98,9 @@ export default function Header() {
                 </a>
               ))}
               <hr className="my-2 border-border" />
-              <a href="#" className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:text-primary">آزمون آنلاین</a>
-              <a href="#" className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:text-primary">پورتال کارآموز</a>
-              <a href="#" className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:text-primary">پنل مدیریت</a>
+              <a href="/exam" className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:text-primary">آزمون آنلاین</a>
+              <a href="/portal" className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:text-primary">پورتال کارآموز</a>
+              <a href="/admin" className="rounded-md px-4 py-2 text-sm text-muted-foreground hover:text-primary">پنل مدیریت</a>
               <a href="tel:01144746441" className="flex items-center gap-2 rounded-md px-4 py-2 text-sm text-muted-foreground hover:text-primary">
                 <Phone className="h-4 w-4" />
                 <span dir="ltr">01144746441</span>
