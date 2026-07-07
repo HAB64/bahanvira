@@ -41,8 +41,8 @@ const exams: ExamDef[] = [
   { id: 'comprehensive', title: 'آزمون جامع', questionCount: 30, timeMinutes: 30, icon: '🏆' },
 ];
 
-const toPersian = (n: number): string =>
-  n.toString().replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d)]);
+const toPersian = (n: number | string): string =>
+  String(n).toString().replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d)]);
 
 /* ─────────── Question Generator ─────────── */
 function generateQuestions(examId: string, count: number): Question[] {

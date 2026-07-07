@@ -20,10 +20,8 @@ import {
   UserCheck,
   UserPlus,
   TrendingUp,
-  Award,
   MessageSquare,
   Phone,
-  Mail,
   CalendarDays,
   FileText,
   Megaphone,
@@ -359,7 +357,7 @@ function ClassesTab() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><GraduationCap className="w-3.5 h-3.5" />مربی</span><span className="text-slate-900 font-medium">{cls.instructor}</span></div>
               <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />دانش‌آموز</span><span className="text-slate-900 font-medium">{cls.students} نفر</span></div>
-              <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />برنامه</span><span className="text-slate-900 font-medium text-xs">{cls.schedule}</span></div>
+              <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><CalendarIcon className="w-3.5 h-3.5" />برنامه</span><span className="text-slate-900 font-medium text-xs">{cls.schedule}</span></div>
             </div>
           </div>
         ))}
@@ -453,7 +451,7 @@ function CRMInlineTab() {
                 <td className="py-3 px-4 text-slate-600">{l.course}</td>
                 <td className="py-3 px-4"><span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${crmStatusColors[l.status]}`}>{l.status}</span></td>
                 <td className="py-3 px-4 text-slate-600 hidden sm:table-cell">{l.assignee}</td>
-                <td className="py-3 px-4"><div className="flex gap-1"><button className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-500"><Eye className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-green-50 text-slate-400 hover:text-green-500"><PhoneIcon className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-purple-50 text-slate-400 hover:text-purple-500"><MessageSquare className="w-4 h-4" /></button></div></td>
+                <td className="py-3 px-4"><div className="flex gap-1"><button className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-500"><Eye className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-green-50 text-slate-400 hover:text-green-500"><Phone className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-purple-50 text-slate-400 hover:text-purple-500"><MessageSquare className="w-4 h-4" /></button></div></td>
               </tr>
             ))}
           </tbody>
