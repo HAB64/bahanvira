@@ -33,6 +33,12 @@ import {
   HelpCircle as SupportIcon,
   Play,
   X,
+  Plus,
+  Search,
+  Eye,
+  Edit3,
+  Trash2,
+  Calendar as CalendarIcon,
 } from 'lucide-react';
 
 // Tab components
