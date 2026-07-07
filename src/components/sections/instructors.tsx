@@ -1,68 +1,75 @@
+'use client';
+
 const instructors = [
   {
-    name: "استاد بهنام ویرا",
-    role: "مدیر آموزشگاه و مدرس ارشد",
-    bio: "بیش از ۱۵ سال سابقه تدریس چرتکه دهگانی و حساب ذهنی. موسس آموزشگاه ویرا و مربی تیم ملی مسابقات چرتکه ایران.",
-    initials: "ب.و",
-    color: "bg-primary",
+    name: 'استاد فاطمه محمدی',
+    role: 'مدیر آموزشگاه و سرمربی',
+    exp: '۱۵ سال سابقه',
+    bio: 'فارغ‌التحصیل کارشناسی ارشد ریاضی و دارای گواهینامه بین‌المللی مربی‌گری چرتکه',
+    initials: 'ف.م',
+    gradient: 'from-teal-400 to-cyan-500',
   },
   {
-    name: "استاد فرزانه رحیمی",
-    role: "مدرس چرتکه و حساب ذهنی",
-    bio: "کارشناسی ارشد آموزش ریاضی و دارای گواهینامه بین‌المللی تدریس چرتکه. تخصص ویژه در آموزش کودکان سنین ۵ تا ۱۰ سال.",
-    initials: "ف.ر",
-    color: "bg-accent",
+    name: 'استاد علی حسینی',
+    role: 'مربی پیشرفته و مسابقات',
+    exp: '۱۰ سال سابقه',
+    bio: 'قهرمان مسابقات ملی چرتکه و مربی تیم ملی',
+    initials: 'ا.ح',
+    gradient: 'from-emerald-400 to-teal-500',
   },
   {
-    name: "استاد مهدی احمدی",
-    role: "مدرس مسابقات و تمرینات فشرده",
-    bio: "قهرمان سابق مسابقات کشوری چرتکه و مربی رسمی تیم مسابقات ویرا. تمرکز بر آماده‌سازی کارآموزان برای رقابت‌های ملی.",
-    initials: "م.ا",
-    color: "bg-emerald-600",
+    name: 'استاد مریم رضایی',
+    role: 'مربی مبتدی و کودک',
+    exp: '۸ سال سابقه',
+    bio: 'متخصص آموزش چرتکه به کودکان سنین ۵ تا ۱۰ سال با روش‌های بازی‌محور',
+    initials: 'م.ر',
+    gradient: 'from-cyan-400 to-teal-500',
   },
 ];
 
 export default function Instructors() {
   return (
-    <section id="instructors" className="py-16 sm:py-20 lg:py-24 bg-background">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="py-16 sm:py-20 relative overflow-hidden section-gradient">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground">
-            اساتید مجرب ویرا
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-            تیم آموزشی ویرا از بهترین و باتجربه‌ترین مدرسان چرتکه دهگانی تشکیل شده
-            که با تعهد و تخصص بالا، مسیر یادگیری فرزند شما را هموار می‌کنند.
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="section-heading">مربیان مجرب ما</h2>
+          <p className="section-subheading max-w-2xl mx-auto">
+            با بهترین مربیان چرتکه کشور، فرزندتان بهترین آموزش را دریافت می‌کند
           </p>
         </div>
 
         {/* Instructor Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {instructors.map((instructor) => (
             <div
               key={instructor.name}
-              className="group border border-border rounded-2xl p-6 bg-card transition-all duration-300 hover:shadow-lg hover:-translate-y-1 text-center"
+              className="glass-card rounded-2xl p-6 flex flex-col items-center text-center group transition-all duration-300 hover:-translate-y-1"
             >
               {/* Avatar */}
               <div
-                className={`${instructor.color} w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 text-white text-xl font-bold shadow-lg group-hover:scale-105 transition-transform duration-300`}
+                className={`w-20 h-20 rounded-full bg-gradient-to-br ${instructor.gradient} flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform duration-300`}
               >
                 {instructor.initials}
               </div>
 
               {/* Name */}
-              <h3 className="text-lg font-bold text-foreground mb-1">
+              <h3 className="text-lg font-bold text-white mt-5 mb-1">
                 {instructor.name}
               </h3>
 
-              {/* Role */}
-              <p className="text-sm font-medium text-primary mb-4">
+              {/* Role Badge */}
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-teal-500/15 text-teal-400 mb-1">
                 {instructor.role}
-              </p>
+              </span>
+
+              {/* Experience */}
+              <span className="inline-block text-xs text-slate-500 mb-4">
+                {instructor.exp}
+              </span>
 
               {/* Bio */}
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="text-sm leading-relaxed text-slate-400">
                 {instructor.bio}
               </p>
             </div>

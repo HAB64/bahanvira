@@ -1,79 +1,102 @@
 "use client";
 
-import { Target, Brain, Zap, GraduationCap } from "lucide-react";
+import { Brain, Target, Calculator, Sparkles, Puzzle, GraduationCap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface Benefit {
   icon: LucideIcon;
   title: string;
   description: string;
+  color: string;
 }
 
 const benefits: Benefit[] = [
   {
-    icon: Target,
-    title: "افزایش تمرکز",
-    description:
-      "تمرین منظم با چرتکه باعث بهبود قابل‌توجه تمرکز و توجه پایدار در کودکان می‌شود و اثر مثبتی بر عملکرد تحصیلی آن‌ها دارد.",
-  },
-  {
     icon: Brain,
     title: "تقویت حافظه",
-    description:
-      "محاسبات ذهنی و تصویرسازی چرتکه در ذهن، حافظه کوتاه‌مدت و بلندمدت را به‌طور چشمگیری تقویت می‌کند.",
+    description: "با تمرین مداوم چرتکه، حافظه کوتاه‌مدت و بلندمدت کودکان به‌طور قابل توجهی تقویت می‌شود.",
+    color: "#0d9488",
   },
   {
-    icon: Zap,
-    title: "افزایش سرعت محاسبات",
-    description:
-      "با تمرین مستمر، کودکان قادر می‌شوند عملیات ریاضی پیچیده را در کسری از ثانیه و بدون استفاده از ماشین‌حساب انجام دهند.",
+    icon: Target,
+    title: "افزایش تمرکز",
+    description: "یادگیری چرتکه نیازمند تمرکز بالا است و این مهارت به سایر بخش‌های زندگی هم منتقل می‌شود.",
+    color: "#f97316",
+  },
+  {
+    icon: Calculator,
+    title: "محاسبه سریع",
+    description: "دانش‌آموزان پس از دوره آموزش چرتکه، عملیات محاسباتی را بسیار سریع‌تر از روش‌های سنتی انجام می‌دهند.",
+    color: "#0d9488",
+  },
+  {
+    icon: Sparkles,
+    title: "اعتماد به نفس",
+    description: "موفقیت در محاسبات ذهنی و شرکت در مسابقات، اعتماد به نفس کودکان را بالا می‌برد.",
+    color: "#f97316",
+  },
+  {
+    icon: Puzzle,
+    title: "تفکر منطقی",
+    description: "چرتکه مهارت تفکر منطقی و تحلیلی را در کودکان پرورش می‌دهد.",
+    color: "#0d9488",
   },
   {
     icon: GraduationCap,
-    title: "آموزش استاندارد",
-    description:
-      "سرفصل‌های آموزشی بر اساس استانداردهای بین‌المللی چرتکه دهگانی تدوین شده و با به‌روزترین متدهای آموزشی ارائه می‌شوند.",
+    title: "آمادگی مدرسه",
+    description: "دانش‌آموزان چرتکه در دروس ریاضی و حتی سایر دروس عملکرد بهتری نشان می‌دهند.",
+    color: "#f97316",
   },
 ];
 
 export default function Benefits() {
   return (
-    <section id="benefits" className="py-16 sm:py-20 lg:py-24 bg-background">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground">
-            چرا چرتکه دهگانی؟
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-muted-foreground leading-relaxed">
-            آموزش چرتکه دهگانی ویرا فراتر از یک دوره محاسبه ذهنی است؛
-            این روش تحولی در رشد شناختی و هوش ریاضی فرزند شما ایجاد می‌کند.
+    <section id="benefits" className="py-16 sm:py-20 relative overflow-hidden section-gradient">
+      {/* Decorative background glows */}
+      <div
+        className="pointer-events-none absolute -top-32 right-0 w-[500px] h-[500px] rounded-full opacity-[0.07]"
+        style={{ background: "radial-gradient(circle, #0d9488, transparent 70%)" }}
+      />
+      <div
+        className="pointer-events-none absolute -bottom-32 left-0 w-[400px] h-[400px] rounded-full opacity-[0.05]"
+        style={{ background: "radial-gradient(circle, #f97316, transparent 70%)" }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Heading */}
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+          <h2 className="section-heading">چرا چرتکه؟</h2>
+          <p className="section-subheading">
+            چرتکه دهگانی ویرا، ابزاری قدرتمند برای توسعه توانمندی‌های ذهنی کودکان و نوجوانان
           </p>
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {benefits.map((benefit) => {
             const Icon = benefit.icon;
             return (
               <div
                 key={benefit.title}
-                className="group relative border border-border rounded-2xl p-6 bg-card transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                className="glass-card rounded-2xl p-6 sm:p-8 flex flex-col items-center text-center transition-all duration-300"
               >
                 {/* Icon */}
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors duration-300">
-                  <Icon className="w-7 h-7 text-primary" />
+                <div
+                  className="flex items-center justify-center w-12 h-12 rounded-2xl mb-5"
+                  style={{ background: `${benefit.color}15` }}
+                >
+                  <Icon
+                    className="w-12 h-12"
+                    style={{ color: benefit.color }}
+                    strokeWidth={1.5}
+                  />
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg font-bold text-foreground mb-3">
-                  {benefit.title}
-                </h3>
+                <h3 className="text-lg font-bold text-white mb-3">{benefit.title}</h3>
 
                 {/* Description */}
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  {benefit.description}
-                </p>
+                <p className="text-sm leading-relaxed text-slate-400">{benefit.description}</p>
               </div>
             );
           })}

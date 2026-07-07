@@ -1,74 +1,88 @@
-import { Star, Quote } from "lucide-react";
+'use client';
+
+import { Star } from 'lucide-react';
+
+const stats = [
+  { value: '۴.۹', label: 'از ۵ امتیاز' },
+  { value: '۹۸٪', label: 'رضایت والدین' },
+  { value: '۲,۰۰۰+', label: 'نظر مثبت' },
+];
 
 const testimonials = [
   {
-    name: "سمیرا محمدی",
-    role: "مادر سارینا ۸ ساله",
-    initial: "س",
-    text: "از وقتی سارینا کلاس چرتکه ویرا رو شروع کرده، خیلی تغییر کرده. هم نمره‌های ریاضیش عالی شده، هم تمرکزش خیلی بیشتر شده. واقعاً ممنونم از اساتید صبور و حرفه‌ای ویرا.",
+    text: 'پسرم بعد از ۶ ماه آموزش چرتکه، نمرات ریاضی‌اش از ۱۴ به ۱۹ رسید. واقعاً ممنونیم از تیم ویرا.',
+    name: 'مادر سارا',
+    role: 'دانش‌آموز سطح ۳',
     rating: 5,
+    initial: 'س',
   },
   {
-    name: "رضا کریمی",
-    role: "پدر امیرعلی ۱۰ ساله",
-    initial: "ر",
-    text: "امیرعلی تو مسابقه چرتکه استان رتبه اول رو کسب کرد. آموزش‌های ویرا واقعاً متفاوته و روش تدریسشون بسیار جذاب و علمیه. توصیه می‌کنم به همه والدین.",
+    text: 'روش آموزش مربیان ویرا بسیار جذاب و کودک‌پسند است. دخترم با اشتیاق هر هفته به کلاس می‌رود.',
+    name: 'پدر امیرعلی',
+    role: 'دانش‌آموز سطح ۵',
     rating: 5,
+    initial: 'ا',
   },
   {
-    name: "نازنین احمدی",
-    role: "مادر آریا ۶ ساله",
-    initial: "ن",
-    text: "آریا عاشق کلاس چرتکه شده! هر هفته با اشتیاق میره کلاس و حتی تو خونه هم تمرین می‌کنه. معلم‌ها خیلی با بچه‌ها مهربون و صبورن. خوشحالم که انتخاب ویرا بودیم.",
+    text: 'حساب ذهنی فرزندم به قدری تقویت شده که دیگر هیچ مشکلی با ریاضی مدرسه ندارد.',
+    name: 'مادر نیکان',
+    role: 'دانش‌آموز سطح ۷',
     rating: 5,
-  },
-  {
-    name: "مهدی حسینی",
-    role: "پدر فاطمه ۱۲ ساله",
-    initial: "م",
-    text: "فاطمه با آموزش حساب ذهنی ویرا توانایی محاسبه سریع ذهنی رو پیدا کرده. الان تو کلاس ریاضی مدرسه از همه سریع‌تره و اعتماد به نفسش خیلی بالا رفته.",
-    rating: 5,
+    initial: 'ن',
   },
 ];
 
 export default function Testimonials() {
   return (
-    <section id="testimonials" className="py-16 sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="testimonials" className="py-16 sm:py-20 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Header */}
         <div className="text-center">
-          <span className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
-            نظرات والدین
-          </span>
-          <h2 className="mt-4 text-2xl font-extrabold sm:text-3xl lg:text-4xl">
-            خانواده‌ها درباره ویرا چه می‌گویند؟
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">
+            نظرات والدین و دانش‌آموزان
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground">
-            رضایت والدین و موفقیت فرزندانشان، بزرگ‌ترین افتخار ماست. نظرات واقعی والدین کارآموزان ویرا را در ادامه بخوانید.
+          <p className="text-slate-400 mt-3 leading-relaxed max-w-2xl mx-auto">
+            صدای واقعی خانواده‌هایی که تجربه آموزش چرتکه ویرا را داشته‌اند
           </p>
         </div>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2">
+        {/* Stats Row */}
+        <div className="mt-10 grid grid-cols-3 gap-4">
+          {stats.map((s) => (
+            <div key={s.label} className="glass-card-lite rounded-2xl p-4 sm:p-5 text-center">
+              <div className="text-xl sm:text-2xl font-bold text-teal-400">{s.value}</div>
+              <div className="text-xs sm:text-sm text-slate-400 mt-1">{s.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Testimonial Cards */}
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((t) => (
-            <div
-              key={t.name}
-              className="relative rounded-2xl border border-border/60 bg-card p-6 transition-all hover:shadow-lg"
-            >
-              <Quote className="absolute top-4 left-4 h-8 w-8 text-primary/10" />
-              <div className="flex gap-0.5 mb-3">
+            <div key={t.name} className="glass-card rounded-2xl p-6 flex flex-col">
+              {/* Stars */}
+              <div className="flex gap-0.5 mb-4">
                 {Array.from({ length: t.rating }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  <Star
+                    key={i}
+                    className="h-4 w-4 fill-amber-400 text-amber-400"
+                  />
                 ))}
               </div>
-              <p className="text-sm leading-relaxed text-foreground/85 mb-4">
+
+              {/* Quote */}
+              <p className="text-sm leading-relaxed text-slate-300 flex-1">
                 &ldquo;{t.text}&rdquo;
               </p>
-              <div className="flex items-center gap-3 border-t border-border/50 pt-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-bold text-sm">
+
+              {/* Author */}
+              <div className="flex items-center gap-3 border-t border-white/10 mt-5 pt-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-600 text-white font-bold text-sm shrink-0">
                   {t.initial}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-foreground">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.role}</p>
+                  <p className="text-sm font-bold text-white">{t.name}</p>
+                  <p className="text-xs text-slate-500">{t.role}</p>
                 </div>
               </div>
             </div>

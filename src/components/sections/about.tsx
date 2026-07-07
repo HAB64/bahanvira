@@ -1,54 +1,55 @@
-import { CheckCircle2 } from "lucide-react";
+'use client';
 
-const highlights = [
-  "تأسیس با بیش از ۱۰ سال سابقه در آموزش چرتکه",
-  "استفاده از روش استاندارد دهگانی (ژاپنی)",
-  "برگزاری دوره‌های حضوری و آنلاین",
-  "حضور موفق در مسابقات کشوری و بین‌المللی",
-  "ارائه گواهینامه معتبر پایان دوره",
-  "پشتیبانی ۲۴ ساعته کارآموزان",
+import { Check } from 'lucide-react';
+import { Trophy, Users, GraduationCap, Medal } from 'lucide-react';
+
+const features = [
+  'دارای مجوز رسمی از سازمان آموزش و پرورش',
+  'عضو انجمن چرتکه ایران',
+  'دارای گواهینامه بین‌المللی ISO',
 ];
 
 const stats = [
-  { value: "۵۰۰+", label: "فارغ‌التحصیل موفق" },
-  { value: "۴۵+", label: "رتبه برتر در مسابقات" },
-  { value: "۱۰+", label: "سال فعالیت مستمر" },
-  { value: "۳", label: "شعبه فعال" },
+  { icon: GraduationCap, value: '۵۰۰+', label: 'فارغ‌التحصیل' },
+  { icon: Trophy, value: '۴۵+', label: 'رتبه برتر' },
+  { icon: Users, value: '۳', label: 'شعبه فعال' },
+  { icon: Medal, value: '۱۰+', label: 'سال تجربه' },
 ];
 
 export default function About() {
   return (
-    <section id="about" className="py-16 sm:py-20 lg:py-24 bg-muted/50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="py-16 sm:py-20 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12 lg:mb-16">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-foreground">
-            درباره آموزشگاه ویرا
-          </h2>
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="section-heading">درباره ویرا</h2>
+          <p className="section-subheading max-w-2xl mx-auto">
+            بیش از یک دهه تجربه در آموزش چرتکه و حساب ذهنی
+          </p>
         </div>
 
         {/* Two Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-start max-w-6xl mx-auto">
           {/* Text Column */}
           <div>
-            <p className="text-base sm:text-lg text-foreground leading-relaxed mb-6">
-              آموزشگاه چرتکه دهگانی ویرا از سال ۱۳۹۳ با هدف ارتقای سطح هوش ریاضی و
-              مهارت‌های شناختی کودکان و نوجوانان ایرانی تأسیس شده است. ما با بهره‌گیری
-              از روش نوین چرتکه دهگانی (مبتنی بر استاندارد ژاپنی)، بستری فراهم
-              کرده‌ایم که یادگیری ریاضی را به تجربه‌ای جذاب و مؤثر تبدیل کند.
-            </p>
-            <p className="text-base text-muted-foreground leading-relaxed mb-8">
-              مأموریت ما رشد همه‌جانبه ذهنی نسل آینده است. ما باور داریم هر کودکی
-              ظرفیت‌های نهفته‌ای دارد که با آموزش صحیح و منظم، می‌تواند به بالاترین
-              سطح توانمندی دست یابد.
+            <h3 className="text-xl font-bold text-white mb-4">
+              چرتکه دهگانی ویرا
+            </h3>
+            <p className="text-sm sm:text-base text-slate-400 leading-relaxed mb-8">
+              آموزشگاه چرتکه دهگانی ویرا از سال ۱۳۹۳ فعالیت خود را در زمینه آموزش
+              چرتکه و حساب ذهنی آغاز کرده است. ما با بهره‌گیری از جدیدترین
+              متدهای آموزشی و تیمی از مربیان مجرب، توانسته‌ایم هزاران دانش‌آموز
+              را در مسیر پیشرفت تحصیلی قرار دهیم.
             </p>
 
-            {/* Highlight Points */}
-            <ul className="space-y-3">
-              {highlights.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <span className="text-sm text-foreground leading-relaxed">
+            {/* Feature Items */}
+            <ul className="space-y-4">
+              {features.map((item) => (
+                <li key={item} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-teal-500/15 flex items-center justify-center shrink-0">
+                    <Check className="w-3.5 h-3.5 text-teal-400" />
+                  </div>
+                  <span className="text-sm text-slate-300 leading-relaxed">
                     {item}
                   </span>
                 </li>
@@ -56,31 +57,38 @@ export default function About() {
             </ul>
           </div>
 
-          {/* Stats Column */}
-          <div className="bg-card border border-border rounded-2xl p-6 sm:p-8">
-            <h3 className="text-lg font-bold text-foreground mb-6">
+          {/* Right Column — Decorative Card */}
+          <div className="glass-card rounded-2xl p-6 sm:p-8">
+            <h3 className="text-lg font-bold text-white mb-6 text-center">
               ویرا در یک نگاه
             </h3>
-            <div className="grid grid-cols-2 gap-6">
-              {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="text-center p-4 rounded-xl bg-muted/50"
-                >
-                  <div className="text-2xl sm:text-3xl font-extrabold text-primary mb-1">
-                    {stat.value}
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              {stats.map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div
+                    key={stat.label}
+                    className="text-center p-4 rounded-xl bg-white/[0.03] border border-white/[0.06]"
+                  >
+                    <Icon className="w-6 h-6 text-teal-400 mx-auto mb-2" />
+                    <div className="text-2xl sm:text-3xl font-extrabold text-white mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs text-slate-500 font-medium">
+                      {stat.label}
+                    </div>
                   </div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-medium">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* Extra info */}
-            <div className="mt-8 p-4 rounded-xl bg-primary/5 border border-primary/10">
-              <p className="text-sm text-foreground leading-relaxed">
-                <span className="font-bold text-primary">آیا می‌دانستید؟</span>{" "}
+            {/* Achievement Badge */}
+            <div className="text-center p-5 rounded-xl bg-gradient-to-br from-teal-500/10 to-cyan-500/5 border border-teal-500/15">
+              <div className="text-4xl mb-3">🧮</div>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                <span className="font-bold text-teal-400">آیا می‌دانستید؟</span>{' '}
                 کارآموزان آموزشگاه ویرا تاکنون موفق به کسب بیش از ۴۵ رتبه برتر
                 کشوری در مسابقات چرتکه و محاسبات ذهنی شده‌اند.
               </p>

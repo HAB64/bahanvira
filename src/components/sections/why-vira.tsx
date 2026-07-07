@@ -1,82 +1,126 @@
-import { Button } from "@/components/ui/button";
+'use client';
 
-const stats = [
-  { value: "۵۰۰+", label: "کارآموز فعال" },
-  { value: "۲۰+", label: "شهر و استان" },
-  { value: "۳۰+", label: "نمایندگی فعال" },
-  { value: "۱۰۰+", label: "قرارداد آموزشی" },
-];
+import { CheckCircle2 } from 'lucide-react';
 
-const benefits = [
+const advantages = [
   {
-    icon: "🎯",
-    title: "تقویت تمرکز",
-    desc: "تمرینات چرتکه باعث افزایش چشمگیر تمرکز و دقت توجه کودک در تمامی فعالیت‌های روزانه و تحصیلی می‌شود.",
+    title: 'روش آموزشی منحصر به فرد',
+    desc: 'ترکیب چرتکه فیزیکی و تمرینات دیجیتال',
   },
   {
-    icon: "⚡",
-    title: "افزایش سرعت محاسبه",
-    desc: "دانش‌آموزان چرتکه آموزش‌دیده، توانایی محاسبات ذهنی بسیار سریع‌تر از همسالان خود را کسب می‌کنند.",
+    title: 'مربیان با تجربه و دارای گواهینامه',
+    desc: 'تمام مربیان دارای گواهینامه بین‌المللی',
   },
   {
-    icon: "🧠",
-    title: "تقویت حافظه",
-    desc: "تصویرسازی ذهنی چرتکه و تمرینات مرتبط، حافظه کوتاه‌مدت و بلندمدت کودک را به‌طور مؤثری تقویت می‌کند.",
+    title: 'کلاس‌های حضوری و آنلاین',
+    desc: 'انعطاف‌پذیری کامل در نحوه حضور',
   },
   {
-    icon: "💪",
-    title: "اعتماد به نفس",
-    desc: "موفقیت در محاسبات ذهنی و کسب رتبه‌های برتر، اعتماد به نفس کودک را در تمامی جنبه‌های زندگی افزایش می‌دهد.",
+    title: 'گزارش پیشرفت هفتگی',
+    desc: 'والدین همیشه از وضعیت فرزندشان مطلع هستند',
   },
   {
-    icon: "🎨",
-    title: "خلاقیت و تفکر",
-    desc: "آموزش چرتکه نیمکره راست مغز را فعال کرده و خلاقیت، تفکر تحلیلی و مهارت حل مسئله را تقویت می‌کند.",
+    title: 'آزمون‌های دوره‌ای استاندارد',
+    desc: 'سنجش مستمر پیشرفت دانش‌آموزان',
   },
   {
-    icon: "📊",
-    title: "عملکرد تحصیلی بهتر",
-    desc: "تحقیقات نشان داده کودکان آموزش‌دیده چرتکه، میانگین نمرات بالاتری در دروس مختلف به‌ویژه ریاضی کسب می‌کنند.",
+    title: 'محیط دوستانه و رقابتی',
+    desc: 'ایجاد انگیزه از طریق مسابقات داخلی',
   },
 ];
 
 export default function WhyVira() {
   return (
-    <section id="why" className="py-16 sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section id="why-vira" className="py-16 sm:py-20 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        {/* Header */}
         <div className="text-center">
-          <span className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
-            چرا ویرا
-          </span>
-          <h2 className="mt-4 text-2xl font-extrabold sm:text-3xl lg:text-4xl">
-            اعتماد والدین، افتخار ما
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground">
-            سال‌ها تجربه آموزش تخصصی چرتکه دهگانی و رضایت بالای والدین، بهترین تضمین کیفیت خدمات آموزشی ماست. آمار و ارقام گویای تعهد ما به تعالی آموزشی است.
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">چرا ویرا؟</h2>
+          <p className="text-slate-400 mt-3 leading-relaxed max-w-2xl mx-auto">
+            تفاوت ما با سایر آموزشگاه‌ها
           </p>
         </div>
 
-        {/* Stats */}
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label} className="rounded-2xl border border-border/60 bg-card p-5 text-center">
-              <div className="text-2xl font-extrabold text-primary sm:text-3xl">{s.value}</div>
-              <div className="text-sm text-muted-foreground mt-1">{s.label}</div>
-            </div>
-          ))}
-        </div>
+        {/* Two-column layout */}
+        <div className="mt-12 grid gap-10 lg:grid-cols-2 items-start">
+          {/* Left: Advantages */}
+          <div className="space-y-4">
+            {advantages.map((item, i) => {
+              const isEven = i % 2 === 0;
+              return (
+                <div
+                  key={item.title}
+                  className={`glass-card rounded-2xl p-5 flex items-start gap-4 transition-all duration-300 ${
+                    isEven ? 'hover:border-teal-500/30' : 'hover:border-emerald-500/30'
+                  }`}
+                >
+                  <CheckCircle2
+                    className={`h-6 w-6 shrink-0 mt-0.5 ${
+                      isEven ? 'text-teal-400' : 'text-emerald-400'
+                    }`}
+                  />
+                  <div>
+                    <h3 className="text-sm font-bold text-white">{item.title}</h3>
+                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
 
-        {/* Benefits */}
-        <div className="mt-14">
-          <h3 className="text-lg font-bold text-foreground text-center mb-8">مزایای آموزش چرتکه دهگانی</h3>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {benefits.map((b) => (
-              <div key={b.title} className="rounded-2xl border border-border/60 bg-card p-5 transition-all hover:shadow-md">
-                <div className="text-3xl mb-3">{b.icon}</div>
-                <h4 className="font-bold text-foreground">{b.title}</h4>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.desc}</p>
+          {/* Right: Decorative showcase card */}
+          <div className="glass-card rounded-2xl p-8 flex flex-col items-center justify-center min-h-[420px] relative">
+            {/* Decorative abacus illustration */}
+            <div className="relative w-full flex flex-col items-center justify-center flex-1">
+              {/* Abacus frame */}
+              <div className="relative w-64 sm:w-72">
+                {/* Top bar */}
+                <div className="h-2 bg-gradient-to-l from-teal-500 to-emerald-500 rounded-full mb-6" />
+
+                {/* Bead rows */}
+                {[0, 1, 2, 3, 4].map((row) => (
+                  <div key={row} className="flex items-center justify-between mb-5">
+                    {/* Rod */}
+                    <div className="absolute right-[8%] left-[8%] h-px bg-white/10" />
+
+                    {/* Upper bead */}
+                    <div className="relative z-10 h-8 w-8 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-orange-500/20" />
+
+                    {/* Lower beads */}
+                    <div className="flex gap-2 relative z-10">
+                      {[0, 1, 2, 3].map((b) => (
+                        <div
+                          key={b}
+                          className="h-7 w-7 rounded-full bg-gradient-to-br from-teal-400 to-teal-600 shadow-md shadow-teal-500/20"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Bottom bar */}
+                <div className="h-2 bg-gradient-to-l from-teal-500 to-emerald-500 rounded-full mt-2" />
               </div>
-            ))}
+
+              {/* Achievement badges */}
+              <div className="mt-8 flex flex-wrap justify-center gap-3">
+                {[
+                  { num: '+۵۰۰', label: 'دانش‌آموز' },
+                  { num: '+۳۰', label: 'نمایندگی' },
+                  { num: '+۲۰', label: 'شهر' },
+                ].map((badge) => (
+                  <div
+                    key={badge.label}
+                    className="glass-card-lite rounded-xl px-4 py-2.5 text-center"
+                  >
+                    <div className="text-base font-bold text-teal-400">{badge.num}</div>
+                    <div className="text-[11px] text-slate-500">{badge.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,160 +1,147 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Check, Clock, Users, ArrowLeft } from "lucide-react";
+'use client';
+
+import { Grid3X3, Brain, Zap, Trophy, Rocket, BookOpen, Clock, Users, ArrowLeft } from 'lucide-react';
 
 const courses = [
   {
-    title: "دوره چرتکه مقدماتی",
-    level: "مقدماتی",
-    age: "۵ تا ۸ سال",
-    desc: "آشنایی با چرتکه دهگانی، یادگیری اعداد و عملیات ساده جمع و تفریق. این دوره مبنای اصلی آموزش چرتکه است و کودکان با بازی‌های آموزشی جذاب با مفاهیم پایه آشنا می‌شوند.",
-    skills: [
-      "آشنایی با ساختار چرتکه دهگانی",
-      "یادگیری اعداد ۱ تا ۹۹۹",
-      "جمع و تفریق یک‌رقمی و دو‌رقمی",
-      "بازی‌های تعاملی و آموزشی",
-      "تقویت تمرکز و دقت",
-    ],
-    duration: "۳ ماه",
-    sessions: 24,
-    price: "۲,۸۰۰,۰۰۰",
-    highlight: null,
+    badge: { text: 'پرطرفدار', color: 'bg-orange-500/20 text-orange-400' },
+    icon: Grid3X3,
+    iconBg: 'bg-orange-500/15',
+    iconColor: 'text-orange-400',
+    title: 'چرتکه مبتدی',
+    desc: 'آموزش اصول اولیه چرتکه دهگانی برای سنین ۵ تا ۸ سال',
+    duration: '۳۶ ساعته',
+    sessions: '۱۲ جلسه',
   },
   {
-    title: "دوره حساب ذهنی متوسط",
-    level: "متوسط",
-    age: "۷ تا ۱۱ سال",
-    desc: "گذر از چرتکه فیزیکی به محاسبات ذهنی. کودکان یاد می‌گیرند بدون استفاده از چرتکه فیزیکی، عملیات ریاضی را در ذهن خود انجام دهند و سرعت محاسبه آن‌ها به‌طور چشمگیری افزایش می‌یابد.",
-    skills: [
-      "محاسبات ذهنی جمع و تفریق",
-      "ضرب و تقسیم پایه",
-      "تصویرسازی ذهنی چرتکه",
-      "افزایش سرعت محاسبه ۳ برابری",
-      "تمرینات تمرکز حسی",
-    ],
-    duration: "۴ ماه",
-    sessions: 32,
-    price: "۳,۵۰۰,۰۰۰",
-    highlight: null,
+    badge: { text: 'پرطرفدار', color: 'bg-orange-500/20 text-orange-400' },
+    icon: Brain,
+    iconBg: 'bg-teal-500/15',
+    iconColor: 'text-teal-400',
+    title: 'حساب ذهنی ۱',
+    desc: 'تقویت محاسبات ذهنی بدون چرتکه فیزیکی',
+    duration: '۲۴ ساعته',
+    sessions: '۸ جلسه',
   },
   {
-    title: "دوره چرتکه پیشرفته",
-    level: "پیشرفته",
-    age: "۹ تا ۱۵ سال",
-    desc: "عملیات پیچیده ریاضی شامل ضرب و تقسیم چندرقمی، اعشار و کاربرد چرتکه در مسائل روزمره. این دوره دانش‌آموزان را برای شرکت در مسابقات داخلی و بین‌المللی آماده می‌کند.",
-    skills: [
-      "ضرب و تقسیم چندرقمی ذهنی",
-      "محاسبات اعشاری",
-      "حل مسائل ترکیبی",
-      "آمادگی مسابقات داخلی",
-      "گواهینامه رسمی پایان دوره",
-    ],
-    duration: "۶ ماه",
-    sessions: 48,
-    price: "۴,۸۰۰,۰۰۰",
-    highlight: null,
+    badge: { text: 'جدید', color: 'bg-teal-500/20 text-teal-400' },
+    icon: Zap,
+    iconBg: 'bg-yellow-500/15',
+    iconColor: 'text-yellow-400',
+    title: 'چرتکه متوسط',
+    desc: 'تکمیل مهارت‌های چرتکه و ورود به محاسبات پیچیده',
+    duration: '۴۸ ساعته',
+    sessions: '۱۶ جلسه',
   },
   {
-    title: "دوره آمادگی مسابقات",
-    level: "پیشرفته",
-    age: "۸ تا ۱۵ سال",
-    desc: "آمادگی تخصصی برای شرکت در مسابقات چرتکه داخلی و بین‌المللی. تمرینات فشرده سرعت و دقت، شبیه‌سازی شرایط مسابقه و تکنیک‌های مدیریت زمان.",
-    skills: [
-      "تمرینات سرعت و دقت فشرده",
-      "شبیه‌سازی آزمون مسابقه",
-      "تکنیک‌های مدیریت زمان",
-      "مشاوره روانشناسی مسابقات",
-      "شرکت در مسابقات ملی",
-    ],
-    duration: "۲ ماه",
-    sessions: 16,
-    price: "۲,۵۰۰,۰۰۰",
-    highlight: null,
+    badge: null,
+    icon: Trophy,
+    iconBg: 'bg-purple-500/15',
+    iconColor: 'text-purple-400',
+    title: 'آمادگی مسابقات',
+    desc: 'تمرین‌های ویژه برای آمادگی شرکت در مسابقات ملی و بین‌المللی',
+    duration: '۲۰ ساعته',
+    sessions: '۱۰ جلسه',
+  },
+  {
+    badge: { text: 'ظرفیت محدود', color: 'bg-red-500/20 text-red-400' },
+    icon: Rocket,
+    iconBg: 'bg-rose-500/15',
+    iconColor: 'text-rose-400',
+    title: 'چرتکه پیشرفته',
+    desc: 'محاسبات چندرقمی پیچیده و سرعت‌بخشی حرفه‌ای',
+    duration: '۶۰ ساعته',
+    sessions: '۲۰ جلسه',
+  },
+  {
+    badge: null,
+    icon: BookOpen,
+    iconBg: 'bg-sky-500/15',
+    iconColor: 'text-sky-400',
+    title: 'مربی‌گری چرتکه',
+    desc: 'دوره تربیت مربی چرتکه برای علاقه‌مندان به تدریس',
+    duration: '۸۰ ساعته',
+    sessions: '۲۵ جلسه',
   },
 ];
 
 export default function Courses() {
   return (
-    <section id="courses" className="py-16 sm:py-24 bg-muted/30">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <span className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-semibold text-primary">
+    <section id="courses" className="py-16 sm:py-20 relative overflow-hidden">
+      {/* Decorative background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+        {/* Section Header */}
+        <div className="text-center mb-12">
+          <span className="inline-block rounded-full bg-teal-500/15 px-4 py-1.5 text-xs font-semibold text-teal-400 mb-4">
             دوره‌های آموزشی
           </span>
-          <h2 className="mt-4 text-2xl font-extrabold sm:text-3xl lg:text-4xl">
-            دوره‌های تخصصی ویرا
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground">
-            دوره‌های آموزشی ما با بهره‌گیری از جدیدترین روش‌های آموزشی و با هدف تقویت مهارت‌های ذهنی و ریاضی کودکان و نوجوانان طراحی شده‌اند.
+          <h2 className="section-heading text-3xl sm:text-4xl">دوره‌های پرطرفدار ما</h2>
+          <p className="section-subheading mt-4 max-w-2xl mx-auto text-sm sm:text-base">
+            دوره‌هایی که بیشترین تقاضا را دارند و نتایج فوق‌العاده‌ای ارائه داده‌اند.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-2">
-          {courses.map((course) => (
-            <div
-              key={course.title}
-              className="rounded-2xl border border-border/60 bg-card p-6 sm:p-8 transition-all hover:shadow-lg"
-            >
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-foreground">{course.title}</h3>
-                  <div className="mt-2 flex items-center gap-2">
-                    <Badge variant="secondary" className="bg-primary/10 text-primary text-xs">{course.level}</Badge>
-                    <span className="text-xs text-muted-foreground">{course.age}</span>
-                  </div>
+        {/* Course Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {courses.map((course) => {
+            const IconComponent = course.icon;
+            return (
+              <a
+                key={course.title}
+                href="#"
+                className="glass-card rounded-2xl overflow-hidden group block p-5 transition-all duration-300"
+              >
+                {/* Badge — top-right */}
+                <div className="flex justify-start mb-4">
+                  {course.badge && (
+                    <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${course.badge.color}`}>
+                      {course.badge.text}
+                    </span>
+                  )}
                 </div>
-              </div>
 
-              <p className="text-sm leading-relaxed text-muted-foreground mb-5">
-                {course.desc}
-              </p>
+                {/* Icon */}
+                <div className={`w-14 h-14 rounded-2xl ${course.iconBg} flex items-center justify-center mb-4`}>
+                  <IconComponent className={`w-7 h-7 ${course.iconColor}`} />
+                </div>
 
-              <ul className="space-y-2 mb-6">
-                {course.skills.map((skill) => (
-                  <li key={skill} className="flex items-start gap-2 text-sm">
-                    <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
-                    <span className="text-foreground/80">{skill}</span>
-                  </li>
-                ))}
-              </ul>
+                {/* Title */}
+                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-teal-300 transition-colors duration-200">
+                  {course.title}
+                </h3>
 
-              <div className="flex items-center justify-between pt-4 border-t border-border/50">
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3.5 w-3.5" />
+                {/* Description */}
+                <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                  {course.desc}
+                </p>
+
+                {/* Meta Row */}
+                <div className="flex items-center gap-4 text-xs text-slate-500 pt-3 border-t border-white/5">
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
                     {course.duration}
                   </span>
-                  <span className="flex items-center gap-1">
-                    <Users className="h-3.5 w-3.5" />
-                    {course.sessions} جلسه
+                  <span className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5" />
+                    {course.sessions}
                   </span>
                 </div>
-                <div className="text-left">
-                  <span className="text-xs text-muted-foreground">شهریه</span>
-                  <p className="text-lg font-extrabold text-primary">{course.price}<span className="text-xs font-normal text-muted-foreground mr-1">تومان</span></p>
-                </div>
-              </div>
-
-              <Button className="mt-4 w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-xl" asChild>
-                <a href="#register">ثبت‌نام و مشاوره رایگان</a>
-              </Button>
-            </div>
-          ))}
-
-          {/* View all courses button */}
-          <div className="mt-10 text-center">
-            <Button
-              variant="outline"
-              size="lg"
-              className="rounded-xl gap-2 px-8 border-2 hover:bg-primary/5 hover:text-primary hover:border-primary/30"
-              asChild
-            >
-              <a href="/courses">
-                مشاهده همه دوره‌ها
-                <ArrowLeft className="h-4 w-4" />
               </a>
-            </Button>
-          </div>
+            );
+          })}
+        </div>
+
+        {/* View All Link */}
+        <div className="text-center mt-10">
+          <a
+            href="#"
+            className="inline-flex items-center gap-2 text-teal-400 hover:text-teal-300 text-sm font-medium transition-colors duration-200"
+          >
+            مشاهده همه دوره‌ها
+            <ArrowLeft className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </section>

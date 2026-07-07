@@ -1,95 +1,158 @@
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Instagram,
-  Send,
-  MessageCircle,
-} from "lucide-react";
+import { Instagram, Send, Phone, MapPin, Mail, Clock } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer id="contact" className="border-t border-border bg-card">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground text-lg font-bold">
-                و
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold leading-tight text-foreground">ویرا</span>
-                <span className="text-[10px] text-muted-foreground leading-tight">چرتکه دهگانی ویرا</span>
-              </div>
-            </div>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              آموزش تخصصی چرتکه دهگانی و حساب ذهنی برای کودکان و نوجوانان با بهره‌گیری از جدیدترین روش‌های آموزشی و اساتید مجرب. هدف ما پرورش نسل توانمند و خلاق در زمینه ریاضیات است.
+    <footer className="bg-[#0a1628] border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 pb-8">
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+          {/* ── Column 1: Brand ── */}
+          <div className="glass-card-lite rounded-2xl p-6">
+            <h3 className="text-white text-lg font-extrabold tracking-tight mb-1">
+              ویرا | چرتکه دهگانی
+            </h3>
+            <p className="text-slate-400 text-sm leading-7 mt-4">
+              آموزشگاه تخصصی چرتکه دهگانی و حساب ذهنی برای کودکان و نوجوانان
             </p>
-            <div className="mt-4 flex gap-2">
-              <a href="#" target="_blank" rel="noopener noreferrer" className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-pink-500 hover:text-white">
-                <Instagram className="h-4 w-4" />
+
+            {/* Social Icons */}
+            <div className="flex items-center gap-2 mt-5">
+              <a
+                href="https://instagram.com/bahanvira"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="اینستاگرام"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-slate-400 transition-colors hover:bg-pink-500/20 hover:text-pink-400"
+              >
+                <Instagram className="h-[18px] w-[18px]" />
               </a>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-sky-500 hover:text-white">
-                <Send className="h-4 w-4" />
+              <a
+                href="https://t.me/bahanvira"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="تلگرام"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-slate-400 transition-colors hover:bg-sky-500/20 hover:text-sky-400"
+              >
+                <Send className="h-[18px] w-[18px]" />
               </a>
-              <a href="https://wa.me/989111277194" target="_blank" rel="noopener noreferrer" className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-emerald-500 hover:text-white">
-                <MessageCircle className="h-4 w-4" />
+              <a
+                href="tel:09121234567"
+                aria-label="تماس تلفنی"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-slate-400 transition-colors hover:bg-emerald-500/20 hover:text-emerald-400"
+              >
+                <Phone className="h-[18px] w-[18px]" />
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-sm font-bold text-foreground mb-4">دسترسی سریع</h4>
-            <nav className="space-y-2.5">
+          {/* ── Column 2: Quick Links ── */}
+          <div className="glass-card-lite rounded-2xl p-6">
+            <h4 className="text-white text-sm font-bold mb-5">دسترسی سریع</h4>
+            <nav className="space-y-3">
               {[
                 { label: "صفحه اصلی", href: "#hero" },
-                { label: "دوره‌ها", href: "#courses" },
-                { label: "درباره ما", href: "#why" },
-                { label: "سوالات متداول", href: "#faq" },
-                { label: "تماس با ما", href: "#contact" },
+                { label: "دوره‌های آموزشی", href: "#courses" },
+                { label: "آباکوس مجازی", href: "#abacus" },
+                { label: "آزمون آنلاین", href: "#exam" },
+                { label: "پنل دانش‌آموز", href: "#panel" },
+                { label: "بلاگ", href: "#blog" },
               ].map((link) => (
-                <a key={link.href} href={link.href} className="block text-sm text-muted-foreground hover:text-primary transition-colors">
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="block text-sm text-slate-400 hover:text-white transition-colors"
+                >
                   {link.label}
                 </a>
               ))}
             </nav>
           </div>
 
-          {/* Course Links */}
-          <div>
-            <h4 className="text-sm font-bold text-foreground mb-4">دوره‌های آموزشی</h4>
-            <nav className="space-y-2.5">
-              {["چرتکه مقدماتی","حساب ذهنی متوسط","چرتکه پیشرفته","آمادگی مسابقات"].map((c) => (
-                <a key={c} href="#courses" className="block text-sm text-muted-foreground hover:text-primary transition-colors">
-                  {c}
+          {/* ── Column 3: Courses ── */}
+          <div className="glass-card-lite rounded-2xl p-6">
+            <h4 className="text-white text-sm font-bold mb-5">دوره‌های آموزشی</h4>
+            <nav className="space-y-3">
+              {[
+                "چرتکه مبتدی (سطح ۱-۳)",
+                "چرتکه متوسط (سطح ۴-۶)",
+                "چرتکه پیشرفته (سطح ۷-۹)",
+                "حساب ذهنی",
+                "آمادگی مسابقات",
+              ].map((course) => (
+                <a
+                  key={course}
+                  href="#courses"
+                  className="block text-sm text-slate-400 hover:text-white transition-colors"
+                >
+                  {course}
                 </a>
               ))}
             </nav>
           </div>
 
-          {/* Contact */}
-          <div>
-            <h4 className="text-sm font-bold text-foreground mb-4">تماس با ما</h4>
-            <div className="space-y-3">
-              <a href="tel:01144746441" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-                <Phone className="h-4 w-4 flex-shrink-0" />
-                <span dir="ltr">01144746441</span>
+          {/* ── Column 4: Contact ── */}
+          <div className="glass-card-lite rounded-2xl p-6">
+            <h4 className="text-white text-sm font-bold mb-5">تماس با ما</h4>
+            <div className="space-y-4">
+              {/* Address */}
+              <div className="flex items-start gap-3">
+                <MapPin className="h-4 w-4 mt-1 flex-shrink-0 text-slate-500" />
+                <span className="text-sm text-slate-400 leading-6">
+                  تهران، خیابان انقلاب، پلاک ۱۲۳
+                </span>
+              </div>
+
+              {/* Phone */}
+              <a
+                href="tel:02191302584"
+                className="flex items-center gap-3 text-sm text-slate-400 hover:text-white transition-colors"
+              >
+                <Phone className="h-4 w-4 flex-shrink-0 text-slate-500" />
+                <span dir="ltr">۰۲۱-۹۱۳۰۲۵۸۴</span>
               </a>
-              <a href="tel:09111277194" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-                <Phone className="h-4 w-4 flex-shrink-0" />
-                <span dir="ltr">09111277194</span>
+
+              {/* Mobile */}
+              <a
+                href="tel:09121234567"
+                className="flex items-center gap-3 text-sm text-slate-400 hover:text-white transition-colors"
+              >
+                <Phone className="h-4 w-4 flex-shrink-0 text-slate-500" />
+                <span dir="ltr">۰۹۱۲۱۲۳۴۵۶۷</span>
               </a>
-              <a href="mailto:info@vira-abacus.ir" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-                <Mail className="h-4 w-4 flex-shrink-0" />
-                info@vira-abacus.ir
+
+              {/* Email */}
+              <a
+                href="mailto:info@bahanvira.ir"
+                className="flex items-center gap-3 text-sm text-slate-400 hover:text-white transition-colors"
+              >
+                <Mail className="h-4 w-4 flex-shrink-0 text-slate-500" />
+                <span dir="ltr">info@bahanvira.ir</span>
               </a>
-              <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <span>مازندران، محمودآباد، خیابان امام، کوچه آسیاب (نسیم ۴)، انتهای کوچه</span>
+
+              {/* Working Hours */}
+              <div className="flex items-start gap-3">
+                <Clock className="h-4 w-4 mt-0.5 flex-shrink-0 text-slate-500" />
+                <span className="text-sm text-slate-400 leading-6">
+                  شنبه تا پنجشنبه ۸:۰۰ - ۱۸:۰۰
+                </span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* ── Bottom Bar ── */}
+        <div className="mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-slate-500">
+            © ۱۴۰۵ چرتکه دهگانی ویرا. تمامی حقوق محفوظ است.
+          </p>
+          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+            <a href="#" className="hover:text-white transition-colors">
+              حریم خصوصی
+            </a>
+            <span className="text-slate-600">|</span>
+            <a href="#" className="hover:text-white transition-colors">
+              قوانین و مقررات
+            </a>
           </div>
         </div>
       </div>

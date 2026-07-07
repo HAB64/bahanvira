@@ -1,272 +1,275 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useState } from 'react';
+import Header from '@/components/sections/header';
+import Footer from '@/components/sections/footer';
 import {
-  ArrowRight,
-  User,
-  Phone,
-  LogIn,
   BookOpen,
   Award,
-  ClipboardList,
-  LogOut,
+  Calendar,
+  CheckSquare,
+  Download,
+  TrendingUp,
+  Star,
+  Clock,
 } from 'lucide-react';
-import StudentProfile from '@/components/portal/StudentProfile';
-import CourseProgress from '@/components/portal/CourseProgress';
-import ExamHistory from '@/components/portal/ExamHistory';
-import {
-  initializeSampleData,
-} from '@/lib/sample-data';
-import {
-  getPortalUser,
-  loginPortal,
-  logoutPortal,
-  getStudents,
-  getStudentResults,
-} from '@/lib/storage';
-import type { Student, ExamResult } from '@/types';
-import Image from 'next/image';
-import Link from 'next/link';
-import { siteConfig } from '@/config/site';
 
+/* ─────────── Data ─────────── */
+const activeCourses = [
+  { name: 'چرتکه متوسط (سطح ۴-۶)', progress: 65 },
+  { name: 'حساب ذهنی ۱', progress: 20 },
+];
+
+const recentExams = [
+  { title: 'آزمون جمع و تفریق', date: '۱۴۰۴/۰۳/۱۵', score: '۸/۱۰', passed: true },
+  { title: 'آزمون ضرب', date: '۱۴۰۴/۰۳/۱۰', score: '۶/۱۰', passed: true },
+  { title: 'آزمون سرعت', date: '۱۴۰۴/۰۲/۲۸', score: '۱۵/۲۰', passed: true },
+];
+
+const dailyTasks = [
+  '۱۰ دقیقه تمرین آزاد',
+  '۵ مسئله جمع',
+  '۵ مسئله تفریق',
+  'تمرین سرعت',
+];
+
+const certificates = [
+  { title: 'چرتکه مبتدی - سطح ۳', date: '۱۴۰۴/۰۲/۱۵' },
+  { title: 'حساب ذهنی پایه', date: '۱۴۰۴/۰۱/۲۰' },
+  { title: 'مسابقات منطقه‌ای', date: '۱۴۰۳/۱۱/۱۰' },
+];
+
+const stats = [
+  { label: 'جلسه حضور', value: '۱۲', icon: Calendar, color: 'text-[#0d9488]' },
+  { label: 'میانگین نمرات', value: '۸۵٪', icon: TrendingUp, color: 'text-[#f97316]' },
+  { label: 'گواهینامه', value: '۳', icon: Award, color: 'text-[#eab308]' },
+  { label: 'روز متوالی تمرین', value: '۷', icon: Star, color: 'text-[#ec4899]' },
+];
+
+/* ─────────── Component ─────────── */
 export default function PortalPage() {
-  const [mounted, setMounted] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [phone, setPhone] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const [student, setStudent] = useState<Student | null>(null);
-  const [results, setResults] = useState<ExamResult[]>([]);
-  const [activeTab, setActiveTab] = useState('profile');
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [checkedTasks, setCheckedTasks] = useState<boolean[]>(
+    new Array(dailyTasks.length).fill(false)
+  );
 
-  const checkExistingLogin = useCallback(() => {
-    const user = getPortalUser();
-    if (user && user.isLoggedIn) {
-      const students = getStudents();
-      const s = students.find(st => st.id === user.studentId);
-      if (s) {
-        setStudent(s);
-        setResults(getStudentResults());
-        setIsLoggedIn(true);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    initializeSampleData();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (mounted) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      checkExistingLogin();
-    }
-  }, [mounted, checkExistingLogin, refreshKey]);
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const user = loginPortal(phone);
-    if (user) {
-      const students = getStudents();
-      const s = students.find(st => st.id === user.studentId);
-      if (s) {
-        setStudent(s);
-        setResults(getStudentResults());
-        setIsLoggedIn(true);
-        setLoginError('');
-      }
-    } else {
-      setLoginError('شماره تماس یافت نشد. لطفاً شماره تماس ثبت‌نام شده را وارد کنید.');
-    }
+  const toggleTask = (index: number) => {
+    setCheckedTasks((prev) => {
+      const copy = [...prev];
+      copy[index] = !copy[index];
+      return copy;
+    });
   };
 
-  const handleLogout = () => {
-    logoutPortal();
-    setIsLoggedIn(false);
-    setStudent(null);
-    setResults([]);
-  };
+  const completedTasks = checkedTasks.filter(Boolean).length;
 
-  if (!mounted) return null;
-
-  // Login Screen
-  if (!isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-gradient-to-bl from-amber-50 via-orange-50 to-teal-50 flex items-center justify-center p-4" dir="rtl">
-        <Card className="w-full max-w-md border-2 border-amber-200 shadow-xl">
-          <CardContent className="p-8">
-            <div className="text-center space-y-6">
-              <div className="flex justify-center">
-                <Image
-                  src="/logo.webp"
-                  alt={siteConfig.name.fullName}
-                  width={72}
-                  height={72}
-                  className="rounded-xl"
-                />
-              </div>
-
-              <div>
-                <h1 className="text-2xl font-black text-gray-900">پورتال کارآموز</h1>
-                <p className="text-gray-500 mt-1">{siteConfig.name.fullName}</p>
-              </div>
-
-              <div className="flex justify-center">
-                <div className="p-4 bg-teal-100 rounded-full">
-                  <User className="w-8 h-8 text-teal-600" />
-                </div>
-              </div>
-
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    شماره تماس
-                  </label>
-                  <Input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => {
-                      setPhone(e.target.value);
-                      setLoginError('');
-                    }}
-                    placeholder="مثال: ۰۹۱۲۱۲۳۴۵۶۷"
-                    className="text-center"
-                    dir="ltr"
-                  />
-                  {loginError && (
-                    <p className="text-red-500 text-sm">{loginError}</p>
-                  )}
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-teal-600 hover:bg-teal-700 text-white rounded-xl py-6"
-                >
-                  <LogIn className="w-4 h-4 ml-2" />
-                  ورود به پورتال
-                </Button>
-              </form>
-
-              <div className="bg-teal-50 rounded-xl p-4 text-sm text-teal-700">
-                <p className="font-medium mb-1">شماره‌های نمونه برای تست:</p>
-                <p className="text-xs" dir="ltr">09121111111 (سارینا محمدی)</p>
-                <p className="text-xs" dir="ltr">09143333333 (آریا احمدی)</p>
-              </div>
-
-              <Link href="/" className="inline-flex items-center gap-1 text-amber-600 hover:text-amber-700 text-sm">
-                <ArrowRight className="w-4 h-4" />
-                بازگشت به صفحه اصلی
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Portal Dashboard
   return (
-    <div className="min-h-screen bg-gray-50" dir="rtl">
-      {/* Header */}
-      <header className="bg-white border-b border-teal-200 sticky top-0 z-40">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <Link href="/">
-                <Image
-                  src="/logo.webp"
-                  alt={siteConfig.name.fullName}
-                  width={36}
-                  height={36}
-                  className="rounded-lg"
-                />
-              </Link>
-              <div>
-                <h1 className="font-bold text-teal-700">پورتال کارآموز</h1>
-                <p className="text-[10px] text-gray-500 hidden sm:block">{student?.name}</p>
+    <div dir="rtl" className="pt-24 pb-16 bg-[#0a1628] min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 w-full">
+        {/* ─── Title ─── */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-white">پنل دانش‌آموز</h1>
+          <p className="text-slate-400 mt-2">علی محمدی</p>
+        </div>
+
+        {/* ─── Welcome Bar ─── */}
+        <div className="glass-card rounded-2xl p-6 mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-white">خوش آمدید، علی!</h2>
+              <div className="flex items-center gap-3 mt-2">
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-[#0d9488]/15 text-[#0d9488] border border-[#0d9488]/30 rounded-full px-3 py-1">
+                  <TrendingUp className="w-3 h-3" />
+                  سطح ۴ - متوسط
+                </span>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Link href="/exam">
-                <Button variant="outline" size="sm" className="text-xs gap-1">
-                  <ClipboardList className="w-3 h-3" />
-                  آزمون‌ها
-                </Button>
-              </Link>
-              <Link href="/">
-                <Button variant="outline" size="sm" className="text-xs">
-                  بازگشت به سایت
-                </Button>
-              </Link>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="text-red-500 border-red-200 hover:bg-red-50 text-xs"
-              >
-                <LogOut className="w-4 h-4 ml-1" />
-                خروج
-              </Button>
+            <div className="sm:w-64">
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span className="text-slate-400">پیشرفت کلی</span>
+                <span className="text-white font-bold">۶۵٪</span>
+              </div>
+              <div className="h-3 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-l from-[#0d9488] to-[#0f766e]"
+                  style={{ width: '65%' }}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Welcome banner */}
-          <div className="bg-gradient-to-l from-amber-500 to-teal-500 rounded-2xl p-6 mb-6 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">سلام {student?.name}! 👋</h2>
-                <p className="text-white/80 mt-1">به پورتال کارآموز ویرا خوش آمدی</p>
+        {/* ─── Stats Row ─── */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {stats.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <div key={stat.label} className="glass-card-lite rounded-2xl p-5 text-center">
+                <Icon className={`w-6 h-6 mx-auto mb-3 ${stat.color}`} />
+                <p className="text-2xl font-bold text-white">{stat.value}</p>
+                <p className="text-sm text-slate-400 mt-1">{stat.label}</p>
               </div>
-              <div className="hidden sm:block">
-                <Badge className="bg-white/20 text-white border-0 text-sm px-3 py-1">
-                  سطح {student?.level === 'beginner' ? 'مقدماتی' : student?.level === 'intermediate' ? 'متوسط' : student?.level === 'advanced' ? 'پیشرفته' : 'مسابقات'}
-                </Badge>
+            );
+          })}
+        </div>
+
+        {/* ─── Two Column Layout ─── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* ── Left Column ── */}
+          <div className="space-y-6">
+            {/* Active Courses */}
+            <div className="glass-card rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <BookOpen className="w-5 h-5 text-[#0d9488]" />
+                <h3 className="text-lg font-bold text-white">دوره‌های فعال</h3>
+              </div>
+              <div className="space-y-5">
+                {activeCourses.map((course) => (
+                  <div key={course.name}>
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <span className="text-slate-300">{course.name}</span>
+                      <span className="text-white font-bold">{course.progress}٪</span>
+                    </div>
+                    <div className="h-2.5 rounded-full bg-white/10 overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          course.progress >= 60
+                            ? 'bg-gradient-to-l from-[#0d9488] to-[#0f766e]'
+                            : 'bg-gradient-to-l from-[#f97316] to-[#ea580c]'
+                        }`}
+                        style={{ width: `${course.progress}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Recent Exams */}
+            <div className="glass-card rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <Clock className="w-5 h-5 text-[#f97316]" />
+                <h3 className="text-lg font-bold text-white">آزمون‌های اخیر</h3>
+              </div>
+              <div className="space-y-3">
+                {recentExams.map((exam, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold text-white truncate">{exam.title}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{exam.date}</p>
+                    </div>
+                    <div className="flex items-center gap-3 shrink-0 mr-4">
+                      <span className="text-sm font-bold text-white">{exam.score}</span>
+                      <span className="text-xs font-bold bg-[#0d9488]/15 text-[#0d9488] border border-[#0d9488]/30 rounded-full px-2.5 py-0.5">
+                        {exam.passed ? 'قبول' : 'مردود'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="bg-white border shadow-sm w-full justify-start">
-              <TabsTrigger value="profile" className="gap-2 data-[state=active]:bg-teal-50 data-[state=active]:text-teal-700">
-                <User className="w-4 h-4" />
-                <span className="hidden sm:inline">پروفایل</span>
-              </TabsTrigger>
-              <TabsTrigger value="courses" className="gap-2 data-[state=active]:bg-amber-50 data-[state=active]:text-amber-700">
-                <BookOpen className="w-4 h-4" />
-                <span className="hidden sm:inline">دوره‌ها</span>
-              </TabsTrigger>
-              <TabsTrigger value="exams" className="gap-2 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700">
-                <Award className="w-4 h-4" />
-                <span className="hidden sm:inline">نتایج آزمون</span>
-              </TabsTrigger>
-            </TabsList>
+          {/* ── Right Column ── */}
+          <div className="space-y-6">
+            {/* Daily Practice */}
+            <div className="glass-card rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  <CheckSquare className="w-5 h-5 text-[#eab308]" />
+                  <h3 className="text-lg font-bold text-white">تمرین امروز</h3>
+                </div>
+                <span className="text-xs text-slate-400">
+                  {completedTasks}/{dailyTasks.length} انجام شده
+                </span>
+              </div>
 
-            <TabsContent value="profile" className="mt-6">
-              {student && <StudentProfile student={student} />}
-            </TabsContent>
+              {/* Practice progress */}
+              <div className="h-1.5 rounded-full bg-white/10 overflow-hidden mb-5">
+                <div
+                  className="h-full rounded-full bg-gradient-to-l from-[#eab308] to-[#ca8a04] transition-all duration-300"
+                  style={{ width: `${(completedTasks / dailyTasks.length) * 100}%` }}
+                />
+              </div>
 
-            <TabsContent value="courses" className="mt-6">
-              {student && <CourseProgress student={student} />}
-            </TabsContent>
+              <div className="space-y-3">
+                {dailyTasks.map((task, idx) => (
+                  <label
+                    key={idx}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 cursor-pointer transition-all hover:bg-white/[0.08]"
+                  >
+                    <div className="relative shrink-0">
+                      <input
+                        type="checkbox"
+                        checked={checkedTasks[idx]}
+                        onChange={() => toggleTask(idx)}
+                        className="peer sr-only"
+                      />
+                      <div
+                        className={`
+                          w-5 h-5 rounded-md border-2 transition-all duration-200 flex items-center justify-center
+                          ${
+                            checkedTasks[idx]
+                              ? 'bg-[#0d9488] border-[#0d9488]'
+                              : 'border-white/20 bg-transparent'
+                          }
+                        `}
+                      >
+                        {checkedTasks[idx] && (
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                    <span
+                      className={`text-sm transition-all ${
+                        checkedTasks[idx] ? 'text-slate-500 line-through' : 'text-slate-300'
+                      }`}
+                    >
+                      {task}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
 
-            <TabsContent value="exams" className="mt-6">
-              <ExamHistory results={results} />
-            </TabsContent>
-          </Tabs>
+            {/* Certificates */}
+            <div className="glass-card rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <Award className="w-5 h-5 text-[#eab308]" />
+                <h3 className="text-lg font-bold text-white">گواهینامه‌های من</h3>
+              </div>
+              <div className="space-y-3">
+                {certificates.map((cert, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="shrink-0 w-10 h-10 rounded-lg bg-[#eab308]/15 flex items-center justify-center">
+                        <Award className="w-5 h-5 text-[#eab308]" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-bold text-white truncate">{cert.title}</p>
+                        <p className="text-xs text-slate-500 mt-0.5">{cert.date}</p>
+                      </div>
+                    </div>
+                    <button className="shrink-0 mr-3 flex items-center gap-1.5 text-xs font-bold text-[#0d9488] hover:text-[#0f766e] transition-colors bg-[#0d9488]/10 border border-[#0d9488]/20 rounded-lg px-3 py-1.5">
+                      <Download className="w-3.5 h-3.5" />
+                      دانلود
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

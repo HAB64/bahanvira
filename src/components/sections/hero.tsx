@@ -1,101 +1,179 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Users, Trophy, Clock, ThumbsUp } from "lucide-react";
+import { useState } from "react";
+import {
+  Brain,
+  Calculator,
+  Star,
+  Users,
+  Award,
+  Phone,
+  ChevronLeft,
+} from "lucide-react";
 
 const stats = [
-  { value: "۵۰۰+", label: "کارآموز فعال", icon: Users },
-  { value: "۴۵+", label: "رتبه برتر کشوری", icon: Trophy },
-  { value: "۱۰+", label: "سال تجربه", icon: Clock },
-  { value: "۹۸٪", label: "رضایت والدین", icon: ThumbsUp },
+  { value: "۱۰+", label: "سال تجربه", icon: Award },
+  { value: "۲,۰۰۰+", label: "دانش‌آموز", icon: Users },
+  { value: "۹۵%", label: "رضایت والدین", icon: Star },
+  { value: "۵۰+", label: "مرکز آموزشی", icon: Calculator },
 ];
 
 export default function Hero() {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+
   return (
     <section
       id="hero"
-      className="relative overflow-hidden abacus-gradient pt-16 pb-20 sm:pt-24 sm:pb-32 lg:pt-28 lg:pb-36"
+      className="relative min-h-[85vh] overflow-hidden hero-gradient flex items-center"
     >
-      {/* Decorative background elements */}
-      <div className="absolute top-[-5%] right-[-5%] h-72 w-72 rounded-full bg-white/5 blur-3xl" />
-      <div className="absolute top-[20%] left-[-8%] h-96 w-96 rounded-full bg-blue-400/10 blur-3xl" />
-      <div className="absolute bottom-[-10%] right-[15%] h-64 w-64 rounded-full bg-orange-400/10 blur-3xl" />
-      <div className="absolute bottom-[10%] left-[20%] h-40 w-40 rounded-full bg-white/5 blur-2xl" />
+      {/* ── Decorative floating elements ── */}
+      <div className="absolute top-[8%] right-[6%] w-16 h-16 rounded-full bg-teal-500/10 border border-teal-500/20 animate-float" />
+      <div
+        className="absolute top-[18%] right-[12%] w-8 h-8 rounded-full bg-orange-400/15 border border-orange-400/20 animate-float"
+        style={{ animationDelay: "0.5s" }}
+      />
+      <div
+        className="absolute top-[35%] right-[3%] w-12 h-12 rounded-full bg-teal-400/8 border border-teal-400/15 animate-float"
+        style={{ animationDelay: "1s" }}
+      />
+      <div
+        className="absolute bottom-[20%] right-[8%] w-6 h-6 rounded-full bg-orange-500/10 border border-orange-500/15 animate-float"
+        style={{ animationDelay: "1.5s" }}
+      />
+      <div
+        className="absolute top-[12%] left-[4%] w-20 h-20 rounded-full bg-teal-500/6 border border-teal-500/10 animate-float"
+        style={{ animationDelay: "0.8s" }}
+      />
+      <div
+        className="absolute bottom-[30%] left-[6%] w-10 h-10 rounded-full bg-orange-400/10 border border-orange-400/15 animate-float"
+        style={{ animationDelay: "1.2s" }}
+      />
+      <div
+        className="absolute bottom-[10%] left-[15%] w-14 h-14 rounded-full bg-teal-400/5 border border-teal-400/10 animate-float"
+        style={{ animationDelay: "2s" }}
+      />
+      {/* Large soft glows */}
+      <div className="absolute top-[-10%] right-[-5%] h-[420px] w-[420px] rounded-full bg-teal-500/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-8%] h-[360px] w-[360px] rounded-full bg-orange-500/8 blur-[100px] pointer-events-none" />
 
-      {/* Subtle grid pattern overlay */}
-      <div className="absolute inset-0 opacity-[0.03]" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-      }} />
+      {/* ── Content ── */}
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 py-16 sm:py-20 lg:py-0">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          {/* ── Left Column: Text + Stats ── */}
+          <div className="flex-1 w-full text-center lg:text-right">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 rounded-full bg-teal-500/15 border border-teal-500/25 px-5 py-2 mb-8">
+              <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+              <span className="text-teal-300 text-sm font-medium">
+                آموزشگاه تخصصی چرتکه دهگانی
+              </span>
+            </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Badge */}
-        <div className="text-center mb-6 animate-[fadeInDown_0.6s_ease-out]">
-          <Badge
-            variant="secondary"
-            className="bg-white/15 text-white border border-white/20 backdrop-blur-sm px-4 py-1.5 text-sm font-medium"
-          >
-            <span className="inline-block w-2 h-2 rounded-full bg-green-400 ml-2 animate-pulse" />
-            آموزشگاه تخصصی چرتکه دهگانی ویرا
-          </Badge>
-        </div>
+            {/* Heading */}
+            <h1 className="text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-5xl font-extrabold leading-tight text-white max-w-2xl mx-auto lg:mx-0">
+              قدرت ذهن فرزندتان را
+              <br className="hidden sm:block" />
+              <span className="text-transparent bg-clip-text bg-gradient-to-l from-teal-300 to-teal-500">
+                {" "}
+                با چرتکه شکوفا کنید{" "}
+              </span>
+            </h1>
 
-        {/* Main Heading */}
-        <h1 className="text-center text-3xl sm:text-4xl lg:text-6xl font-extrabold leading-tight text-white max-w-4xl mx-auto animate-[fadeInUp_0.7s_ease-out_0.1s_both]">
-          آموزش چرتکه و محاسبات ذهنی
-        </h1>
+            {/* Subtitle */}
+            <p className="mt-6 text-base sm:text-lg text-slate-300 leading-relaxed max-w-xl mx-auto lg:mx-0">
+              آموزشگاه چرتکه دهگانی ویرا با بیش از ۱۰ سال تجربه، بهترین
+              روش آموزش چرتکه و حساب ذهنی را به کودکان و نوجوانان ارائه
+              می‌دهد.
+            </p>
 
-        {/* Subheading */}
-        <p className="mt-6 text-center text-base sm:text-lg lg:text-xl leading-relaxed text-white/80 sm:text-white/85 max-w-2xl mx-auto animate-[fadeInUp_0.7s_ease-out_0.25s_both]">
-          با روش نوین چرتکه دهگانی ویرا، فرزند شما قابلیت‌های ذهنی خود را شکوفا می‌کند.
-          افزایش تمرکز، تقویت حافظه، سرعت عمل در محاسبات و اعتماد به نفس بالا،
-          تنها بخشی از دستاوردهای آموزش چرتکه برای کودکان و نوجوانان است.
-        </p>
-
-        {/* CTA Buttons */}
-        <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-[fadeInUp_0.7s_ease-out_0.4s_both]">
-          <Button
-            size="lg"
-            className="bg-accent hover:bg-accent/90 text-white font-bold rounded-xl px-8 py-6 text-base shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 transition-all duration-300 hover:scale-[1.02] w-full sm:w-auto"
-            asChild
-          >
-            <a href="#register">
-              شروع یادگیری
-            </a>
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 rounded-xl px-8 py-6 text-base transition-all duration-300 w-full sm:w-auto backdrop-blur-sm"
-            asChild
-          >
-            <a href="#courses">
-              مشاهده دوره‌ها
-            </a>
-          </Button>
-        </div>
-
-        {/* Stats Row */}
-        <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 max-w-3xl mx-auto animate-[fadeInUp_0.7s_ease-out_0.55s_both]">
-          {stats.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.label}
-                className="text-center group"
+            {/* CTA Buttons */}
+            <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 lg:justify-start justify-center">
+              <a
+                href="#register"
+                className="btn-primary text-base px-10 py-4 w-full sm:w-auto"
               >
-                <div className="flex items-center justify-center mb-2">
-                  <Icon className="w-5 h-5 text-white/50 ml-1.5 group-hover:text-accent transition-colors duration-300" />
-                  <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white">
-                    {stat.value}
+                <Brain className="w-5 h-5" />
+                شروع رایگان
+              </a>
+              <a
+                href="#courses"
+                className="btn-ghost text-base px-8 py-4 w-full sm:w-auto"
+              >
+                مشاهده دوره‌ها
+                <ChevronLeft className="w-4 h-4" />
+              </a>
+            </div>
+
+            {/* Stats Row */}
+            <div className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-2xl mx-auto lg:mx-0">
+              {stats.map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={stat.label} className="stat-card">
+                    <Icon className="w-5 h-5 text-teal-400 mx-auto mb-2" />
+                    <div className="text-xl sm:text-2xl font-extrabold text-white">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
+                      {stat.label}
+                    </div>
                   </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── Right Column: Consult Form ── */}
+          <div className="w-full max-w-md lg:max-w-sm flex-shrink-0">
+            <div className="glass-card rounded-2xl p-6 sm:p-8">
+              {/* Form Header */}
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-teal-500/15 flex items-center justify-center">
+                  <Phone className="w-5 h-5 text-teal-400" />
                 </div>
-                <div className="text-xs sm:text-sm text-white/60 font-medium">
-                  {stat.label}
-                </div>
+                <h3 className="text-lg font-bold text-white">
+                  مشاوره رایگان
+                </h3>
               </div>
-            );
-          })}
+              <p className="text-sm text-slate-400 leading-relaxed mb-6">
+                نام و شمارهتان را بگذارید، مشاوران ما تماس می‌گیرند
+              </p>
+
+              {/* Form Body */}
+              <div className="space-y-4">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="نام و نام خانوادگی"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="input-dark"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    placeholder="شماره همراه"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="input-dark"
+                    dir="ltr"
+                    style={{ textAlign: "left" }}
+                  />
+                </div>
+                <button className="btn-primary w-full text-base py-4">
+                  دریافت مشاوره رایگان
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Form Footer */}
+              <p className="mt-4 text-center text-xs text-slate-500">
+                پاسخگویی در کمتر از ۲۴ ساعت
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
