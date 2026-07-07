@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Clock, Users } from "lucide-react";
+import { Check, Clock, Users, ArrowLeft } from "lucide-react";
 
 const courses = [
   {
@@ -140,6 +140,21 @@ export default function Courses() {
               </Button>
             </div>
           ))}
+
+          {/* View all courses button */}
+          <div className="mt-10 text-center">
+            <Button
+              variant="outline"
+              size="lg"
+              className="rounded-xl gap-2 px-8 border-2 hover:bg-primary/5 hover:text-primary hover:border-primary/30"
+              asChild
+            >
+              <a href="/courses">
+                مشاهده همه دوره‌ها
+                <ArrowLeft className="h-4 w-4" />
+              </a>
+            </Button>
+          </div>
         </div>
       </div>
     </section>

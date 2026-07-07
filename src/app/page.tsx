@@ -3,8 +3,12 @@
 import { useState } from "react";
 import Header from "@/components/sections/header";
 import Hero from "@/components/sections/hero";
+import Benefits from "@/components/sections/benefits";
+import PracticeTools from "@/components/sections/practice-tools";
 import LearningPath from "@/components/sections/learning-path";
 import Courses from "@/components/sections/courses";
+import Instructors from "@/components/sections/instructors";
+import About from "@/components/sections/about";
 import WhyVira from "@/components/sections/why-vira";
 import Cooperation from "@/components/sections/cooperation";
 import Testimonials from "@/components/sections/testimonials";
@@ -44,8 +48,12 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <Hero />
+        <Benefits />
+        <PracticeTools />
         <LearningPath />
         <Courses />
+        <Instructors />
+        <About />
         <WhyVira />
         <Cooperation />
         <Testimonials />
