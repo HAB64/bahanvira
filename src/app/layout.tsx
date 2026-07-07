@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Vazirmatn } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
 
 const vazir = Vazirmatn({
   variable: "--font-vazir",
   subsets: ["arabic"],
   display: "swap",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -40,7 +40,6 @@ export default function RootLayout({
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body className={`${vazir.variable} font-sans antialiased`}>
         {children}
-        <Toaster />
       </body>
     </html>
   );
