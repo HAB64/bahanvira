@@ -19,7 +19,7 @@ interface Tool {
 const tools = [
   {
     icon: Calculator,
-    title: 'آباکوس مجازی',
+    title: 'چرتکه دهگانی ویرا',
     desc: 'چرتکه دیجیتال تعاملی برای تمرین روزانه',
     btnText: 'شروع تمرین',
     href: '/abacus',

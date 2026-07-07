@@ -6,7 +6,7 @@ import { Menu, X, Phone, User, LogIn, ChevronDown, GraduationCap } from "lucide-
 const navLinks = [
   { label: "صفحه اصلی", href: "/" },
   { label: "دوره‌ها", href: "/courses", hasDropdown: true },
-  { label: "آباکوس مجازی", href: "/abacus" },
+  { label: "چرتکه دهگانی ویرا", href: "/abacus" },
   { label: "آزمون آنلاین", href: "/exam" },
   { label: "پنل دانش‌آموز", href: "/portal" },
   { label: "وبلاگ", href: "/blog", comingSoon: true },
@@ -14,7 +14,7 @@ const navLinks = [
 ];
 
 const courseDropdownItems = [
-  { label: "دوره‌های آباکوس", href: "/courses?type=abacus" },
+  { label: "دوره‌های چرتکه", href: "/courses?type=abacus" },
   { label: "دوره‌های حساب ذهنی", href: "/courses?type=mental" },
 ];
 

@@ -392,10 +392,15 @@ export default function AbacusPage() {
 
       <main className="flex-1 pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6" dir="rtl">
-          {/* ───── Page Title ───── */}
+          {/* ───── Page Title + Image ───── */}
           <div className="text-center mb-8">
+            <img
+              src="/chertke-dohgani-vira.png"
+              alt="چرتکه دهگانی ویرا"
+              className="mx-auto h-32 sm:h-40 object-contain mb-4 drop-shadow-lg"
+            />
             <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2 tracking-tight">
-              آباکوس مجازی
+              چرتکه دهگانی ویرا
             </h1>
             <p className="text-slate-900/40 text-sm sm:text-base">
               چرتکه دیجیتال تعاملی برای تمرین روزانه

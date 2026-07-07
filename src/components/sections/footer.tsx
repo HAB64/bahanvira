@@ -52,7 +52,7 @@ export default function Footer() {
               {[
                 { label: "صفحه اصلی", href: "#hero" },
                 { label: "دوره‌های آموزشی", href: "#courses" },
-                { label: "آباکوس مجازی", href: "/abacus" },
+                { label: "چرتکه دهگانی ویرا", href: "/abacus" },
                 { label: "آزمون آنلاین", href: "/exam" },
                 { label: "پنل دانش‌آموز", href: "/portal" },
                 { label: "بلاگ", href: "/blog" },
