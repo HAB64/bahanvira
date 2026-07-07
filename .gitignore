@@ -1,0 +1,17 @@
+node_modules/
+.next/
+*.tsbuildinfo
+.env
+.git/
+upload/
+download/
+tool-results/
+worklog.md
+agent-ctx/
+skills/
+.zscripts/
+examples/
+mini-services/
+db/
+prisma/
+out-deploy/
