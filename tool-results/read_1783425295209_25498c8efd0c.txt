@@ -1,0 +1,728 @@
+     1→'use client';
+     2→
+     3→import { useState } from 'react';
+     4→import {
+     5→  Users,
+     6→  GraduationCap,
+     7→  Lock,
+     8→  LogOut,
+     9→  BarChart3,
+    10→  BookOpen,
+    11→  Settings,
+    12→  ChevronDown,
+    13→  Bell,
+    14→  Home,
+    15→  FolderOpen,
+    16→  Shield,
+    17→  PieChart,
+    18→  CreditCard,
+    19→  ClipboardList,
+    20→  UserCheck,
+    21→  UserPlus,
+    22→  TrendingUp,
+    23→  Award,
+    24→  MessageSquare,
+    25→  Phone,
+    26→  Mail,
+    27→  CalendarDays,
+    28→  FileText,
+    29→  Megaphone,
+    30→  Building2,
+    31→  Gift,
+    32→  Send,
+    33→  HelpCircle as SupportIcon,
+    34→  Play,
+    35→  X,
+    36→} from 'lucide-react';
+    37→
+    38→// Tab components
+    39→import MarketersTab from '@/components/admin/marketers';
+    40→import AgenciesTab from '@/components/admin/agencies';
+    41→import LMSTab from '@/components/admin/lms';
+    42→import CalendarTab from '@/components/admin/calendar';
+    43→import ReportsTab from '@/components/admin/reports';
+    44→import SupportTab from '@/components/admin/support';
+    45→import FilesTab from '@/components/admin/files';
+    46→import PaymentsTab from '@/components/admin/payments';
+    47→import MarketingTab from '@/components/admin/marketing';
+    48→import EmailsTab from '@/components/admin/emails';
+    49→
+    50→/* ═══════════════════════════════════════════════════
+    51→   Types
+    52→   ═══════════════════════════════════════════════════ */
+    53→
+    54→type TabKey =
+    55→  | 'dashboard'
+    56→  | 'students'
+    57→  | 'classes'
+    58→  | 'exams'
+    59→  | 'crm'
+    60→  | 'financial'
+    61→  | 'users'
+    62→  | 'settings'
+    63→  | 'marketers'
+    64→  | 'agencies'
+    65→  | 'lms'
+    66→  | 'calendar'
+    67→  | 'reports'
+    68→  | 'support'
+    69→  | 'files'
+    70→  | 'payments'
+    71→  | 'marketing'
+    72→  | 'emails';
+    73→
+    74→interface MenuItem {
+    75→  key: TabKey;
+    76→  label: string;
+    77→  icon: React.ElementType;
+    78→}
+    79→
+    80→interface MenuCategory {
+    81→  title: string;
+    82→  icon: React.ElementType;
+    83→  items: MenuItem[];
+    84→}
+    85→
+    86→/* ═══════════════════════════════════════════════════
+    87→   Sidebar Config — Complete like bahanrayaneh.ir
+    88→   ═══════════════════════════════════════════════════ */
+    89→
+    90→const sidebarCategories: MenuCategory[] = [
+    91→  {
+    92→    title: 'داشبورد و گزارشات',
+    93→    icon: BarChart3,
+    94→    items: [
+    95→      { key: 'dashboard', label: 'داشبورد', icon: Home },
+    96→      { key: 'reports', label: 'گزارش‌ها و تحلیل', icon: BarChart3 },
+    97→    ],
+    98→  },
+    99→  {
+   100→    title: 'مدیریت آموزشی',
+   101→    icon: BookOpen,
+   102→    items: [
+   103→      { key: 'students', label: 'دانش‌آموزان', icon: Users },
+   104→      { key: 'classes', label: 'کلاس‌ها', icon: BookOpen },
+   105→      { key: 'exams', label: 'آزمون‌ها', icon: ClipboardList },
+   106→      { key: 'lms', label: 'مدیریت محتوا (LMS)', icon: Play },
+   107→      { key: 'calendar', label: 'تقویم و برنامه‌ریزی', icon: CalendarDays },
+   108→    ],
+   109→  },
+   110→  {
+   111→    title: 'مدیریت و پیکربندی',
+   112→    icon: Settings,
+   113→    items: [
+   114→      { key: 'users', label: 'کاربران و نقش‌ها', icon: Shield },
+   115→      { key: 'payments', label: 'پرداخت و فاکتورها', icon: CreditCard },
+   116→      { key: 'financial', label: 'مدیریت مالی', icon: TrendingUp },
+   117→      { key: 'files', label: 'مدیریت فایل‌ها', icon: FileText },
+   118→      { key: 'settings', label: 'تنظیمات', icon: Settings },
+   119→    ],
+   120→  },
+   121→  {
+   122→    title: 'پشتیبانی و CRM',
+   123→    icon: UserCheck,
+   124→    items: [
+   125→      { key: 'crm', label: 'مدیریت CRM', icon: UserCheck },
+   126→      { key: 'support', label: 'پشتیبانی (تیکت)', icon: SupportIcon },
+   127→    ],
+   128→  },
+   129→  {
+   130→    title: 'بازاریابی و فروش',
+   131→    icon: Megaphone,
+   132→    items: [
+   133→      { key: 'marketers', label: 'بازاریاب‌ها و پورسانت', icon: Gift },
+   134→      { key: 'agencies', label: 'نمایندگی‌ها', icon: Building2 },
+   135→      { key: 'marketing', label: 'کمپین‌ها و بازاریابی', icon: Megaphone },
+   136→      { key: 'emails', label: 'قالب ایمیل و پیامک', icon: Send },
+   137→    ],
+   138→  },
+   139→];
+   140→
+   141→/* ═══════════════════════════════════════════════════
+   142→   Dashboard Data (inline — main overview)
+   143→   ═══════════════════════════════════════════════════ */
+   144→
+   145→const dashboardStats = [
+   146→  { label: 'دانش‌آموز فعال', value: '۱۲۳', icon: Users, color: 'text-orange-500', bgColor: 'bg-orange-50', borderColor: 'border-orange-200' },
+   147→  { label: 'مربی', value: '۸', icon: GraduationCap, color: 'text-teal-500', bgColor: 'bg-teal-50', borderColor: 'border-teal-200' },
+   148→  { label: 'کلاس فعال', value: '۱۵', icon: BookOpen, color: 'text-purple-500', bgColor: 'bg-purple-50', borderColor: 'border-purple-200' },
+   149→  { label: 'درآمد ماهانه', value: '۲۵M', icon: TrendingUp, color: 'text-emerald-500', bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200' },
+   150→  { label: 'سرنخ CRM', value: '۴۷', icon: UserPlus, color: 'text-blue-500', bgColor: 'bg-blue-50', borderColor: 'border-blue-200' },
+   151→  { label: 'نرخ تبدیل', value: '۶۸٪', icon: PieChart, color: 'text-amber-500', bgColor: 'bg-amber-50', borderColor: 'border-amber-200' },
+   152→  { label: 'بازاریاب فعال', value: '۱۲', icon: Gift, color: 'text-rose-500', bgColor: 'bg-rose-50', borderColor: 'border-rose-200' },
+   153→  { label: 'نمایندگی', value: '۸', icon: Building2, color: 'text-indigo-500', bgColor: 'bg-indigo-50', borderColor: 'border-indigo-200' },
+   154→];
+   155→
+   156→const quickModules = [
+   157→  { title: 'مدیریت CRM', desc: 'مدیریت ارتباط با مشتریان و پیگیری سرنخ‌ها', icon: UserCheck, color: 'from-orange-400 to-orange-600', count: 4, target: 'crm' as TabKey },
+   158→  { title: 'بازاریاب‌ها', desc: 'مدیریت بازاریاب‌ها و محاسبه پورسانت', icon: Gift, color: 'from-rose-400 to-rose-600', count: 2, target: 'marketers' as TabKey },
+   159→  { title: 'نمایندگی‌ها', desc: 'مدیریت شعب و نمایندگی‌های آموزشگاه', icon: Building2, color: 'from-indigo-400 to-indigo-600', count: 3, target: 'agencies' as TabKey },
+   160→  { title: 'مدیریت محتوا', desc: 'LMS و مدیریت جلسات آموزشی', icon: Play, color: 'from-teal-400 to-teal-600', count: 5, target: 'lms' as TabKey },
+   161→  { title: 'گزارشات پیشرفته', desc: 'تحلیل داده‌ها و نمودارهای عملکرد', icon: BarChart3, color: 'from-purple-400 to-purple-600', count: 2, target: 'reports' as TabKey },
+   162→  { title: 'پرداخت و فاکتور', desc: 'صدور فاکتور و پیگیری پرداخت‌ها', icon: CreditCard, color: 'from-emerald-400 to-emerald-600', count: 8, target: 'payments' as TabKey },
+   163→  { title: 'پشتیبانی', desc: 'مدیریت تیکت‌ها و پشتیبانی آنلاین', icon: SupportIcon, color: 'from-blue-400 to-blue-600', count: 5, target: 'support' as TabKey },
+   164→  { title: 'بازاریابی', desc: 'کمپین‌ها، ایمیل و پیامک', icon: Megaphone, color: 'from-amber-400 to-amber-600', count: 3, target: 'marketing' as TabKey },
+   165→];
+   166→
+   167→const recentRegistrations = [
+   168→  { name: 'سارا احمدی', phone: '۰۹۱۲۱۲۳۴۵۶۷', date: '۱۴۰۴/۰۳/۲۰', course: 'چرتکه مبتدی', status: 'فعال' },
+   169→  { name: 'محمد رضایی', phone: '۰۹۳۵۶۷۸۹۰۱۲', date: '۱۴۰۴/۰۳/۱۹', course: 'حساب ذهنی ۱', status: 'در انتظار' },
+   170→  { name: 'فاطمه حسینی', phone: '۰۹۱۰۳۴۵۶۷۸۹', date: '۱۴۰۴/۰۳/۱۸', course: 'چرتکه متوسط', status: 'فعال' },
+   171→  { name: 'امیر کریمی', phone: '۰۹۲۱۲۳۴۵۶۷۸', date: '۱۴۰۴/۰۳/۱۷', course: 'چرتکه مبتدی', status: 'فعال' },
+   172→  { name: 'نازنین عباسی', phone: '۰۹۳۸۹۰۱۲۳۴۵', date: '۱۴۰۴/۰۳/۱۶', course: 'آمادگی مسابقات', status: 'غیرفعال' },
+   173→];
+   174→
+   175→const recentExamResults = [
+   176→  { student: 'سارا احمدی', exam: 'آزمون جمع و تفریق', score: '۹/۱۰', date: '۱۴۰۴/۰۳/۲۰' },
+   177→  { student: 'محمد رضایی', exam: 'آزمون ضرب', score: '۷/۱۰', date: '۱۴۰۴/۰۳/۱۹' },
+   178→  { student: 'فاطمه حسینی', exam: 'آزمون سرعت', score: '۱۸/۲۰', date: '۱۴۰۴/۰۳/۱۸' },
+   179→  { student: 'امیر کریمی', exam: 'آزمون جامع', score: '۲۲/۳۰', date: '۱۴۰۴/۰۳/۱۷' },
+   180→  { student: 'نازنین عباسی', exam: 'آزمون سطح ۳', score: '۸/۱۰', date: '۱۴۰۴/۰۳/۱۶' },
+   181→];
+   182→
+   183→const statusColors: Record<string, string> = {
+   184→  'فعال': 'bg-emerald-100 text-emerald-600 border-emerald-200',
+   185→  'در انتظار': 'bg-amber-100 text-amber-600 border-amber-200',
+   186→  'غیرفعال': 'bg-slate-100 text-slate-500 border-slate-200',
+   187→  'بسته شده': 'bg-slate-100 text-slate-500 border-slate-200',
+   188→};
+   189→
+   190→/* ═══════════════════════════════════════════════════
+   191→   Inline Tabs (Dashboard, Students, Classes, Exams, CRM, Financial, Users, Settings)
+   192→   ═══════════════════════════════════════════════════ */
+   193→
+   194→/* ─── Dashboard ─── */
+   195→function DashboardTab() {
+   196→  return (
+   197→    <div className="space-y-8">
+   198→      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+   199→        {dashboardStats.map((stat) => {
+   200→          const Icon = stat.icon;
+   201→          return (
+   202→            <div key={stat.label} className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-shadow flex items-center gap-4">
+   203→              <div className={`shrink-0 w-12 h-12 rounded-xl ${stat.bgColor} border ${stat.borderColor} flex items-center justify-center`}>
+   204→                <Icon className={`w-6 h-6 ${stat.color}`} />
+   205→              </div>
+   206→              <div className="min-w-0">
+   207→                <p className="text-xl font-bold text-slate-900 truncate">{stat.value}</p>
+   208→                <p className="text-xs text-slate-500 mt-0.5">{stat.label}</p>
+   209→              </div>
+   210→            </div>
+   211→          );
+   212→        })}
+   213→      </div>
+   214→
+   215→      <div>
+   216→        <h3 className="text-lg font-bold text-slate-900 mb-4">ماژول‌های پیشنهادی</h3>
+   217→        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+   218→          {quickModules.map((mod) => {
+   219→            const Icon = mod.icon;
+   220→            return (
+   221→              <div key={mod.title} className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-all text-right group cursor-pointer">
+   222→                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${mod.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
+   223→                  <Icon className="w-6 h-6 text-white" />
+   224→                </div>
+   225→                <h4 className="text-sm font-bold text-slate-900 mb-1">{mod.title}</h4>
+   226→                <p className="text-xs text-slate-500 leading-relaxed mb-3">{mod.desc}</p>
+   227→                <span className="text-xs text-orange-500 font-medium">{mod.count} آیتم فعال</span>
+   228→              </div>
+   229→            );
+   230→          })}
+   231→        </div>
+   232→      </div>
+   233→
+   234→      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+   235→        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+   236→          <div className="flex items-center justify-between mb-5">
+   237→            <h3 className="text-base font-bold text-slate-900">آخرین ثبت‌نام‌ها</h3>
+   238→            <Plus className="w-5 h-5 text-slate-400 cursor-pointer hover:text-orange-500 transition-colors" />
+   239→          </div>
+   240→          <table className="w-full text-sm">
+   241→            <thead>
+   242→              <tr className="text-slate-400 text-xs border-b border-gray-100">
+   243→                <th className="text-right pb-3 font-medium">نام</th>
+   244→                <th className="text-right pb-3 font-medium hidden sm:table-cell">دوره</th>
+   245→                <th className="text-right pb-3 font-medium">وضعیت</th>
+   246→              </tr>
+   247→            </thead>
+   248→            <tbody className="divide-y divide-gray-50">
+   249→              {recentRegistrations.map((r, idx) => (
+   250→                <tr key={idx} className="hover:bg-orange-50/30 transition-colors">
+   251→                  <td className="py-3 text-slate-900 font-medium">{r.name}</td>
+   252→                  <td className="py-3 text-slate-500 hidden sm:table-cell">{r.course}</td>
+   253→                  <td className="py-3"><span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${statusColors[r.status] || ''}`}>{r.status}</span></td>
+   254→                </tr>
+   255→              ))}
+   256→            </tbody>
+   257→          </table>
+   258→        </div>
+   259→        <div className="bg-white rounded-2xl p-6 border border-gray-100">
+   260→          <div className="flex items-center justify-between mb-5">
+   261→            <h3 className="text-base font-bold text-slate-900">آزمون‌های اخیر</h3>
+   262→            <GraduationCap className="w-5 h-5 text-slate-400" />
+   263→          </div>
+   264→          <table className="w-full text-sm">
+   265→            <thead>
+   266→              <tr className="text-slate-400 text-xs border-b border-gray-100">
+   267→                <th className="text-right pb-3 font-medium">دانش‌آموز</th>
+   268→                <th className="text-right pb-3 font-medium hidden sm:table-cell">آزمون</th>
+   269→                <th className="text-right pb-3 font-medium">نمره</th>
+   270→              </tr>
+   271→            </thead>
+   272→            <tbody className="divide-y divide-gray-50">
+   273→              {recentExamResults.map((r, idx) => (
+   274→                <tr key={idx} className="hover:bg-orange-50/30 transition-colors">
+   275→                  <td className="py-3 text-slate-900 font-medium">{r.student}</td>
+   276→                  <td className="py-3 text-slate-500 hidden sm:table-cell">{r.exam}</td>
+   277→                  <td className="py-3 text-emerald-600 font-bold">{r.score}</td>
+   278→                </tr>
+   279→              ))}
+   280→            </tbody>
+   281→          </table>
+   282→        </div>
+   283→      </div>
+   284→    </div>
+   285→  );
+   286→}
+   287→
+   288→/* ─── Students (simplified — full data is demo) ─── */
+   289→function StudentsTab() {
+   290→  const [search, setSearch] = useState('');
+   291→  const students = [
+   292→    { name: 'سارا احمدی', phone: '۰۹۱۲۱۲۳۴۵۶۷', level: 'سطح ۳', date: '۱۴۰۴/۰۱/۱۵', status: 'فعال', paid: 'تسویه شده' },
+   293→    { name: 'محمد رضایی', phone: '۰۹۳۵۶۷۸۹۰۱۲', level: 'سطح ۲', date: '۱۴۰۴/۰۲/۰۵', status: 'فعال', paid: 'تسویه شده' },
+   294→    { name: 'فاطمه حسینی', phone: '۰۹۱۰۳۴۵۶۷۸۹', level: 'سطح ۵', date: '۱۴۰۳/۱۲/۲۰', status: 'فعال', paid: 'تسویه شده' },
+   295→    { name: 'امیر کریمی', phone: '۰۹۲۱۲۳۴۵۶۷۸', level: 'سطح ۱', date: '۱۴۰۴/۰۳/۰۱', status: 'در انتظار', paid: 'پرداخت نشده' },
+   296→    { name: 'نازنین عباسی', phone: '۰۹۳۸۹۰۱۲۳۴۵', level: 'سطح ۴', date: '۱۴۰۴/۰۱/۱۰', status: 'غیرفعال', paid: 'بدهکار' },
+   297→    { name: 'رضا طاهری', phone: '۰۹۱۵۶۷۸۱۲۳۴', level: 'سطح ۲', date: '۱۴۰۴/۰۲/۲۰', status: 'فعال', paid: 'تسویه شده' },
+   298→  ];
+   299→  const filtered = students.filter((s) => s.name.includes(search) || s.phone.includes(search));
+   300→  return (
+   301→    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden" dir="rtl">
+   302→      <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+   303→        <h3 className="text-lg font-bold text-slate-900">لیست دانش‌آموزان</h3>
+   304→        <div className="flex items-center gap-3">
+   305→          <div className="relative w-full sm:w-64">
+   306→            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+   307→            <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="جستجو..." className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400" />
+   308→          </div>
+   309→          <button className="shrink-0 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5"><Plus className="w-4 h-4" />افزودن</button>
+   310→        </div>
+   311→      </div>
+   312→      <table className="w-full text-sm">
+   313→        <thead><tr className="text-slate-400 text-xs border-b border-gray-100 bg-gray-50/50">
+   314→          <th className="text-right py-3 px-4 font-medium">نام</th><th className="text-right py-3 px-4 font-medium hidden md:table-cell">تلفن</th><th className="text-right py-3 px-4 font-medium">سطح</th><th className="text-right py-3 px-4 font-medium hidden sm:table-cell">تاریخ</th><th className="text-right py-3 px-4 font-medium">وضعیت</th><th className="text-right py-3 px-4 font-medium">عملیات</th>
+   315→        </tr></thead>
+   316→        <tbody className="divide-y divide-gray-50">
+   317→          {filtered.map((s, i) => (
+   318→            <tr key={i} className="hover:bg-orange-50/30 transition-colors">
+   319→              <td className="py-3 px-4 text-slate-900 font-medium">{s.name}</td>
+   320→              <td className="py-3 px-4 text-slate-500 hidden md:table-cell" dir="ltr">{s.phone}</td>
+   321→              <td className="py-3 px-4 text-slate-600">{s.level}</td>
+   322→              <td className="py-3 px-4 text-slate-500 hidden sm:table-cell">{s.date}</td>
+   323→              <td className="py-3 px-4"><span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${statusColors[s.status]}`}>{s.status}</span></td>
+   324→              <td className="py-3 px-4"><div className="flex gap-1"><button className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-500"><Eye className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-orange-50 text-slate-400 hover:text-orange-500"><Edit3 className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button></div></td>
+   325→            </tr>
+   326→          ))}
+   327→        </tbody>
+   328→      </table>
+   329→    </div>
+   330→  );
+   331→}
+   332→
+   333→/* ─── Classes ─── */
+   334→function ClassesTab() {
+   335→  const classes = [
+   336→    { name: 'چرتکه مبتدی - گروه الف', instructor: 'استاد رضایی', students: 18, schedule: 'شنبه و دوشنبه - ۱۶:۰۰' },
+   337→    { name: 'چرتکه مبتدی - گروه ب', instructor: 'استاد احمدی', students: 15, schedule: 'یکشنبه و سه‌شنبه - ۱۵:۰۰' },
+   338→    { name: 'چرتکه متوسط', instructor: 'استاد کریمی', students: 12, schedule: 'شنبه و چهارشنبه - ۱۷:۰۰' },
+   339→    { name: 'چرتکه پیشرفته', instructor: 'استاد حسینی', students: 8, schedule: 'دوشنبه و پنجشنبه - ۱۴:۰۰' },
+   340→    { name: 'حساب ذهنی ۱', instructor: 'استاد محمدی', students: 20, schedule: 'سه‌شنبه و پنجشنبه - ۱۶:۰۰' },
+   341→    { name: 'آمادگی مسابقات', instructor: 'استاد رضایی', students: 6, schedule: 'پنجشنبه - ۱۰:۰۰' },
+   342→  ];
+   343→  return (
+   344→    <div className="space-y-6" dir="rtl">
+   345→      <div className="flex items-center justify-between">
+   346→        <h3 className="text-lg font-bold text-slate-900">لیست کلاس‌ها</h3>
+   347→        <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5"><Plus className="w-4 h-4" />ایجاد کلاس</button>
+   348→      </div>
+   349→      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+   350→        {classes.map((cls, i) => (
+   351→          <div key={i} className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-shadow">
+   352→            <h4 className="text-sm font-bold text-slate-900 leading-6 mb-4">{cls.name}</h4>
+   353→            <div className="space-y-3 text-sm">
+   354→              <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><GraduationCap className="w-3.5 h-3.5" />مربی</span><span className="text-slate-900 font-medium">{cls.instructor}</span></div>
+   355→              <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />دانش‌آموز</span><span className="text-slate-900 font-medium">{cls.students} نفر</span></div>
+   356→              <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />برنامه</span><span className="text-slate-900 font-medium text-xs">{cls.schedule}</span></div>
+   357→            </div>
+   358→          </div>
+   359→        ))}
+   360→      </div>
+   361→    </div>
+   362→  );
+   363→}
+   364→
+   365→/* ─── Exams ─── */
+   366→function ExamsTab() {
+   367→  const exams = [
+   368→    { name: 'آزمون سطح ۱', students: 35, avgScore: '۸۵٪', date: '۱۴۰۴/۰۳/۱۵', status: 'بسته شده' },
+   369→    { name: 'آزمون سطح ۳', students: 28, avgScore: '۷۸٪', date: '۱۴۰۴/۰۳/۱۰', status: 'بسته شده' },
+   370→    { name: 'آزمون سرعت', students: 42, avgScore: '۷۲٪', date: '۱۴۰۴/۰۲/۲۸', status: 'بسته شده' },
+   371→    { name: 'آزمون جامع', students: 15, avgScore: '۸۰٪', date: '۱۴۰۴/۰۳/۲۲', status: 'فعال' },
+   372→    { name: 'آزمون ضرب', students: 30, avgScore: '۸۲٪', date: '۱۴۰۴/۰۳/۲۵', status: 'فعال' },
+   373→  ];
+   374→  return (
+   375→    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden" dir="rtl">
+   376→      <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+   377→        <h3 className="text-lg font-bold text-slate-900">لیست آزمون‌ها</h3>
+   378→        <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5"><Plus className="w-4 h-4" />ایجاد آزمون</button>
+   379→      </div>
+   380→      <table className="w-full text-sm">
+   381→        <thead><tr className="text-slate-400 text-xs border-b border-gray-100 bg-gray-50/50">
+   382→          <th className="text-right py-3 px-4 font-medium">نام آزمون</th><th className="text-right py-3 px-4 font-medium">شرکت‌کننده</th><th className="text-right py-3 px-4 font-medium hidden sm:table-cell">میانگین</th><th className="text-right py-3 px-4 font-medium">تاریخ</th><th className="text-right py-3 px-4 font-medium">وضعیت</th><th className="text-right py-3 px-4 font-medium">عملیات</th>
+   383→        </tr></thead>
+   384→        <tbody className="divide-y divide-gray-50">
+   385→          {exams.map((e, i) => (
+   386→            <tr key={i} className="hover:bg-orange-50/30 transition-colors">
+   387→              <td className="py-3 px-4 text-slate-900 font-medium">{e.name}</td>
+   388→              <td className="py-3 px-4 text-slate-600">{e.students} نفر</td>
+   389→              <td className="py-3 px-4 text-emerald-600 font-bold hidden sm:table-cell">{e.avgScore}</td>
+   390→              <td className="py-3 px-4 text-slate-500">{e.date}</td>
+   391→              <td className="py-3 px-4"><span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${statusColors[e.status]}`}>{e.status}</span></td>
+   392→              <td className="py-3 px-4"><div className="flex gap-1"><button className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-500"><Eye className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-orange-50 text-slate-400 hover:text-orange-500"><Edit3 className="w-4 h-4" /></button></div></td>
+   393→            </tr>
+   394→          ))}
+   395→        </tbody>
+   396→      </table>
+   397→    </div>
+   398→  );
+   399→}
+   400→
+   401→/* ─── CRM (simplified inline) ─── */
+   402→function CRMInlineTab() {
+   403→  const [search, setSearch] = useState('');
+   404→  const leads = [
+   405→    { name: 'زهرا محمدی', phone: '۰۹۱۲۳۴۵۶۷۸۹', source: 'اینستاگرام', status: 'ثبت‌نام شده', course: 'چرتکه مبتدی', date: '۱۴۰۴/۰۳/۲۰', assignee: 'مستر رضایی' },
+   406→    { name: 'علی حسینی', phone: '۰۹۳۵۶۷۸۹۰۱۲', source: 'وبسایت', status: 'تماس گرفته شد', course: 'حساب ذهنی ۱', date: '۱۴۰۴/۰۳/۱۹', assignee: 'مستر احمدی' },
+   407→    { name: 'مینا رضایی', phone: '۰۹۱۰۱۲۳۴۵۶۷', source: 'معرفی', status: 'جلسه مشاوره', course: 'چرتکه متوسط', date: '۱۴۰۴/۰۳/۱۸', assignee: 'مستر کریمی' },
+   408→    { name: 'امیر کریمی', phone: '۰۹۲۱۲۳۴۵۶۷۸', source: 'تلگرام', status: 'جدید', course: 'چرتکه مبتدی', date: '۱۴۰۴/۰۳/۲۲', assignee: '-' },
+   409→    { name: 'فاطمه عباسی', phone: '۰۹۱۵۶۷۸۱۲۳۴', source: 'اینستاگرام', status: 'غیرفعال', course: 'چرتکه پیشرفته', date: '۱۴۰۴/۰۲/۱۰', assignee: 'مستر رضایی' },
+   410→  ];
+   411→  const crmStatusColors: Record<string, string> = {
+   412→    'جدید': 'bg-blue-100 text-blue-600 border-blue-200',
+   413→    'تماس گرفته شد': 'bg-amber-100 text-amber-600 border-amber-200',
+   414→    'جلسه مشاوره': 'bg-purple-100 text-purple-600 border-purple-200',
+   415→    'ثبت‌نام شده': 'bg-emerald-100 text-emerald-600 border-emerald-200',
+   416→    'غیرفعال': 'bg-slate-100 text-slate-500 border-slate-200',
+   417→  };
+   418→  const filtered = leads.filter((l) => l.name.includes(search) || l.phone.includes(search));
+   419→  return (
+   420→    <div className="space-y-6" dir="rtl">
+   421→      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+   422→        {Object.entries({ 'جدید': 2, 'تماس گرفته شد': 1, 'جلسه مشاوره': 1, 'ثبت‌نام شده': 1, 'غیرفعال': 1 }).map(([status, count]) => (
+   423→          <div key={status} className={`p-4 rounded-2xl border text-center ${crmStatusColors[status]}`}>
+   424→            <div className="text-2xl font-bold">{count}</div>
+   425→            <div className="text-xs font-medium mt-1">{status}</div>
+   426→          </div>
+   427→        ))}
+   428→      </div>
+   429→      <div className="flex gap-3">
+   430→        <div className="relative flex-1">
+   431→          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+   432→          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="جستجوی سرنخ..." className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400" />
+   433→        </div>
+   434→        <button className="shrink-0 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium px-5 py-2.5 rounded-xl flex items-center gap-1.5"><UserPlus className="w-4 h-4" />سرنخ جدید</button>
+   435→      </div>
+   436→      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+   437→        <table className="w-full text-sm">
+   438→          <thead><tr className="text-slate-400 text-xs border-b border-gray-100 bg-gray-50/50">
+   439→            <th className="text-right py-3 px-4 font-medium">نام</th><th className="text-right py-3 px-4 font-medium hidden md:table-cell">تلفن</th><th className="text-right py-3 px-4 font-medium hidden lg:table-cell">منبع</th><th className="text-right py-3 px-4 font-medium">دوره</th><th className="text-right py-3 px-4 font-medium">وضعیت</th><th className="text-right py-3 px-4 font-medium hidden sm:table-cell">مسئول</th><th className="text-right py-3 px-4 font-medium">عملیات</th>
+   440→          </tr></thead>
+   441→          <tbody className="divide-y divide-gray-50">
+   442→            {filtered.map((l, i) => (
+   443→              <tr key={i} className="hover:bg-orange-50/30 transition-colors">
+   444→                <td className="py-3 px-4 text-slate-900 font-medium">{l.name}</td>
+   445→                <td className="py-3 px-4 text-slate-500 hidden md:table-cell" dir="ltr">{l.phone}</td>
+   446→                <td className="py-3 px-4 text-slate-600 hidden lg:table-cell">{l.source}</td>
+   447→                <td className="py-3 px-4 text-slate-600">{l.course}</td>
+   448→                <td className="py-3 px-4"><span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${crmStatusColors[l.status]}`}>{l.status}</span></td>
+   449→                <td className="py-3 px-4 text-slate-600 hidden sm:table-cell">{l.assignee}</td>
+   450→                <td className="py-3 px-4"><div className="flex gap-1"><button className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-500"><Eye className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-green-50 text-slate-400 hover:text-green-500"><PhoneIcon className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-purple-50 text-slate-400 hover:text-purple-500"><MessageSquare className="w-4 h-4" /></button></div></td>
+   451→              </tr>
+   452→            ))}
+   453→          </tbody>
+   454→        </table>
+   455→      </div>
+   456→    </div>
+   457→  );
+   458→}
+   459→
+   460→/* ─── Financial ─── */
+   461→function FinancialTab() {
+   462→  const txs = [
+   463→    { desc: 'شهریه چرتکه مبتدی - سارا احمدی', amount: '+۲,۵۰۰,۰۰۰', date: '۱۴۰۴/۰۳/۲۰', type: 'درآمد', status: 'تسویه' },
+   464→    { desc: 'حقوق مربی رضایی - اردیبهشت', amount: '-۸,۰۰۰,۰۰۰', date: '۱۴۰۴/۰۳/۱۵', type: 'هزینه', status: 'پرداخت شده' },
+   465→    { desc: 'شهریه حساب ذهنی - محمد رضایی', amount: '+۲,۰۰۰,۰۰۰', date: '۱۴۰۴/۰۳/۱۹', type: 'درآمد', status: 'تسویه' },
+   466→    { desc: 'اجاره محل آموزشگاه', amount: '-۱۵,۰۰۰,۰۰۰', date: '۱۴۰۴/۰۳/۰۱', type: 'هزینه', status: 'پرداخت شده' },
+   467→  ];
+   468→  const finStatusColors: Record<string, string> = {
+   469→    'درآمد': 'bg-emerald-100 text-emerald-600 border-emerald-200',
+   470→    'هزینه': 'bg-rose-100 text-rose-600 border-rose-200',
+   471→    'تسویه': 'bg-emerald-100 text-emerald-600 border-emerald-200',
+   472→    'پرداخت شده': 'bg-slate-100 text-slate-500 border-slate-200',
+   473→  };
+   474→  return (
+   475→    <div className="space-y-6" dir="rtl">
+   476→      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+   477→        <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="text-xs text-slate-400 mb-1">کل درآمد</div><div className="text-2xl font-bold text-emerald-600">۴۵,۰۰۰,۰۰۰</div><div className="text-xs text-slate-400 mt-1">تومان</div></div>
+   478→        <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="text-xs text-slate-400 mb-1">کل هزینه</div><div className="text-2xl font-bold text-rose-600">۲۴,۵۰۰,۰۰۰</div><div className="text-xs text-slate-400 mt-1">تومان</div></div>
+   479→        <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="text-xs text-slate-400 mb-1">سود خالص</div><div className="text-2xl font-bold text-slate-900">۲۰,۵۰۰,۰۰۰</div><div className="text-xs text-slate-400 mt-1">تومان</div></div>
+   480→      </div>
+   481→      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+   482→        <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+   483→          <h3 className="text-lg font-bold text-slate-900">تراکنش‌های اخیر</h3>
+   484→          <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5"><Plus className="w-4 h-4" />ثبت تراکنش</button>
+   485→        </div>
+   486→        <table className="w-full text-sm">
+   487→          <thead><tr className="text-slate-400 text-xs border-b border-gray-100 bg-gray-50/50">
+   488→            <th className="text-right py-3 px-4 font-medium">توضیحات</th><th className="text-right py-3 px-4 font-medium">مبلغ</th><th className="text-right py-3 px-4 font-medium hidden sm:table-cell">نوع</th><th className="text-right py-3 px-4 font-medium">تاریخ</th><th className="text-right py-3 px-4 font-medium">وضعیت</th>
+   489→          </tr></thead>
+   490→          <tbody className="divide-y divide-gray-50">
+   491→            {txs.map((tx, i) => (
+   492→              <tr key={i} className="hover:bg-orange-50/30 transition-colors">
+   493→                <td className="py-3 px-4 text-slate-900 font-medium">{tx.desc}</td>
+   494→                <td className={`py-3 px-4 font-bold ${tx.type === 'درآمد' ? 'text-emerald-600' : 'text-rose-600'}`}>{tx.amount}</td>
+   495→                <td className="py-3 px-4 hidden sm:table-cell"><span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${finStatusColors[tx.type]}`}>{tx.type}</span></td>
+   496→                <td className="py-3 px-4 text-slate-500">{tx.date}</td>
+   497→                <td className="py-3 px-4"><span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${finStatusColors[tx.status]}`}>{tx.status}</span></td>
+   498→              </tr>
+   499→            ))}
+   500→          </tbody>
+   501→        </table>
+   502→      </div>
+   503→    </div>
+   504→  );
+   505→}
+   506→
+   507→/* ─── Users ─── */
+   508→function UsersTab() {
+   509→  const users = [
+   510→    { name: 'مستر رضایی', role: 'مدیر', phone: '۰۹۱۲۱۱۱۱۱۱۱۱', lastLogin: '۱۴۰۴/۰۳/۲۲ ۰۹:۳۰', status: 'آنلاین' },
+   511→    { name: 'مستر احمدی', role: 'مربی', phone: '۰۹۳۵۲۲۲۲۲۲۲', lastLogin: '۱۴۰۴/۰۳/۲۲ ۱۰:۱۵', status: 'آنلاین' },
+   512→    { name: 'مستر کریمی', role: 'مربی', phone: '۰۹۱۰۳۳۳۳۳۳۳', lastLogin: '۱۴۰۴/۰۳/۲۱ ۱۶:۴۵', status: 'آفلاین' },
+   513→  ];
+   514→  return (
+   515→    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden" dir="rtl">
+   516→      <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+   517→        <h3 className="text-lg font-bold text-slate-900">کاربران و نقش‌ها</h3>
+   518→        <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5"><UserPlus className="w-4 h-4" />افزودن کاربر</button>
+   519→      </div>
+   520→      <table className="w-full text-sm">
+   521→        <thead><tr className="text-slate-400 text-xs border-b border-gray-100 bg-gray-50/50">
+   522→          <th className="text-right py-3 px-4 font-medium">نام</th><th className="text-right py-3 px-4 font-medium">نقش</th><th className="text-right py-3 px-4 font-medium hidden sm:table-cell">تلفن</th><th className="text-right py-3 px-4 font-medium hidden md:table-cell">آخرین ورود</th><th className="text-right py-3 px-4 font-medium">وضعیت</th><th className="text-right py-3 px-4 font-medium">عملیات</th>
+   523→        </tr></thead>
+   524→        <tbody className="divide-y divide-gray-50">
+   525→          {users.map((u, i) => (
+   526→            <tr key={i} className="hover:bg-orange-50/30 transition-colors">
+   527→              <td className="py-3 px-4 text-slate-900 font-medium flex items-center gap-2">
+   528→                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold shrink-0">{u.name.charAt(0)}</div>{u.name}
+   529→              </td>
+   530→              <td className="py-3 px-4"><span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${u.role === 'مدیر' ? 'bg-purple-100 text-purple-600 border-purple-200' : 'bg-blue-100 text-blue-600 border-blue-200'}`}>{u.role}</span></td>
+   531→              <td className="py-3 px-4 text-slate-500 hidden sm:table-cell" dir="ltr">{u.phone}</td>
+   532→              <td className="py-3 px-4 text-slate-500 hidden md:table-cell">{u.lastLogin}</td>
+   533→              <td className="py-3 px-4"><span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${u.status === 'آنلاین' ? 'bg-emerald-100 text-emerald-600 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>{u.status}</span></td>
+   534→              <td className="py-3 px-4"><div className="flex gap-1"><button className="p-1.5 rounded-lg hover:bg-orange-50 text-slate-400 hover:text-orange-500"><Edit3 className="w-4 h-4" /></button><button className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button></div></td>
+   535→            </tr>
+   536→          ))}
+   537→        </tbody>
+   538→      </table>
+   539→    </div>
+   540→  );
+   541→}
+   542→
+   543→/* ─── Settings ─── */
+   544→function SettingsTab() {
+   545→  return (
+   546→    <div className="space-y-6" dir="rtl">
+   547→      <div className="bg-white rounded-2xl border border-gray-100 p-6">
+   548→        <h3 className="text-lg font-bold text-slate-900 mb-6">تنظیمات عمومی</h3>
+   549→        <div className="space-y-5 max-w-lg">
+   550→          <div><label className="text-xs font-medium text-slate-500 mb-1.5 block">نام آموزشگاه</label><input type="text" defaultValue="چرتکه دهگانی ویرا" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400" /></div>
+   551→          <div><label className="text-xs font-medium text-slate-500 mb-1.5 block">شماره تماس</label><input type="tel" defaultValue="۰۲۱-۹۱۳۰۲۵۸۴" dir="ltr" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-left" /></div>
+   552→          <div><label className="text-xs font-medium text-slate-500 mb-1.5 block">ایمیل</label><input type="email" defaultValue="info@bahanvira.ir" dir="ltr" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-left" /></div>
+   553→          <div><label className="text-xs font-medium text-slate-500 mb-1.5 block">آدرس</label><textarea defaultValue="تهران، خیابان انقلاب، پلاک ۱۲۳" rows={2} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 resize-none" /></div>
+   554→          <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium px-6 py-2.5 rounded-xl">ذخیره تنظیمات</button>
+   555→        </div>
+   556→      </div>
+   557→      <div className="bg-white rounded-2xl border border-gray-100 p-6">
+   558→        <h3 className="text-lg font-bold text-slate-900 mb-6">تنظیمات ارتباطی</h3>
+   559→        <div className="space-y-5 max-w-lg">
+   560→          <div><label className="text-xs font-medium text-slate-500 mb-1.5 block">لینک اینستاگرام</label><input type="url" defaultValue="https://instagram.com/bahanvira" dir="ltr" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-left" /></div>
+   561→          <div><label className="text-xs font-medium text-slate-500 mb-1.5 block">لینک تلگرام</label><input type="url" defaultValue="https://t.me/bahanvira" dir="ltr" className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 text-left" /></div>
+   562→          <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium px-6 py-2.5 rounded-xl">ذخیره</button>
+   563→        </div>
+   564→      </div>
+   565→    </div>
+   566→  );
+   567→}
+   568→
+   569→/* ═══════════════════════════════════════════════════
+   570→   Main Admin Page Component
+   571→   ═══════════════════════════════════════════════════ */
+   572→
+   573→export default function AdminPage() {
+   574→  const [isLoggedIn, setIsLoggedIn] = useState(false);
+   575→  const [password, setPassword] = useState('');
+   576→  const [passwordError, setPasswordError] = useState('');
+   577→  const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
+   578→  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+   579→  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(
+   580→    Object.fromEntries(sidebarCategories.map((c) => [c.title, true]))
+   581→  );
+   582→
+   583→  const handleLogin = () => {
+   584→    if (password === 'vira2024') { setIsLoggedIn(true); setPasswordError(''); }
+   585→    else { setPasswordError('رمز عبور اشتباه است'); }
+   586→  };
+   587→
+   588→  const toggleCategory = (title: string) => {
+   589→    setExpandedCategories((prev) => ({ ...prev, [title]: !prev[title] }));
+   590→  };
+   591→
+   592→  const navigateTo = (key: TabKey) => {
+   593→    setActiveTab(key);
+   594→    setMobileSidebarOpen(false);
+   595→  };
+   596→
+   597→  const renderContent = () => {
+   598→    switch (activeTab) {
+   599→      case 'dashboard': return <DashboardTab />;
+   600→      case 'students': return <StudentsTab />;
+   601→      case 'classes': return <ClassesTab />;
+   602→      case 'exams': return <ExamsTab />;
+   603→      case 'crm': return <CRMInlineTab />;
+   604→      case 'financial': return <FinancialTab />;
+   605→      case 'users': return <UsersTab />;
+   606→      case 'settings': return <SettingsTab />;
+   607→      case 'marketers': return <MarketersTab />;
+   608→      case 'agencies': return <AgenciesTab />;
+   609→      case 'lms': return <LMSTab />;
+   610→      case 'calendar': return <CalendarTab />;
+   611→      case 'reports': return <ReportsTab />;
+   612→      case 'support': return <SupportTab />;
+   613→      case 'files': return <FilesTab />;
+   614→      case 'payments': return <PaymentsTab />;
+   615→      case 'marketing': return <MarketingTab />;
+   616→      case 'emails': return <EmailsTab />;
+   617→    }
+   618→  };
+   619→
+   620→  /* ─── Login ─── */
+   621→  if (!isLoggedIn) {
+   622→    return (
+   623→      <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-50 to-orange-50/30 flex items-center justify-center px-4">
+   624→        <div className="bg-white rounded-3xl shadow-xl shadow-black/[0.06] p-8 w-full max-w-sm border border-gray-100">
+   625→          <div className="flex justify-center mb-6">
+   626→            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
+   627→              <Lock className="w-8 h-8 text-white" />
+   628→            </div>
+   629→          </div>
+   630→          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">ورود به پنل مدیریت</h1>
+   631→          <p className="text-sm text-slate-500 text-center mb-8">آموزگاه چرتکه دهگانی ویرا</p>
+   632→          <div className="space-y-4">
+   633→            <div>
+   634→              <input type="password" value={password} onChange={(e) => { setPassword(e.target.value); setPasswordError(''); }} onKeyDown={(e) => e.key === 'Enter' && handleLogin()} placeholder="رمز عبور" className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all" autoFocus />
+   635→              {passwordError && <p className="text-red-500 text-xs mt-2 text-center">{passwordError}</p>}
+   636→            </div>
+   637→            <button onClick={handleLogin} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-md shadow-orange-500/20 hover:shadow-lg">ورود</button>
+   638→          </div>
+   639→        </div>
+   640→      </div>
+   641→    );
+   642→  }
+   643→
+   644→  /* ─── Main Layout ─── */
+   645→  return (
+   646→    <div dir="rtl" className="min-h-screen bg-gray-50/80 flex">
+   647→      {/* Mobile overlay */}
+   648→      {mobileSidebarOpen && <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden" onClick={() => setMobileSidebarOpen(false)} />}
+   649→
+   650→      {/* Sidebar */}
+   651→      <aside className={`fixed lg:sticky top-0 right-0 z-50 lg:z-10 h-screen w-72 bg-white border-l border-gray-100 flex flex-col transition-transform duration-300 ease-out ${mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'} shadow-xl lg:shadow-none`}>
+   652→        {/* Sidebar Header */}
+   653→        <div className="p-5 border-b border-gray-100 flex items-center gap-3 shrink-0">
+   654→          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md shadow-orange-500/20">
+   655→            <GraduationCap className="w-5 h-5 text-white" />
+   656→          </div>
+   657→          <div className="flex-1 min-w-0">
+   658→            <h2 className="text-sm font-bold text-slate-900 truncate">ویرا | چرتکه دهگانی</h2>
+   659→            <p className="text-[11px] text-slate-400">پنل مدیریت جامع</p>
+   660→          </div>
+   661→          <button onClick={() => setMobileSidebarOpen(false)} className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 text-slate-400"><X className="w-5 h-5" /></button>
+   662→        </div>
+   663→
+   664→        {/* Sidebar Nav */}
+   665→        <nav className="flex-1 overflow-y-auto py-3 px-3">
+   666→          {sidebarCategories.map((cat) => (
+   667→            <div key={cat.title} className="mb-2">
+   668→              <button onClick={() => toggleCategory(cat.title)} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-gray-50">
+   669→                <FolderOpen className="w-4 h-4 text-orange-400" />
+   670→                <span className="flex-1 text-right">{cat.title}</span>
+   671→                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${expandedCategories[cat.title] ? 'rotate-180' : ''}`} />
+   672→              </button>
+   673→              <div className={`overflow-hidden transition-all duration-200 ${expandedCategories[cat.title] ? 'max-h-96' : 'max-h-0'}`}>
+   674→                {cat.items.map((item) => {
+   675→                  const Icon = item.icon;
+   676→                  return (
+   677→                    <button key={item.key} onClick={() => navigateTo(item.key)} className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 mb-0.5 ${activeTab === item.key ? 'bg-orange-50 text-orange-600 shadow-sm border border-orange-100' : 'text-slate-600 hover:bg-gray-50 hover:text-slate-900'}`}>
+   678→                      <Icon className={`w-4 h-4 ${activeTab === item.key ? 'text-orange-500' : 'text-slate-400'}`} />
+   679→                      {item.label}
+   680→                    </button>
+   681→                  );
+   682→                })}
+   683→              </div>
+   684→            </div>
+   685→          ))}
+   686→        </nav>
+   687→
+   688→        {/* Sidebar Footer */}
+   689→        <div className="p-4 border-t border-gray-100 shrink-0">
+   690→          <button onClick={() => { setIsLoggedIn(false); setPassword(''); }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+   691→            <LogOut className="w-4 h-4" />
+   692→            خروج از پنل
+   693→          </button>
+   694→        </div>
+   695→      </aside>
+   696→
+   697→      {/* Main Content */}
+   698→      <div className="flex-1 min-w-0 flex flex-col">
+   699→        {/* Top Bar */}
+   700→        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between shrink-0">
+   701→          <div className="flex items-center gap-3">
+   702→            <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-gray-100 text-slate-500">
+   703→              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+   704→            </button>
+   705→            <h1 className="text-base sm:text-lg font-bold text-slate-900">
+   706→              {sidebarCategories.flatMap((c) => c.items).find((i) => i.key === activeTab)?.label || 'داشبورد'}
+   707→            </h1>
+   708→          </div>
+   709→          <div className="flex items-center gap-3">
+   710→            <button className="relative p-2 rounded-xl hover:bg-gray-100 text-slate-400 hover:text-slate-600 transition-colors">
+   711→              <Bell className="w-5 h-5" />
+   712→              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
+   713→            </button>
+   714→            <div className="flex items-center gap-2">
+   715→              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold">م</div>
+   716→              <span className="text-sm font-medium text-slate-700 hidden sm:block">مدیر</span>
+   717→            </div>
+   718→          </div>
+   719→        </header>
+   720→
+   721→        {/* Page Content */}
+   722→        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+   723→          {renderContent()}
+   724→        </main>
+   725→      </div>
+   726→    </div>
+   727→  );
+   728→}
