@@ -134,11 +134,11 @@ export default function Hero() {
             <div className="relative mb-6 rounded-2xl overflow-hidden shadow-xl shadow-orange-500/10 border border-orange-100/50">
               <div className="absolute inset-0 bg-gradient-to-b from-orange-100/40 to-teal-100/40 z-10 pointer-events-none" />
               <Image
-                src="/images/abacus-real.png"
+                src="/chertke-dohgani-vira.png"
                 alt="چرتکه دهگانی ویرا"
                 width={400}
                 height={300}
-                className="w-full h-auto object-cover"
+                className="w-full h-auto object-contain p-4"
                 priority
               />
             </div>

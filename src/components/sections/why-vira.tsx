@@ -55,11 +55,11 @@ export default function WhyVira() {
             <div className="relative w-full rounded-2xl overflow-hidden shadow-lg mb-8">
               <div className="absolute inset-0 bg-gradient-to-b from-orange-100/30 to-teal-100/30 z-10 pointer-events-none rounded-2xl" />
               <Image
-                src="/images/abacus-real.png"
+                src="/chertke-dohgani-vira.png"
                 alt="چرتکه دهگانی ویرا"
                 width={500}
                 height={350}
-                className="w-full h-auto object-cover rounded-2xl"
+                className="w-full h-auto object-contain p-6 rounded-2xl"
               />
             </div>
 

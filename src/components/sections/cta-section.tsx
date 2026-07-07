@@ -1,6 +1,7 @@
 'use client';
 
 import { Phone, ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 
 export default function CTASection() {
   return (
@@ -14,6 +15,16 @@ export default function CTASection() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center relative z-10">
+          {/* Abacus decorative image */}
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/chertke-dohgani-vira.png"
+              alt="چرتکه دهگانی ویرا"
+              width={240}
+              height={120}
+              className="h-24 sm:h-32 w-auto object-contain drop-shadow-lg opacity-30"
+            />
+          </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-white">
             آموزش چرتکه را همین امروز شروع کنید!
           </h2>

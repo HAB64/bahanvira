@@ -1,6 +1,7 @@
 'use client';
 
 import { Grid3X3, Brain, Zap, Trophy, Rocket, BookOpen, Clock, Users, ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 
 const courses = [
   {
@@ -87,6 +88,15 @@ export default function Courses() {
           <p className="section-subheading mt-4 max-w-2xl mx-auto text-sm sm:text-base">
             دوره‌هایی که بیشترین تقاضا را دارند و نتایج فوق‌العاده‌ای ارائه داده‌اند.
           </p>
+          <div className="mt-6 flex justify-center">
+            <Image
+              src="/chertke-dohgani-vira.png"
+              alt="چرتکه دهگانی ویرا"
+              width={320}
+              height={160}
+              className="h-28 sm:h-36 w-auto object-contain drop-shadow-md opacity-90"
+            />
+          </div>
         </div>
 
         {/* Course Cards Grid */}
