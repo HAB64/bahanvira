@@ -228,13 +228,13 @@ export default function ExamPage() {
   /* ─────────── Render: Selection ─────────── */
   if (phase === 'selection') {
     return (
-      <div dir="rtl" className="pt-24 pb-16 bg-[#0a1628] min-h-screen flex flex-col">
+      <div dir="rtl" className="pt-24 pb-16 bg-[#f9fafb] min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 w-full">
           {/* Title */}
           <div className="text-center mb-12">
-            <h1 className="text-2xl font-bold text-white">آزمون آنلاین</h1>
-            <p className="text-slate-400 mt-3">آزمون‌های دوره‌ای برای سنجش پیشرفت شما</p>
+            <h1 className="text-2xl font-bold text-slate-900">آزمون آنلاین</h1>
+            <p className="text-slate-500 mt-3">آزمون‌های دوره‌ای برای سنجش پیشرفت شما</p>
           </div>
 
           {/* Exam Grid */}
@@ -243,8 +243,8 @@ export default function ExamPage() {
               <div key={exam.id} className="glass-card rounded-2xl p-6 flex flex-col justify-between min-h-[220px]">
                 <div>
                   <span className="text-3xl mb-3 block">{exam.icon}</span>
-                  <h3 className="text-white font-bold text-base mb-3 leading-7">{exam.title}</h3>
-                  <div className="flex items-center gap-4 text-sm text-slate-400">
+                  <h3 className="text-slate-900 font-bold text-base mb-3 leading-7">{exam.title}</h3>
+                  <div className="flex items-center gap-4 text-sm text-slate-500">
                     <span className="flex items-center gap-1.5">
                       <CheckCircle className="w-4 h-4 text-[#0d9488]" />
                       {toPersian(exam.questionCount)} سوال
@@ -276,28 +276,28 @@ export default function ExamPage() {
     const q = questions[currentQ];
 
     return (
-      <div dir="rtl" className="pt-24 pb-16 bg-[#0a1628] min-h-screen flex flex-col">
+      <div dir="rtl" className="pt-24 pb-16 bg-[#f9fafb] min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 w-full">
           {/* Top Bar */}
           <div className="glass-card rounded-2xl p-4 mb-6">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-3">
-                <h2 className="text-white font-bold text-sm sm:text-base">{currentExam.title}</h2>
+                <h2 className="text-slate-900 font-bold text-sm sm:text-base">{currentExam.title}</h2>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Clock className="w-4 h-4 text-[#f97316]" />
-                <span className={`font-mono font-bold text-base ${timeLeft < 60 ? 'text-red-400' : 'text-white'}`}>
+                <span className={`font-mono font-bold text-base ${timeLeft < 60 ? 'text-red-400' : 'text-slate-900'}`}>
                   {formatTime(timeLeft)}
                 </span>
               </div>
             </div>
             {/* Progress */}
             <div className="flex items-center gap-3">
-              <span className="text-xs text-slate-400 whitespace-nowrap">
+              <span className="text-xs text-slate-500 whitespace-nowrap">
                 سوال {toPersian(currentQ + 1)} از {toPersian(currentExam.questionCount)}
               </span>
-              <div className="flex-1 h-2.5 rounded-full bg-white/10 overflow-hidden">
+              <div className="flex-1 h-2.5 rounded-full bg-gray-100 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-gradient-to-l from-[#0d9488] to-[#0f766e] transition-all duration-300"
                   style={{ width: `${progressPercent}%` }}
@@ -308,7 +308,7 @@ export default function ExamPage() {
 
           {/* Question Card */}
           <div className="glass-card rounded-2xl p-6 sm:p-8 mb-6">
-            <p className="text-center text-2xl sm:text-3xl font-bold text-white mb-8 leading-relaxed tracking-wider">
+            <p className="text-center text-2xl sm:text-3xl font-bold text-slate-900 mb-8 leading-relaxed tracking-wider">
               {q.text}
             </p>
 
@@ -322,7 +322,7 @@ export default function ExamPage() {
                     ${
                       answers[currentQ] === idx
                         ? 'bg-[#0d9488]/20 border-[#0d9488] text-[#0d9488] shadow-[0_0_20px_rgba(13,148,136,0.15)]'
-                        : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20'
+                        : 'bg-gray-100 border-gray-200 text-slate-600 hover:bg-gray-50 hover:border-gray-300'
                     }
                   `}
                 >
@@ -387,7 +387,7 @@ export default function ExamPage() {
     const percentage = Math.round((score / currentExam.questionCount) * 100);
 
     return (
-      <div dir="rtl" className="pt-24 pb-16 bg-[#0a1628] min-h-screen flex flex-col">
+      <div dir="rtl" className="pt-24 pb-16 bg-[#f9fafb] min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 w-full">
           {/* Result Card */}
@@ -397,32 +397,32 @@ export default function ExamPage() {
                 <Award className={`w-10 h-10 ${passed ? 'text-[#0d9488]' : 'text-red-400'}`} />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">
               {passed ? 'تبریک! آزمون را با موفقیت گذراندید' : 'متأسفانه قبول نشدید'}
             </h2>
-            <p className="text-slate-400 mb-8">{currentExam.title}</p>
+            <p className="text-slate-500 mb-8">{currentExam.title}</p>
 
             {/* Score */}
             <div className="flex justify-center gap-8 mb-8">
               <div className="text-center">
-                <p className="text-3xl font-bold text-white">{toPersian(score)}/{toPersian(currentExam.questionCount)}</p>
-                <p className="text-sm text-slate-400 mt-1">پاسخ صحیح</p>
+                <p className="text-3xl font-bold text-slate-900">{toPersian(score)}/{toPersian(currentExam.questionCount)}</p>
+                <p className="text-sm text-slate-500 mt-1">پاسخ صحیح</p>
               </div>
-              <div className="w-px bg-white/10" />
+              <div className="w-px bg-gray-100" />
               <div className="text-center">
-                <p className="text-3xl font-bold text-white">{toPersian(percentage)}٪</p>
-                <p className="text-sm text-slate-400 mt-1">درصد موفقیت</p>
+                <p className="text-3xl font-bold text-slate-900">{toPersian(percentage)}٪</p>
+                <p className="text-sm text-slate-500 mt-1">درصد موفقیت</p>
               </div>
-              <div className="w-px bg-white/10" />
+              <div className="w-px bg-gray-100" />
               <div className="text-center">
-                <p className="text-3xl font-bold text-white">{toPersian(minutesTaken)}:{toPersian(secondsTaken.toString().padStart(2, '0'))}</p>
-                <p className="text-sm text-slate-400 mt-1">زمان صرف‌شده</p>
+                <p className="text-3xl font-bold text-slate-900">{toPersian(minutesTaken)}:{toPersian(secondsTaken.toString().padStart(2, '0'))}</p>
+                <p className="text-sm text-slate-500 mt-1">زمان صرف‌شده</p>
               </div>
             </div>
 
             {/* Progress Bar */}
             <div className="max-w-md mx-auto mb-8">
-              <div className="h-3 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all duration-1000 ${passed ? 'bg-gradient-to-l from-[#0d9488] to-[#0f766e]' : 'bg-gradient-to-l from-red-500 to-red-600'}`}
                   style={{ width: `${percentage}%` }}
@@ -454,7 +454,7 @@ export default function ExamPage() {
 
           {/* Question Review */}
           <div className="space-y-4">
-            <h3 className="text-xl font-bold text-white mb-4">بررسی پاسخ‌ها</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-4">بررسی پاسخ‌ها</h3>
             {questions.map((q, idx) => {
               const userAnswer = answers[idx];
               const isCorrect = userAnswer === q.correctIndex;
@@ -471,8 +471,8 @@ export default function ExamPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-slate-400">سوال {toPersian(idx + 1)}</span>
-                        <span className="text-base font-bold text-white">{q.text}</span>
+                        <span className="text-sm text-slate-500">سوال {toPersian(idx + 1)}</span>
+                        <span className="text-base font-bold text-slate-900">{q.text}</span>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
                         {q.options.map((opt, optIdx) => (
@@ -482,7 +482,7 @@ export default function ExamPage() {
                               text-center text-sm py-1.5 px-2 rounded-lg
                               ${optIdx === q.correctIndex ? 'bg-[#0d9488]/20 text-[#0d9488] font-bold border border-[#0d9488]/30' : ''}
                               ${optIdx === userAnswer && !isCorrect ? 'bg-red-500/20 text-red-400 border border-red-500/30' : ''}
-                              ${optIdx !== userAnswer && optIdx !== q.correctIndex ? 'bg-white/5 text-slate-500' : ''}
+                              ${optIdx !== userAnswer && optIdx !== q.correctIndex ? 'bg-gray-100 text-slate-500' : ''}
                             `}
                           >
                             {opt}

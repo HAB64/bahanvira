@@ -19,7 +19,7 @@ import WhatsAppButton from "@/components/sections/whatsapp-button";
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#0a1628]">
+    <div className="min-h-screen flex flex-col bg-[#f9fafb]">
       <Header />
       <main className="flex-1">
         <Hero />

@@ -1,0 +1,720 @@
+     1→     1→"use client";
+     2→     2→
+     3→     3→import { useState, useEffect, useCallback, useRef } from "react";
+     4→     4→import Header from "@/components/sections/header";
+     5→     5→import Footer from "@/components/sections/footer";
+     6→     6→import {
+     7→     7→  RotateCcw,
+     8→     8→  Volume2,
+     9→     9→  VolumeX,
+    10→    10→  Play,
+    11→    11→  Timer,
+    12→    12→  CheckCircle,
+    13→    13→  XCircle,
+    14→    14→} from "lucide-react";
+    15→    15→
+    16→    16→/* ═══════════════════════════════════════════════════
+    17→    17→   Helpers
+    18→    18→   ═══════════════════════════════════════════════════ */
+    19→    19→
+    20→    20→const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+    21→    21→
+    22→    22→function toPersian(n: number): string {
+    23→    23→  return n.toString().replace(/\d/g, (d) => persianDigits[+d]);
+    24→    24→}
+    25→    25→
+    26→    26→function formatPersian(n: number): string {
+    27→    27→  if (n === 0) return "۰";
+    28→    28→  return toPersian(n).replace(/\B(?=(\d{3})+(?!\d))/g, "٬");
+    29→    29→}
+    30→    30→
+    31→    31→/* ═══════════════════════════════════════════════════
+    32→    32→   Types
+    33→    33→   ═══════════════════════════════════════════════════ */
+    34→    34→
+    35→    35→interface ColumnState {
+    36→    36→  upper: boolean;
+    37→    37→  lower: [boolean, boolean, boolean, boolean];
+    38→    38→}
+    39→    39→
+    40→    40→type Mode = "free" | "practice" | "exam";
+    41→    41→
+    42→    42→interface Problem {
+    43→    43→  a: number;
+    44→    44→  b: number;
+    45→    45→  op: "+" | "-";
+    46→    46→  answer: number;
+    47→    47→}
+    48→    48→
+    49→    49→/* ═══════════════════════════════════════════════════
+    50→    50→   Constants & Pure Functions
+    51→    51→   ═══════════════════════════════════════════════════ */
+    52→    52→
+    53→    53→const NUM_COLS = 13;
+    54→    54→
+    55→    55→function createInitialColumns(): ColumnState[] {
+    56→    56→  return Array.from({ length: NUM_COLS }, () => ({
+    57→    57→    upper: false,
+    58→    58→    lower: [false, false, false, false],
+    59→    59→  }));
+    60→    60→}
+    61→    61→
+    62→    62→function getColumnValue(col: ColumnState): number {
+    63→    63→  return (col.upper ? 5 : 0) + col.lower.filter(Boolean).length;
+    64→    64→}
+    65→    65→
+    66→    66→function getAbacusTotal(columns: ColumnState[]): number {
+    67→    67→  return columns.reduce(
+    68→    68→    (sum, col, i) => sum + getColumnValue(col) * 10 ** i,
+    69→    69→    0
+    70→    70→  );
+    71→    71→}
+    72→    72→
+    73→    73→function generateProblem(): Problem {
+    74→    74→  const op: "+" | "-" = Math.random() > 0.5 ? "+" : "-";
+    75→    75→  let a = Math.floor(Math.random() * 900) + 100;
+    76→    76→  let b = Math.floor(Math.random() * 900) + 100;
+    77→    77→  if (op === "-" && a < b) [a, b] = [b, a];
+    78→    78→  return { a, b, op, answer: op === "+" ? a + b : a - b };
+    79→    79→}
+    80→    80→
+    81→    81→/* ═══════════════════════════════════════════════════
+    82→    82→   AbacusColumn — single rod with 1 upper + 4 lower beads
+    83→    83→   ═══════════════════════════════════════════════════ */
+    84→    84→
+    85→    85→function AbacusColumn({
+    86→    86→  state,
+    87→    87→  onToggleUpper,
+    88→    88→  onToggleLower,
+    89→    89→}: {
+    90→    90→  state: ColumnState;
+    91→    91→  onToggleUpper: () => void;
+    92→    92→  onToggleLower: (beadIndex: number) => void;
+    93→    93→}) {
+    94→    94→  return (
+    95→    95→    <div
+    96→    96→      className="flex flex-col items-center flex-1 min-w-0"
+    97→    97→      style={{ minWidth: 24 }}
+    98→    98→    >
+    99→    99→      <div
+   100→   100→        className="relative flex flex-col items-center w-full"
+   101→   101→        style={{ height: 230 }}
+   102→   102→      >
+   103→   103→        {/* ── Vertical rod ── */}
+   104→   104→        <div className="absolute left-1/2 -translate-x-1/2 w-[2px] h-full rounded-full bg-white/[0.12] z-0" />
+   105→   105→
+   106→   106→        {/* ── Upper (heaven) area ── */}
+   107→   107→        <div className="relative flex-1 flex items-center justify-center w-full z-10">
+   108→   108→          <button
+   109→   109→            onClick={onToggleUpper}
+   110→   110→            className={`
+   111→   111→              w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10
+   112→   112→              rounded-full border-2
+   113→   113→              transition-all duration-150 select-none cursor-pointer
+   114→   114→              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/50
+   115→   115→              relative
+   116→   116→              ${
+   117→   117→                state.upper
+   118→   118→                  ? "bg-gradient-to-br from-amber-400 to-orange-500 border-amber-500/70 shadow-[0_0_16px_rgba(245,158,11,0.5)] translate-y-5 sm:translate-y-7 md:translate-y-8"
+   119→   119→                  : "bg-gradient-to-br from-amber-800/25 to-orange-900/15 border-amber-700/20 -translate-y-5 sm:-translate-y-7 md:-translate-y-8 hover:border-amber-600/35"
+   120→   120→              }
+   121→   121→            `}
+   122→   122→            aria-label="مهره بالا"
+   123→   123→          >
+   124→   124→            {state.upper && (
+   125→   125→              <div
+   126→   126→                className="absolute rounded-full bg-white/30 blur-[1px]"
+   127→   127→                style={{ width: 8, height: 8, top: 5, right: 6 }}
+   128→   128→              />
+   129→   129→            )}
+   130→   130→          </button>
+   131→   131→        </div>
+   132→   132→
+   133→   133→        {/* ── Horizontal bar ── */}
+   134→   134→        <div className="w-full h-[7px] sm:h-2 md:h-[9px] bg-gradient-to-b from-white/[0.18] to-white/[0.08] z-20 flex-shrink-0" />
+   135→   135→
+   136→   136→        {/* ── Lower (earth) area ── */}
+   137→   137→        <div className="relative flex-1 flex flex-col items-center w-full z-10">
+   138→   138→          {/* Active beads — grouped at the top, touching the bar */}
+   139→   139→          {[0, 1, 2, 3].map((i) =>
+   140→   140→            state.lower[i] ? (
+   141→   141→              <button
+   142→   142→                key={`a-${i}`}
+   143→   143→                onClick={() => onToggleLower(i)}
+   144→   144→                className="
+   145→   145→                  w-5 h-[14px] sm:w-7 sm:h-[18px] md:w-9 md:h-[22px]
+   146→   146→                  rounded-full border-2
+   147→   147→                  bg-gradient-to-br from-teal-300 to-teal-500 border-teal-400/60
+   148→   148→                  shadow-[0_0_10px_rgba(20,184,166,0.35)]
+   149→   149→                  transition-all duration-150 select-none cursor-pointer
+   150→   150→                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50
+   151→   151→                  relative flex-shrink-0
+   152→   152→                "
+   153→   153→                aria-label={`مهره پایین ${i + 1}`}
+   154→   154→              >
+   155→   155→                <div
+   156→   156→                  className="absolute rounded-full bg-white/25 blur-[1px]"
+   157→   157→                  style={{ width: 6, height: 6, top: 2, right: 5 }}
+   158→   158→                />
+   159→   159→              </button>
+   160→   160→            ) : null
+   161→   161→          )}
+   162→   162→
+   163→   163→          {/* Flexible spacer pushes inactive beads to the bottom */}
+   164→   164→          <div className="flex-1 min-h-0" />
+   165→   165→
+   166→   166→          {/* Inactive beads — resting at the bottom, away from the bar */}
+   167→   167→          {[0, 1, 2, 3].map((i) =>
+   168→   168→            !state.lower[i] ? (
+   169→   169→              <button
+   170→   170→                key={`i-${i}`}
+   171→   171→                onClick={() => onToggleLower(i)}
+   172→   172→                className="
+   173→   173→                  w-5 h-[14px] sm:w-7 sm:h-[18px] md:w-9 md:h-[22px]
+   174→   174→                  rounded-full border-2
+   175→   175→                  bg-gradient-to-br from-teal-800/20 to-teal-900/10 border-teal-700/15
+   176→   176→                  hover:border-orange-300
+   177→   177→                  transition-all duration-150 select-none cursor-pointer
+   178→   178→                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50
+   179→   179→                  flex-shrink-0
+   180→   180→                "
+   181→   181→                aria-label={`مهره پایین ${i + 1}`}
+   182→   182→              />
+   183→   183→            ) : null
+   184→   184→          )}
+   185→   185→        </div>
+   186→   186→      </div>
+   187→   187→    </div>
+   188→   188→  );
+   189→   189→}
+   190→   190→
+   191→   191→/* ═══════════════════════════════════════════════════
+   192→   192→   ModeButton — reusable glass button
+   193→   193→   ═══════════════════════════════════════════════════ */
+   194→   194→
+   195→   195→function GlassButton({
+   196→   196→  children,
+   197→   197→  onClick,
+   198→   198→  variant = "default",
+   199→   199→  icon: Icon,
+   200→   200→  className = "",
+   201→   201→}: {
+   202→   202→  children: React.ReactNode;
+   203→   203→  onClick?: () => void;
+   204→   204→  variant?: "default" | "emerald" | "amber" | "red";
+   205→   205→  icon?: React.ElementType;
+   206→   206→  className?: string;
+   207→   207→}) {
+   208→   208→  const base =
+   209→   209→    "inline-flex items-center justify-center gap-2 rounded-xl text-sm font-medium border transition-all duration-200 cursor-pointer select-none";
+   210→   210→  const variants: Record<string, string> = {
+   211→   211→    default:
+   212→   212→      "bg-white/[0.05] border-white/[0.08] text-slate-900/60 hover:bg-white/[0.08] hover:text-slate-900/80",
+   213→   213→    emerald:
+   214→   214→      "bg-emerald-500/15 border-emerald-500/25 text-emerald-300 hover:bg-emerald-500/25",
+   215→   215→    amber:
+   216→   216→      "bg-amber-500/15 border-amber-500/25 text-amber-300 hover:bg-amber-500/25",
+   217→   217→    red: "bg-red-500/15 border-red-500/25 text-red-300 hover:bg-red-500/25",
+   218→   218→  };
+   219→   219→  return (
+   220→   220→    <button
+   221→   221→      onClick={onClick}
+   222→   222→      className={`${base} ${variants[variant]} ${className}`}
+   223→   223→    >
+   224→   224→      {Icon && <Icon className="w-4 h-4" />}
+   225→   225→      {children}
+   226→   226→    </button>
+   227→   227→  );
+   228→   228→}
+   229→   229→
+   230→   230→/* ═══════════════════════════════════════════════════
+   231→   231→   Main Page
+   232→   232→   ═══════════════════════════════════════════════════ */
+   233→   233→
+   234→   234→export default function AbacusPage() {
+   235→   235→  /* ── Abacus state ── */
+   236→   236→  const [columns, setColumns] = useState<ColumnState[]>(createInitialColumns);
+   237→   237→
+   238→   238→  /* ── UI state ── */
+   239→   239→  const [mode, setMode] = useState<Mode>("free");
+   240→   240→  const [soundOn, setSoundOn] = useState(false);
+   241→   241→
+   242→   242→  /* ── Practice state ── */
+   243→   243→  const [problem, setProblem] = useState<Problem | null>(null);
+   244→   244→  const [score, setScore] = useState({ correct: 0, total: 0 });
+   245→   245→  const [feedback, setFeedback] = useState<"correct" | "wrong" | null>(null);
+   246→   246→
+   247→   247→  /* ── Exam state ── */
+   248→   248→  const [examProblems, setExamProblems] = useState<Problem[]>([]);
+   249→   249→  const [examIdx, setExamIdx] = useState(0);
+   250→   250→  const [examScore, setExamScore] = useState(0);
+   251→   251→  const [examTime, setExamTime] = useState(60);
+   252→   252→  const [examActive, setExamActive] = useState(false);
+   253→   253→  const [examDone, setExamDone] = useState(false);
+   254→   254→  const [examResults, setExamResults] = useState<boolean[]>([]);
+   255→   255→  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+   256→   256→
+   257→   257→  /* ── Cleanup timer on unmount ── */
+   258→   258→  useEffect(
+   259→   259→    () => () => {
+   260→   260→      if (timerRef.current) clearInterval(timerRef.current);
+   261→   261→    },
+   262→   262→    []
+   263→   263→  );
+   264→   264→
+   265→   265→  /* ── Exam countdown timer ── */
+   266→   266→  useEffect(() => {
+   267→   267→    if (examActive && !examDone && examTime > 0) {
+   268→   268→      timerRef.current = setInterval(() => {
+   269→   269→        setExamTime((t) => {
+   270→   270→          if (t <= 1) {
+   271→   271→            setExamDone(true);
+   272→   272→            return 0;
+   273→   273→          }
+   274→   274→          return t - 1;
+   275→   275→        });
+   276→   276→      }, 1000);
+   277→   277→      return () => {
+   278→   278→        if (timerRef.current) clearInterval(timerRef.current);
+   279→   279→      };
+   280→   280→    }
+   281→   281→  }, [examActive, examDone]);
+   282→   282→
+   283→   283→  /* ═══════════════════════════════════════
+   284→   284→     Handlers
+   285→   285→     ═══════════════════════════════════════ */
+   286→   286→
+   287→   287→  const toggleUpper = useCallback((colIndex: number) => {
+   288→   288→    setColumns((prev) =>
+   289→   289→      prev.map((col, i) =>
+   290→   290→        i === colIndex ? { ...col, upper: !col.upper } : col
+   291→   291→      )
+   292→   292→    );
+   293→   293→  }, []);
+   294→   294→
+   295→   295→  const toggleLower = useCallback((colIndex: number, beadIndex: number) => {
+   296→   296→    setColumns((prev) =>
+   297→   297→      prev.map((col, i) => {
+   298→   298→        if (i !== colIndex) return col;
+   299→   299→        const earthActive = col.lower.filter(Boolean).length;
+   300→   300→        const newActive = beadIndex < earthActive ? beadIndex : beadIndex + 1;
+   301→   301→        return {
+   302→   302→          ...col,
+   303→   303→          lower: ([0, 1, 2, 3].map((k) => k < newActive) as [
+   304→   304→            boolean,
+   305→   305→            boolean,
+   306→   306→            boolean,
+   307→   307→            boolean,
+   308→   308→          ]),
+   309→   309→        };
+   310→   310→      })
+   311→   311→    );
+   312→   312→  }, []);
+   313→   313→
+   314→   314→  const resetAbacus = useCallback(() => {
+   315→   315→    setColumns(createInitialColumns());
+   316→   316→    setFeedback(null);
+   317→   317→  }, []);
+   318→   318→
+   319→   319→  const handleGenerateProblem = useCallback(() => {
+   320→   320→    setProblem(generateProblem());
+   321→   321→    setFeedback(null);
+   322→   322→    resetAbacus();
+   323→   323→  }, [resetAbacus]);
+   324→   324→
+   325→   325→  const handleCheckAnswer = useCallback(() => {
+   326→   326→    if (!problem) return;
+   327→   327→    const ok = getAbacusTotal(columns) === problem.answer;
+   328→   328→    setFeedback(ok ? "correct" : "wrong");
+   329→   329→    setScore((s) => ({
+   330→   330→      correct: s.correct + (ok ? 1 : 0),
+   331→   331→      total: s.total + 1,
+   332→   332→    }));
+   333→   333→  }, [problem, columns]);
+   334→   334→
+   335→   335→  const handleStartExam = useCallback(() => {
+   336→   336→    const problems = Array.from({ length: 10 }, () => generateProblem());
+   337→   337→    setExamProblems(problems);
+   338→   338→    setExamIdx(0);
+   339→   339→    setExamScore(0);
+   340→   340→    setExamTime(60);
+   341→   341→    setExamActive(true);
+   342→   342→    setExamDone(false);
+   343→   343→    setExamResults([]);
+   344→   344→    resetAbacus();
+   345→   345→  }, [resetAbacus]);
+   346→   346→
+   347→   347→  const handleExamSubmit = useCallback(() => {
+   348→   348→    if (examIdx >= examProblems.length) return;
+   349→   349→    const ok = getAbacusTotal(columns) === examProblems[examIdx].answer;
+   350→   350→    const newResults = [...examResults, ok];
+   351→   351→    setExamResults(newResults);
+   352→   352→    if (ok) setExamScore((s) => s + 1);
+   353→   353→
+   354→   354→    if (examIdx + 1 >= examProblems.length) {
+   355→   355→      setExamDone(true);
+   356→   356→    } else {
+   357→   357→      setTimeout(() => {
+   358→   358→        setExamIdx((i) => i + 1);
+   359→   359→        resetAbacus();
+   360→   360→      }, 700);
+   361→   361→    }
+   362→   362→  }, [examIdx, examProblems, columns, examResults, resetAbacus]);
+   363→   363→
+   364→   364→  const switchMode = useCallback(
+   365→   365→    (newMode: Mode) => {
+   366→   366→      setMode(newMode);
+   367→   367→      resetAbacus();
+   368→   368→      setProblem(null);
+   369→   369→      setFeedback(null);
+   370→   370→      setScore({ correct: 0, total: 0 });
+   371→   371→      setExamActive(false);
+   372→   372→      setExamDone(false);
+   373→   373→      if (timerRef.current) clearInterval(timerRef.current);
+   374→   374→    },
+   375→   375→    [resetAbacus]
+   376→   376→  );
+   377→   377→
+   378→   378→  /* ── Derived values ── */
+   379→   379→  const total = getAbacusTotal(columns);
+   380→   380→  const currentProblem =
+   381→   381→    mode === "exam" && examActive && !examDone
+   382→   382→      ? examProblems[examIdx]
+   383→   383→      : problem;
+   384→   384→
+   385→   385→  /* ═══════════════════════════════════════
+   386→   386→     Render
+   387→   387→     ═══════════════════════════════════════ */
+   388→   388→
+   389→   389→  return (
+   390→   390→    <div className="min-h-screen flex flex-col bg-[#f9fafb]">
+   391→   391→      <Header />
+   392→   392→
+   393→   393→      <main className="flex-1 pt-24 pb-16">
+   394→   394→        <div className="max-w-4xl mx-auto px-4 sm:px-6" dir="rtl">
+   395→   395→          {/* ───── Page Title ───── */}
+   396→   396→          <div className="text-center mb-8">
+   397→   397→            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2 tracking-tight">
+   398→   398→              آباکوس مجازی
+   399→   399→            </h1>
+   400→   400→            <p className="text-slate-900/40 text-sm sm:text-base">
+   401→   401→              چرتکه دیجیتال تعاملی برای تمرین روزانه
+   402→   402→            </p>
+   403→   403→          </div>
+   404→   404→
+   405→   405→          {/* ───── Mode Selector ───── */}
+   406→   406→          <div className="flex justify-center gap-2 sm:gap-3 mb-8">
+   407→   407→            {(
+   408→   408→              [
+   409→   409→                ["free", "آزاد"],
+   410→   410→                ["practice", "تمرین"],
+   411→   411→                ["exam", "آزمون"],
+   412→   412→              ] as const
+   413→   413→            ).map(([m, label]) => (
+   414→   414→              <button
+   415→   415→                key={m}
+   416→   416→                onClick={() => switchMode(m)}
+   417→   417→                className={`
+   418→   418→                  px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-sm sm:text-base font-medium
+   419→   419→                  border transition-all duration-200 cursor-pointer select-none
+   420→   420→                  ${
+   421→   421→                    mode === m
+   422→   422→                      ? "bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-[0_0_24px_rgba(245,158,11,0.12)]"
+   423→   423→                      : "bg-white/[0.04] border-white/[0.08] text-slate-900/45 hover:text-slate-900/65 hover:bg-white/[0.07]"
+   424→   424→                  }
+   425→   425→                `}
+   426→   426→              >
+   427→   427→                {label}
+   428→   428→              </button>
+   429→   429→            ))}
+   430→   430→          </div>
+   431→   431→
+   432→   432→          {/* ───── Exam Timer + Problem Counter ───── */}
+   433→   433→          {mode === "exam" && examActive && !examDone && (
+   434→   434→            <div className="flex items-center justify-center gap-5 mb-4 text-sm text-slate-900/50">
+   435→   435→              <span className="flex items-center gap-1.5">
+   436→   436→                <Timer className="w-4 h-4" />
+   437→   437→                <span
+   438→   438→                  className={`font-mono text-base ${
+   439→   439→                    examTime <= 10
+   440→   440→                      ? "text-red-400 font-bold animate-pulse"
+   441→   441→                      : "text-slate-900/70"
+   442→   442→                  }`}
+   443→   443→                >
+   444→   444→                  {toPersian(examTime)}
+   445→   445→                </span>
+   446→   446→                <span>ثانیه</span>
+   447→   447→              </span>
+   448→   448→              <span className="w-px h-4 bg-gray-100" />
+   449→   449→              <span>
+   450→   450→                سؤال {toPersian(examIdx + 1)} از {toPersian(examProblems.length)}
+   451→   451→              </span>
+   452→   452→            </div>
+   453→   453→          )}
+   454→   454→
+   455→   455→          {/* ───── Problem Display ───── */}
+   456→   456→          {currentProblem && !examDone && (
+   457→   457→            <div className="text-center mb-6">
+   458→   458→              <div className="inline-block bg-gray-50 backdrop-blur-xl border border-white/[0.07] rounded-2xl px-6 sm:px-10 py-4 sm:py-5">
+   459→   459→                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-wider" dir="ltr">
+   460→   460→                  <span>{toPersian(currentProblem.a)}</span>
+   461→   461→                  <span
+   462→   462→                    className={`mx-2 sm:mx-3 ${
+   463→   463→                      currentProblem.op === "+" ? "text-emerald-400" : "text-red-400"
+   464→   464→                    }`}
+   465→   465→                  >
+   466→   466→                    {currentProblem.op === "+" ? "+" : "−"}
+   467→   467→                  </span>
+   468→   468→                  <span>{toPersian(currentProblem.b)}</span>
+   469→   469→                  <span className="mx-2 sm:mx-3 text-slate-900/30">=</span>
+   470→   470→                  <span className="text-slate-900/30">?</span>
+   471→   471→                </div>
+   472→   472→              </div>
+   473→   473→            </div>
+   474→   474→          )}
+   475→   475→
+   476→   476→          {/* ───── Feedback ───── */}
+   477→   477→          {feedback && problem && mode === "practice" && (
+   478→   478→            <div
+   479→   479→              className={`mb-5 text-center text-sm sm:text-base font-medium transition-all ${
+   480→   480→                feedback === "correct" ? "text-emerald-400" : "text-red-400"
+   481→   481→              }`}
+   482→   482→            >
+   483→   483→              {feedback === "correct" ? (
+   484→   484→                <span className="inline-flex items-center gap-1.5">
+   485→   485→                  <CheckCircle className="w-4 h-4" />
+   486→   486→                  آفرین! پاسخ درست است
+   487→   487→                </span>
+   488→   488→              ) : (
+   489→   489→                <span className="inline-flex items-center gap-1.5">
+   490→   490→                  <XCircle className="w-4 h-4" />
+   491→   491→                  پاسخ اشتباه است · پاسخ صحیح:{" "}
+   492→   492→                  <span className="font-bold">{formatPersian(problem.answer)}</span>
+   493→   493→                </span>
+   494→   494→              )}
+   495→   495→            </div>
+   496→   496→          )}
+   497→   497→
+   498→   498→          {/* ───── Abacus Frame ───── */}
+   499→   499→          <div className="relative mb-6">
+   500→   500→            {/* Subtle glow behind the frame */}
+   501→   501→            <div className="absolute -inset-6 bg-gradient-to-b from-amber-500/[0.035] via-transparent to-teal-500/[0.035] rounded-3xl pointer-events-none" />
+   502→   502→
+   503→   503→            <div className="relative bg-[#0c1c38]/90 backdrop-blur-sm border border-white/[0.07] rounded-2xl p-2.5 sm:p-4 md:p-5 overflow-hidden">
+   504→   504→              {/* Top decorative rail */}
+   505→   505→              <div className="h-2.5 sm:h-3 bg-gradient-to-r from-transparent via-white/[0.12] to-transparent rounded-full mb-1.5" />
+   506→   506→
+   507→   507→              {/* Columns container — RTL so index 0 (units) is on the right */}
+   508→   508→              <div
+   509→   509→                className="flex gap-[2px] sm:gap-1 md:gap-1.5 overflow-x-auto"
+   510→   510→                style={{ scrollbarWidth: "none" }}
+   511→   511→              >
+   512→   512→                {columns.map((col, i) => (
+   513→   513→                  <AbacusColumn
+   514→   514→                    key={i}
+   515→   515→                    state={col}
+   516→   516→                    onToggleUpper={() => toggleUpper(i)}
+   517→   517→                    onToggleLower={(bi) => toggleLower(i, bi)}
+   518→   518→                  />
+   519→   519→                ))}
+   520→   520→              </div>
+   521→   521→
+   522→   522→              {/* Bottom decorative rail */}
+   523→   523→              <div className="h-2.5 sm:h-3 bg-gradient-to-r from-transparent via-white/[0.12] to-transparent rounded-full mt-1.5" />
+   524→   524→            </div>
+   525→   525→          </div>
+   526→   526→
+   527→   527→          {/* ───── Value Display ───── */}
+   528→   528→          <div className="text-center mb-8">
+   529→   529→            <div className="inline-block bg-gray-50 backdrop-blur-xl border border-white/[0.07] rounded-2xl px-8 sm:px-12 py-4 sm:py-5">
+   530→   530→              <span className="block text-[11px] sm:text-xs text-slate-900/35 mb-1.5 tracking-wide">
+   531→   531→                مقدار عدد
+   532→   532→              </span>
+   533→   533→              <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-[0.12em] font-mono" dir="ltr">
+   534→   534→                {formatPersian(total)}
+   535→   535→              </span>
+   536→   536→            </div>
+   537→   537→          </div>
+   538→   538→
+   539→   539→          {/* ───── Practice Mode Controls ───── */}
+   540→   540→          {mode === "practice" && (
+   541→   541→            <div className="space-y-4 mb-6">
+   542→   542→              <div className="flex flex-wrap justify-center gap-3">
+   543→   543→                <GlassButton
+   544→   544→                  icon={Play}
+   545→   545→                  variant="emerald"
+   546→   546→                  onClick={handleGenerateProblem}
+   547→   547→                >
+   548→   548→                  تولید مسئله
+   549→   549→                </GlassButton>
+   550→   550→                {problem && (
+   551→   551→                  <GlassButton
+   552→   552→                    icon={CheckCircle}
+   553→   553→                    variant="amber"
+   554→   554→                    onClick={handleCheckAnswer}
+   555→   555→                  >
+   556→   556→                    بررسی پاسخ
+   557→   557→                  </GlassButton>
+   558→   558→                )}
+   559→   559→              </div>
+   560→   560→              {score.total > 0 && (
+   561→   561→                <p className="text-center text-sm text-slate-900/45">
+   562→   562→                  امتیاز:{" "}
+   563→   563→                  <span className="text-emerald-400 font-bold">
+   564→   564→                    {toPersian(score.correct)}
+   565→   565→                  </span>{" "}
+   566→   566→                  از{" "}
+   567→   567→                  <span className="text-slate-900/65 font-bold">
+   568→   568→                    {toPersian(score.total)}
+   569→   569→                  </span>
+   570→   570→                </p>
+   571→   571→              )}
+   572→   572→            </div>
+   573→   573→          )}
+   574→   574→
+   575→   575→          {/* ───── Exam Mode Controls ───── */}
+   576→   576→          {mode === "exam" && !examActive && !examDone && (
+   577→   577→            <div className="text-center mb-6">
+   578→   578→              <GlassButton
+   579→   579→                icon={Play}
+   580→   580→                variant="amber"
+   581→   581→                onClick={handleStartExam}
+   582→   582→                className="px-8 py-3 text-base"
+   583→   583→              >
+   584→   584→                شروع آزمون
+   585→   585→              </GlassButton>
+   586→   586→              <p className="text-slate-900/35 text-sm mt-3">
+   587→   587→                ۱۰ مسئله تصادفی · محدودیت ۶۰ ثانیه
+   588→   588→              </p>
+   589→   589→            </div>
+   590→   590→          )}
+   591→   591→
+   592→   592→          {mode === "exam" && examActive && !examDone && (
+   593→   593→            <div className="flex justify-center mb-6">
+   594→   594→              <GlassButton
+   595→   595→                icon={CheckCircle}
+   596→   596→                variant="amber"
+   597→   597→                onClick={handleExamSubmit}
+   598→   598→              >
+   599→   599→                ثبت پاسخ
+   600→   600→              </GlassButton>
+   601→   601→            </div>
+   602→   602→          )}
+   603→   603→
+   604→   604→          {/* ───── Exam Results ───── */}
+   605→   605→          {mode === "exam" && examDone && (
+   606→   606→            <div className="mb-8">
+   607→   607→              <div className="max-w-md mx-auto bg-gray-50 backdrop-blur-xl border border-white/[0.07] rounded-2xl p-6 sm:p-8 text-center">
+   608→   608→                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-5">
+   609→   609→                  نتایج آزمون
+   610→   610→                </h2>
+   611→   611→
+   612→   612→                {/* Score */}
+   613→   613→                <div className="mb-5">
+   614→   614→                  <span className="text-5xl sm:text-6xl font-extrabold text-amber-400">
+   615→   615→                    {toPersian(examScore)}
+   616→   616→                  </span>
+   617→   617→                  <span className="text-2xl sm:text-3xl text-slate-900/30 mx-2">
+   618→   618→                    /
+   619→   619→                  </span>
+   620→   620→                  <span className="text-2xl sm:text-3xl text-slate-900/50">
+   621→   621→                    {toPersian(examResults.length)}
+   622→   622→                  </span>
+   623→   623→                </div>
+   624→   624→
+   625→   625→                {/* Time */}
+   626→   626→                <p className="text-slate-900/40 text-sm mb-6">
+   627→   627→                  <Timer className="inline w-3.5 h-3.5 ml-1" />
+   628→   628→                  زمان استفاده‌شده:{" "}
+   629→   629→                  <span className="text-slate-900/60 font-medium">
+   630→   630→                    {toPersian(60 - examTime)} ثانیه
+   631→   631→                  </span>
+   632→   632→                </p>
+   633→   633→
+   634→   634→                {/* Per-problem results */}
+   635→   635→                <div className="flex justify-center gap-1.5 sm:gap-2 mb-6 flex-wrap">
+   636→   636→                  {examResults.map((ok, i) => (
+   637→   637→                    <div
+   638→   638→                      key={i}
+   639→   639→                      className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg flex items-center justify-center border transition-all ${
+   640→   640→                        ok
+   641→   641→                          ? "bg-emerald-500/15 border-emerald-500/25 text-emerald-400"
+   642→   642→                          : "bg-red-500/15 border-red-500/25 text-red-400"
+   643→   643→                      }`}
+   644→   644→                      title={
+   645→   645→                        ok
+   646→   646→                          ? "پاسخ درست"
+   647→   647→                          : `پاسخ اشتباه · صحیح: ${toPersian(examProblems[i]?.answer)}`
+   648→   648→                      }
+   649→   649→                    >
+   650→   650→                      {ok ? (
+   651→   651→                        <CheckCircle className="w-4 h-4" />
+   652→   652→                      ) : (
+   653→   653→                        <XCircle className="w-4 h-4" />
+   654→   654→                      )}
+   655→   655→                    </div>
+   656→   656→                  ))}
+   657→   657→                </div>
+   658→   658→
+   659→   659→                {/* Percentage */}
+   660→   660→                <p className="text-sm text-slate-900/40 mb-6">
+   661→   661→                  {examResults.length > 0 && (
+   662→   662→                    <>
+   663→   663→                      درصد موفقیت:{" "}
+   664→   664→                      <span
+   665→   665→                        className={`font-bold ${
+   666→   666→                          examScore / examResults.length >= 0.7
+   667→   667→                            ? "text-emerald-400"
+   668→   668→                            : examScore / examResults.length >= 0.4
+   669→   669→                            ? "text-amber-400"
+   670→   670→                            : "text-red-400"
+   671→   671→                        }`}
+   672→   672→                      >
+   673→   673→                        {toPersian(
+   674→   674→                          Math.round((examScore / examResults.length) * 100)
+   675→   675→                        )}
+   676→   676→                        ٪
+   677→   677→                      </span>
+   678→   678→                    </>
+   679→   679→                  )}
+   680→   680→                </p>
+   681→   681→
+   682→   682→                {/* Restart */}
+   683→   683→                <GlassButton
+   684→   684→                  icon={RotateCcw}
+   685→   685→                  onClick={handleStartExam}
+   686→   686→                  className="px-6 py-2.5"
+   687→   687→                >
+   688→   688→                  تلاش مجدد
+   689→   689→                </GlassButton>
+   690→   690→              </div>
+   691→   691→            </div>
+   692→   692→          )}
+   693→   693→
+   694→   694→          {/* ───── Bottom Controls Bar ───── */}
+   695→   695→          <div className="flex justify-center gap-3">
+   696→   696→            <GlassButton icon={RotateCcw} onClick={resetAbacus}>
+   697→   697→              ریست
+   698→   698→            </GlassButton>
+   699→   699→            <GlassButton
+   700→   700→              icon={soundOn ? Volume2 : VolumeX}
+   701→   701→              onClick={() => setSoundOn(!soundOn)}
+   702→   702→            >
+   703→   703→              صدای مهره
+   704→   704→            </GlassButton>
+   705→   705→          </div>
+   706→   706→
+   707→   707→          {/* ───── Free Mode Hint ───── */}
+   708→   708→          {mode === "free" && total === 0 && (
+   709→   709→            <p className="text-center text-slate-900/25 text-xs sm:text-sm mt-8 leading-relaxed">
+   710→   710→              روی مهره‌ها کلیک کنید تا آن‌ها را جابجا کنید. مهره‌های بالایی ارزش
+   711→   711→              ۵ و مهره‌های پایینی ارزش ۱ واحد دارند.
+   712→   712→            </p>
+   713→   713→          )}
+   714→   714→        </div>
+   715→   715→      </main>
+   716→   716→
+   717→   717→      <Footer />
+   718→   718→    </div>
+   719→   719→  );
+   720→   720→}

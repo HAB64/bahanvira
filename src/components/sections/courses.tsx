@@ -4,77 +4,83 @@ import { Grid3X3, Brain, Zap, Trophy, Rocket, BookOpen, Clock, Users, ArrowLeft 
 
 const courses = [
   {
-    badge: { text: 'پرطرفدار', color: 'bg-orange-500/20 text-orange-400' },
+    badge: { text: 'پرطرفدار', color: 'bg-orange-100 text-orange-600' },
     icon: Grid3X3,
-    iconBg: 'bg-orange-500/15',
-    iconColor: 'text-orange-400',
+    iconBg: 'bg-orange-100',
+    iconColor: 'text-orange-500',
     title: 'چرتکه مبتدی',
     desc: 'آموزش اصول اولیه چرتکه دهگانی برای سنین ۵ تا ۸ سال',
     duration: '۳۶ ساعته',
     sessions: '۱۲ جلسه',
+    accentColor: 'hover:border-orange-200',
   },
   {
-    badge: { text: 'پرطرفدار', color: 'bg-orange-500/20 text-orange-400' },
+    badge: { text: 'پرطرفدار', color: 'bg-teal-100 text-teal-600' },
     icon: Brain,
-    iconBg: 'bg-teal-500/15',
-    iconColor: 'text-teal-400',
+    iconBg: 'bg-teal-100',
+    iconColor: 'text-teal-500',
     title: 'حساب ذهنی ۱',
     desc: 'تقویت محاسبات ذهنی بدون چرتکه فیزیکی',
     duration: '۲۴ ساعته',
     sessions: '۸ جلسه',
+    accentColor: 'hover:border-teal-200',
   },
   {
-    badge: { text: 'جدید', color: 'bg-teal-500/20 text-teal-400' },
+    badge: { text: 'جدید', color: 'bg-purple-100 text-purple-600' },
     icon: Zap,
-    iconBg: 'bg-yellow-500/15',
-    iconColor: 'text-yellow-400',
+    iconBg: 'bg-amber-100',
+    iconColor: 'text-amber-500',
     title: 'چرتکه متوسط',
     desc: 'تکمیل مهارت‌های چرتکه و ورود به محاسبات پیچیده',
     duration: '۴۸ ساعته',
     sessions: '۱۶ جلسه',
+    accentColor: 'hover:border-purple-200',
   },
   {
     badge: null,
     icon: Trophy,
-    iconBg: 'bg-purple-500/15',
-    iconColor: 'text-purple-400',
+    iconBg: 'bg-purple-100',
+    iconColor: 'text-purple-500',
     title: 'آمادگی مسابقات',
     desc: 'تمرین‌های ویژه برای آمادگی شرکت در مسابقات ملی و بین‌المللی',
     duration: '۲۰ ساعته',
     sessions: '۱۰ جلسه',
+    accentColor: 'hover:border-purple-200',
   },
   {
-    badge: { text: 'ظرفیت محدود', color: 'bg-red-500/20 text-red-400' },
+    badge: { text: 'ظرفیت محدود', color: 'bg-rose-100 text-rose-600' },
     icon: Rocket,
-    iconBg: 'bg-rose-500/15',
-    iconColor: 'text-rose-400',
+    iconBg: 'bg-rose-100',
+    iconColor: 'text-rose-500',
     title: 'چرتکه پیشرفته',
     desc: 'محاسبات چندرقمی پیچیده و سرعت‌بخشی حرفه‌ای',
     duration: '۶۰ ساعته',
     sessions: '۲۰ جلسه',
+    accentColor: 'hover:border-rose-200',
   },
   {
     badge: null,
     icon: BookOpen,
-    iconBg: 'bg-sky-500/15',
-    iconColor: 'text-sky-400',
+    iconBg: 'bg-blue-100',
+    iconColor: 'text-blue-500',
     title: 'مربی‌گری چرتکه',
     desc: 'دوره تربیت مربی چرتکه برای علاقه‌مندان به تدریس',
     duration: '۸۰ ساعته',
     sessions: '۲۵ جلسه',
+    accentColor: 'hover:border-blue-200',
   },
 ];
 
 export default function Courses() {
   return (
-    <section id="courses" className="py-16 sm:py-20 relative overflow-hidden">
+    <section id="courses" className="py-16 sm:py-20 relative overflow-hidden section-warm">
       {/* Decorative background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-500/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-200/20 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <span className="inline-block rounded-full bg-teal-500/15 px-4 py-1.5 text-xs font-semibold text-teal-400 mb-4">
+          <span className="inline-block rounded-full bg-orange-100 px-4 py-1.5 text-xs font-semibold text-orange-600 mb-4">
             دوره‌های آموزشی
           </span>
           <h2 className="section-heading text-3xl sm:text-4xl">دوره‌های پرطرفدار ما</h2>
@@ -91,9 +97,9 @@ export default function Courses() {
               <a
                 key={course.title}
                 href="#"
-                className="glass-card rounded-2xl overflow-hidden group block p-5 transition-all duration-300"
+                className={`bright-card overflow-hidden group block p-5 transition-all duration-300 ${course.accentColor}`}
               >
-                {/* Badge — top-right */}
+                {/* Badge */}
                 <div className="flex justify-start mb-4">
                   {course.badge && (
                     <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${course.badge.color}`}>
@@ -108,17 +114,17 @@ export default function Courses() {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg font-bold text-white mb-2 group-hover:text-teal-300 transition-colors duration-200">
+                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors duration-200">
                   {course.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-slate-400 text-sm leading-relaxed mb-4">
+                <p className="text-slate-500 text-sm leading-relaxed mb-4">
                   {course.desc}
                 </p>
 
                 {/* Meta Row */}
-                <div className="flex items-center gap-4 text-xs text-slate-500 pt-3 border-t border-white/5">
+                <div className="flex items-center gap-4 text-xs text-slate-400 pt-3 border-t border-gray-100">
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />
                     {course.duration}
@@ -137,7 +143,7 @@ export default function Courses() {
         <div className="text-center mt-10">
           <a
             href="#"
-            className="inline-flex items-center gap-2 text-teal-400 hover:text-teal-300 text-sm font-medium transition-colors duration-200"
+            className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600 text-sm font-medium transition-colors duration-200"
           >
             مشاهده همه دوره‌ها
             <ArrowLeft className="w-4 h-4" />

@@ -7,7 +7,9 @@ const instructors = [
     exp: '۱۵ سال سابقه',
     bio: 'فارغ‌التحصیل کارشناسی ارشد ریاضی و دارای گواهینامه بین‌المللی مربی‌گری چرتکه',
     initials: 'ف.م',
-    gradient: 'from-teal-400 to-cyan-500',
+    gradient: 'from-orange-400 to-amber-500',
+    shadowColor: 'shadow-orange-500/20',
+    badgeColor: 'bg-orange-100 text-orange-600',
   },
   {
     name: 'استاد علی حسینی',
@@ -15,7 +17,9 @@ const instructors = [
     exp: '۱۰ سال سابقه',
     bio: 'قهرمان مسابقات ملی چرتکه و مربی تیم ملی',
     initials: 'ا.ح',
-    gradient: 'from-emerald-400 to-teal-500',
+    gradient: 'from-teal-400 to-cyan-500',
+    shadowColor: 'shadow-teal-500/20',
+    badgeColor: 'bg-teal-100 text-teal-600',
   },
   {
     name: 'استاد مریم رضایی',
@@ -23,14 +27,16 @@ const instructors = [
     exp: '۸ سال سابقه',
     bio: 'متخصص آموزش چرتکه به کودکان سنین ۵ تا ۱۰ سال با روش‌های بازی‌محور',
     initials: 'م.ر',
-    gradient: 'from-cyan-400 to-teal-500',
+    gradient: 'from-purple-400 to-violet-500',
+    shadowColor: 'shadow-purple-500/20',
+    badgeColor: 'bg-purple-100 text-purple-600',
   },
 ];
 
 export default function Instructors() {
   return (
-    <section className="py-16 sm:py-20 relative overflow-hidden section-gradient">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    <section className="py-16 sm:py-20 relative overflow-hidden section-creative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
         {/* Header */}
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="section-heading">مربیان مجرب ما</h2>
@@ -44,34 +50,21 @@ export default function Instructors() {
           {instructors.map((instructor) => (
             <div
               key={instructor.name}
-              className="glass-card rounded-2xl p-6 flex flex-col items-center text-center group transition-all duration-300 hover:-translate-y-1"
+              className="bright-card p-6 flex flex-col items-center text-center group transition-all duration-300 hover:border-purple-200"
             >
               {/* Avatar */}
               <div
-                className={`w-20 h-20 rounded-full bg-gradient-to-br ${instructor.gradient} flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform duration-300`}
+                className={`w-20 h-20 rounded-full bg-gradient-to-br ${instructor.gradient} flex items-center justify-center text-white text-xl font-bold shadow-lg ${instructor.shadowColor} group-hover:scale-105 transition-transform duration-300`}
               >
                 {instructor.initials}
               </div>
 
-              {/* Name */}
-              <h3 className="text-lg font-bold text-white mt-5 mb-1">
-                {instructor.name}
-              </h3>
-
-              {/* Role Badge */}
-              <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-teal-500/15 text-teal-400 mb-1">
+              <h3 className="text-lg font-bold text-slate-900 mt-5 mb-1">{instructor.name}</h3>
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${instructor.badgeColor} mb-1`}>
                 {instructor.role}
               </span>
-
-              {/* Experience */}
-              <span className="inline-block text-xs text-slate-500 mb-4">
-                {instructor.exp}
-              </span>
-
-              {/* Bio */}
-              <p className="text-sm leading-relaxed text-slate-400">
-                {instructor.bio}
-              </p>
+              <span className="inline-block text-xs text-slate-400 mb-4">{instructor.exp}</span>
+              <p className="text-sm leading-relaxed text-slate-500">{instructor.bio}</p>
             </div>
           ))}
         </div>

@@ -101,7 +101,7 @@ function AbacusColumn({
         style={{ height: 230 }}
       >
         {/* ── Vertical rod ── */}
-        <div className="absolute left-1/2 -translate-x-1/2 w-[2px] h-full rounded-full bg-white/[0.12] z-0" />
+        <div className="absolute left-1/2 -translate-x-1/2 w-[2px] h-full rounded-full bg-orange-200/40 z-0" />
 
         {/* ── Upper (heaven) area ── */}
         <div className="relative flex-1 flex items-center justify-center w-full z-10">
@@ -123,7 +123,7 @@ function AbacusColumn({
           >
             {state.upper && (
               <div
-                className="absolute rounded-full bg-white/30 blur-[1px]"
+                className="absolute rounded-full bg-orange-300/40 blur-[1px]"
                 style={{ width: 8, height: 8, top: 5, right: 6 }}
               />
             )}
@@ -131,7 +131,7 @@ function AbacusColumn({
         </div>
 
         {/* ── Horizontal bar ── */}
-        <div className="w-full h-[7px] sm:h-2 md:h-[9px] bg-gradient-to-b from-white/[0.18] to-white/[0.08] z-20 flex-shrink-0" />
+        <div className="w-full h-[7px] sm:h-2 md:h-[9px] bg-gradient-to-b from-gray-300/40 to-gray-200/40 z-20 flex-shrink-0" />
 
         {/* ── Lower (earth) area ── */}
         <div className="relative flex-1 flex flex-col items-center w-full z-10">
@@ -144,16 +144,16 @@ function AbacusColumn({
                 className="
                   w-5 h-[14px] sm:w-7 sm:h-[18px] md:w-9 md:h-[22px]
                   rounded-full border-2
-                  bg-gradient-to-br from-teal-300 to-teal-500 border-teal-400/60
+                  bg-gradient-to-br from-orange-300 to-orange-500 border-orange-400/60
                   shadow-[0_0_10px_rgba(20,184,166,0.35)]
                   transition-all duration-150 select-none cursor-pointer
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/50
                   relative flex-shrink-0
                 "
                 aria-label={`مهره پایین ${i + 1}`}
               >
                 <div
-                  className="absolute rounded-full bg-white/25 blur-[1px]"
+                  className="absolute rounded-full bg-orange-200/30 blur-[1px]"
                   style={{ width: 6, height: 6, top: 2, right: 5 }}
                 />
               </button>
@@ -172,10 +172,10 @@ function AbacusColumn({
                 className="
                   w-5 h-[14px] sm:w-7 sm:h-[18px] md:w-9 md:h-[22px]
                   rounded-full border-2
-                  bg-gradient-to-br from-teal-800/20 to-teal-900/10 border-teal-700/15
-                  hover:border-teal-500/30
+                  bg-gradient-to-br from-orange-500/5 to-orange-500/5 border-orange-200
+                  hover:border-orange-300
                   transition-all duration-150 select-none cursor-pointer
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400/50
                   flex-shrink-0
                 "
                 aria-label={`مهره پایین ${i + 1}`}
@@ -209,7 +209,7 @@ function GlassButton({
     "inline-flex items-center justify-center gap-2 rounded-xl text-sm font-medium border transition-all duration-200 cursor-pointer select-none";
   const variants: Record<string, string> = {
     default:
-      "bg-white/[0.05] border-white/[0.08] text-white/60 hover:bg-white/[0.08] hover:text-white/80",
+      "bg-gray-50 border-gray-200 text-slate-900/60 hover:bg-gray-100 hover:text-slate-900/80",
     emerald:
       "bg-emerald-500/15 border-emerald-500/25 text-emerald-300 hover:bg-emerald-500/25",
     amber:
@@ -387,17 +387,17 @@ export default function AbacusPage() {
      ═══════════════════════════════════════ */
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0a1628]">
+    <div className="min-h-screen flex flex-col bg-[#f9fafb]">
       <Header />
 
       <main className="flex-1 pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6" dir="rtl">
           {/* ───── Page Title ───── */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-2 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2 tracking-tight">
               آباکوس مجازی
             </h1>
-            <p className="text-white/40 text-sm sm:text-base">
+            <p className="text-slate-900/40 text-sm sm:text-base">
               چرتکه دیجیتال تعاملی برای تمرین روزانه
             </p>
           </div>
@@ -420,7 +420,7 @@ export default function AbacusPage() {
                   ${
                     mode === m
                       ? "bg-amber-500/20 border-amber-500/40 text-amber-300 shadow-[0_0_24px_rgba(245,158,11,0.12)]"
-                      : "bg-white/[0.04] border-white/[0.08] text-white/45 hover:text-white/65 hover:bg-white/[0.07]"
+                      : "bg-gray-50 border-gray-200 text-slate-900/45 hover:text-slate-900/65 hover:bg-gray-100"
                   }
                 `}
               >
@@ -431,21 +431,21 @@ export default function AbacusPage() {
 
           {/* ───── Exam Timer + Problem Counter ───── */}
           {mode === "exam" && examActive && !examDone && (
-            <div className="flex items-center justify-center gap-5 mb-4 text-sm text-white/50">
+            <div className="flex items-center justify-center gap-5 mb-4 text-sm text-slate-900/50">
               <span className="flex items-center gap-1.5">
                 <Timer className="w-4 h-4" />
                 <span
                   className={`font-mono text-base ${
                     examTime <= 10
                       ? "text-red-400 font-bold animate-pulse"
-                      : "text-white/70"
+                      : "text-slate-900/70"
                   }`}
                 >
                   {toPersian(examTime)}
                 </span>
                 <span>ثانیه</span>
               </span>
-              <span className="w-px h-4 bg-white/10" />
+              <span className="w-px h-4 bg-gray-100" />
               <span>
                 سؤال {toPersian(examIdx + 1)} از {toPersian(examProblems.length)}
               </span>
@@ -455,8 +455,8 @@ export default function AbacusPage() {
           {/* ───── Problem Display ───── */}
           {currentProblem && !examDone && (
             <div className="text-center mb-6">
-              <div className="inline-block bg-white/[0.03] backdrop-blur-xl border border-white/[0.07] rounded-2xl px-6 sm:px-10 py-4 sm:py-5">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-wider" dir="ltr">
+              <div className="inline-block bg-gray-50 backdrop-blur-xl border border-gray-200 rounded-2xl px-6 sm:px-10 py-4 sm:py-5">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 tracking-wider" dir="ltr">
                   <span>{toPersian(currentProblem.a)}</span>
                   <span
                     className={`mx-2 sm:mx-3 ${
@@ -466,8 +466,8 @@ export default function AbacusPage() {
                     {currentProblem.op === "+" ? "+" : "−"}
                   </span>
                   <span>{toPersian(currentProblem.b)}</span>
-                  <span className="mx-2 sm:mx-3 text-white/30">=</span>
-                  <span className="text-white/30">?</span>
+                  <span className="mx-2 sm:mx-3 text-slate-900/30">=</span>
+                  <span className="text-slate-900/30">?</span>
                 </div>
               </div>
             </div>
@@ -498,11 +498,11 @@ export default function AbacusPage() {
           {/* ───── Abacus Frame ───── */}
           <div className="relative mb-6">
             {/* Subtle glow behind the frame */}
-            <div className="absolute -inset-6 bg-gradient-to-b from-amber-500/[0.035] via-transparent to-teal-500/[0.035] rounded-3xl pointer-events-none" />
+            <div className="absolute -inset-6 bg-gradient-to-b from-orange-200/20 via-transparent to-teal-200/20 rounded-3xl pointer-events-none" />
 
-            <div className="relative bg-[#0c1c38]/90 backdrop-blur-sm border border-white/[0.07] rounded-2xl p-2.5 sm:p-4 md:p-5 overflow-hidden">
+            <div className="relative bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl p-2.5 sm:p-4 md:p-5 overflow-hidden">
               {/* Top decorative rail */}
-              <div className="h-2.5 sm:h-3 bg-gradient-to-r from-transparent via-white/[0.12] to-transparent rounded-full mb-1.5" />
+              <div className="h-2.5 sm:h-3 bg-gradient-to-r from-transparent via-orange-200/30 to-transparent rounded-full mb-1.5" />
 
               {/* Columns container — RTL so index 0 (units) is on the right */}
               <div
@@ -520,17 +520,17 @@ export default function AbacusPage() {
               </div>
 
               {/* Bottom decorative rail */}
-              <div className="h-2.5 sm:h-3 bg-gradient-to-r from-transparent via-white/[0.12] to-transparent rounded-full mt-1.5" />
+              <div className="h-2.5 sm:h-3 bg-gradient-to-r from-transparent via-orange-200/30 to-transparent rounded-full mt-1.5" />
             </div>
           </div>
 
           {/* ───── Value Display ───── */}
           <div className="text-center mb-8">
-            <div className="inline-block bg-white/[0.03] backdrop-blur-xl border border-white/[0.07] rounded-2xl px-8 sm:px-12 py-4 sm:py-5">
-              <span className="block text-[11px] sm:text-xs text-white/35 mb-1.5 tracking-wide">
+            <div className="inline-block bg-gray-50 backdrop-blur-xl border border-gray-200 rounded-2xl px-8 sm:px-12 py-4 sm:py-5">
+              <span className="block text-[11px] sm:text-xs text-slate-900/35 mb-1.5 tracking-wide">
                 مقدار عدد
               </span>
-              <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-[0.12em] font-mono" dir="ltr">
+              <span className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-[0.12em] font-mono" dir="ltr">
                 {formatPersian(total)}
               </span>
             </div>
@@ -558,13 +558,13 @@ export default function AbacusPage() {
                 )}
               </div>
               {score.total > 0 && (
-                <p className="text-center text-sm text-white/45">
+                <p className="text-center text-sm text-slate-900/45">
                   امتیاز:{" "}
                   <span className="text-emerald-400 font-bold">
                     {toPersian(score.correct)}
                   </span>{" "}
                   از{" "}
-                  <span className="text-white/65 font-bold">
+                  <span className="text-slate-900/65 font-bold">
                     {toPersian(score.total)}
                   </span>
                 </p>
@@ -583,7 +583,7 @@ export default function AbacusPage() {
               >
                 شروع آزمون
               </GlassButton>
-              <p className="text-white/35 text-sm mt-3">
+              <p className="text-slate-900/35 text-sm mt-3">
                 ۱۰ مسئله تصادفی · محدودیت ۶۰ ثانیه
               </p>
             </div>
@@ -604,8 +604,8 @@ export default function AbacusPage() {
           {/* ───── Exam Results ───── */}
           {mode === "exam" && examDone && (
             <div className="mb-8">
-              <div className="max-w-md mx-auto bg-white/[0.03] backdrop-blur-xl border border-white/[0.07] rounded-2xl p-6 sm:p-8 text-center">
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-5">
+              <div className="max-w-md mx-auto bg-gray-50 backdrop-blur-xl border border-gray-200 rounded-2xl p-6 sm:p-8 text-center">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-5">
                   نتایج آزمون
                 </h2>
 
@@ -614,19 +614,19 @@ export default function AbacusPage() {
                   <span className="text-5xl sm:text-6xl font-extrabold text-amber-400">
                     {toPersian(examScore)}
                   </span>
-                  <span className="text-2xl sm:text-3xl text-white/30 mx-2">
+                  <span className="text-2xl sm:text-3xl text-slate-900/30 mx-2">
                     /
                   </span>
-                  <span className="text-2xl sm:text-3xl text-white/50">
+                  <span className="text-2xl sm:text-3xl text-slate-900/50">
                     {toPersian(examResults.length)}
                   </span>
                 </div>
 
                 {/* Time */}
-                <p className="text-white/40 text-sm mb-6">
+                <p className="text-slate-900/40 text-sm mb-6">
                   <Timer className="inline w-3.5 h-3.5 ml-1" />
                   زمان استفاده‌شده:{" "}
-                  <span className="text-white/60 font-medium">
+                  <span className="text-slate-900/60 font-medium">
                     {toPersian(60 - examTime)} ثانیه
                   </span>
                 </p>
@@ -657,7 +657,7 @@ export default function AbacusPage() {
                 </div>
 
                 {/* Percentage */}
-                <p className="text-sm text-white/40 mb-6">
+                <p className="text-sm text-slate-900/40 mb-6">
                   {examResults.length > 0 && (
                     <>
                       درصد موفقیت:{" "}
@@ -706,7 +706,7 @@ export default function AbacusPage() {
 
           {/* ───── Free Mode Hint ───── */}
           {mode === "free" && total === 0 && (
-            <p className="text-center text-white/25 text-xs sm:text-sm mt-8 leading-relaxed">
+            <p className="text-center text-slate-900/25 text-xs sm:text-sm mt-8 leading-relaxed">
               روی مهره‌ها کلیک کنید تا آن‌ها را جابجا کنید. مهره‌های بالایی ارزش
               ۵ و مهره‌های پایینی ارزش ۱ واحد دارند.
             </p>

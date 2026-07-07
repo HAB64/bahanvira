@@ -82,7 +82,7 @@ const statusColors: Record<string, string> = {
   'فعال': 'bg-[#0d9488]/15 text-[#0d9488] border-[#0d9488]/30',
   'در انتظار': 'bg-[#eab308]/15 text-[#eab308] border-[#eab308]/30',
   'غیرفعال': 'bg-red-500/15 text-red-400 border-red-500/30',
-  'بسته شده': 'bg-slate-500/15 text-slate-400 border-slate-500/30',
+  'بسته شده': 'bg-slate-500/15 text-slate-500 border-slate-500/30',
 };
 
 /* ─────────── Component ─────────── */
@@ -113,7 +113,7 @@ export default function AdminPage() {
   /* ─── Login Screen ─── */
   if (!isLoggedIn) {
     return (
-      <div dir="rtl" className="pt-24 pb-16 bg-[#0a1628] min-h-screen flex flex-col">
+      <div dir="rtl" className="pt-24 pb-16 bg-[#f9fafb] min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center px-4 sm:px-6">
           <div className="glass-card rounded-2xl p-8 w-full max-w-sm">
@@ -122,8 +122,8 @@ export default function AdminPage() {
                 <Lock className="w-8 h-8 text-[#0d9488]" />
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-white text-center mb-2">ورود به پنل مدیریت</h1>
-            <p className="text-sm text-slate-400 text-center mb-8">لطفاً رمز عبور خود را وارد کنید</p>
+            <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">ورود به پنل مدیریت</h1>
+            <p className="text-sm text-slate-500 text-center mb-8">لطفاً رمز عبور خود را وارد کنید</p>
 
             <div className="space-y-4">
               <div>
@@ -162,13 +162,13 @@ export default function AdminPage() {
         {/* Recent Registrations */}
         <div className="glass-card rounded-2xl p-6">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-lg font-bold text-white">آخرین ثبت‌نام‌ها</h3>
-            <Plus className="w-5 h-5 text-slate-500 cursor-pointer hover:text-white transition-colors" />
+            <h3 className="text-lg font-bold text-slate-900">آخرین ثبت‌نام‌ها</h3>
+            <Plus className="w-5 h-5 text-slate-400 cursor-pointer hover:text-slate-900 transition-colors" />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-slate-500 text-xs border-b border-white/10">
+                <tr className="text-slate-400 text-xs border-b border-gray-200">
                   <th className="text-right pb-3 font-medium">نام</th>
                   <th className="text-right pb-3 font-medium hidden sm:table-cell">تلفن</th>
                   <th className="text-right pb-3 font-medium">دوره</th>
@@ -177,10 +177,10 @@ export default function AdminPage() {
               </thead>
               <tbody className="divide-y divide-white/5">
                 {recentRegistrations.map((r, idx) => (
-                  <tr key={idx} className="hover:bg-white/[0.03] transition-colors">
-                    <td className="py-3 text-white font-medium">{r.name}</td>
-                    <td className="py-3 text-slate-400 hidden sm:table-cell" dir="ltr">{r.phone}</td>
-                    <td className="py-3 text-slate-400">{r.course}</td>
+                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                    <td className="py-3 text-slate-900 font-medium">{r.name}</td>
+                    <td className="py-3 text-slate-500 hidden sm:table-cell" dir="ltr">{r.phone}</td>
+                    <td className="py-3 text-slate-500">{r.course}</td>
                     <td className="py-3">
                       <span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${statusColors[r.status] || ''}`}>
                         {r.status}
@@ -196,13 +196,13 @@ export default function AdminPage() {
         {/* Recent Exams */}
         <div className="glass-card rounded-2xl p-6">
           <div className="flex items-center justify-between mb-5">
-            <h3 className="text-lg font-bold text-white">آزمون‌های اخیر</h3>
-            <GraduationCap className="w-5 h-5 text-slate-500" />
+            <h3 className="text-lg font-bold text-slate-900">آزمون‌های اخیر</h3>
+            <GraduationCap className="w-5 h-5 text-slate-400" />
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-slate-500 text-xs border-b border-white/10">
+                <tr className="text-slate-400 text-xs border-b border-gray-200">
                   <th className="text-right pb-3 font-medium">دانش‌آموز</th>
                   <th className="text-right pb-3 font-medium hidden sm:table-cell">آزمون</th>
                   <th className="text-right pb-3 font-medium">نمره</th>
@@ -211,11 +211,11 @@ export default function AdminPage() {
               </thead>
               <tbody className="divide-y divide-white/5">
                 {recentExamResults.map((r, idx) => (
-                  <tr key={idx} className="hover:bg-white/[0.03] transition-colors">
-                    <td className="py-3 text-white font-medium">{r.student}</td>
-                    <td className="py-3 text-slate-400 hidden sm:table-cell">{r.exam}</td>
+                  <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                    <td className="py-3 text-slate-900 font-medium">{r.student}</td>
+                    <td className="py-3 text-slate-500 hidden sm:table-cell">{r.exam}</td>
                     <td className="py-3 text-[#0d9488] font-bold">{r.score}</td>
-                    <td className="py-3 text-slate-400">{r.date}</td>
+                    <td className="py-3 text-slate-500">{r.date}</td>
                   </tr>
                 ))}
               </tbody>
@@ -230,9 +230,9 @@ export default function AdminPage() {
   const renderStudents = () => (
     <div className="glass-card rounded-2xl p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h3 className="text-lg font-bold text-white">لیست دانش‌آموزان</h3>
+        <h3 className="text-lg font-bold text-slate-900">لیست دانش‌آموزان</h3>
         <div className="relative w-full sm:w-72">
-          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             value={studentSearch}
@@ -245,7 +245,7 @@ export default function AdminPage() {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-slate-500 text-xs border-b border-white/10">
+            <tr className="text-slate-400 text-xs border-b border-gray-200">
               <th className="text-right pb-3 font-medium">نام</th>
               <th className="text-right pb-3 font-medium hidden md:table-cell">تلفن</th>
               <th className="text-right pb-3 font-medium">سطح</th>
@@ -255,11 +255,11 @@ export default function AdminPage() {
           </thead>
           <tbody className="divide-y divide-white/5">
             {filteredStudents.map((s, idx) => (
-              <tr key={idx} className="hover:bg-white/[0.03] transition-colors">
-                <td className="py-3 text-white font-medium">{s.name}</td>
-                <td className="py-3 text-slate-400 hidden md:table-cell" dir="ltr">{s.phone}</td>
-                <td className="py-3 text-slate-300">{s.level}</td>
-                <td className="py-3 text-slate-400 hidden sm:table-cell">{s.date}</td>
+              <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                <td className="py-3 text-slate-900 font-medium">{s.name}</td>
+                <td className="py-3 text-slate-500 hidden md:table-cell" dir="ltr">{s.phone}</td>
+                <td className="py-3 text-slate-600">{s.level}</td>
+                <td className="py-3 text-slate-500 hidden sm:table-cell">{s.date}</td>
                 <td className="py-3">
                   <span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${statusColors[s.status] || ''}`}>
                     {s.status}
@@ -269,7 +269,7 @@ export default function AdminPage() {
             ))}
             {filteredStudents.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-slate-500">
+                <td colSpan={5} className="py-8 text-center text-slate-400">
                   نتیجه‌ای یافت نشد
                 </td>
               </tr>
@@ -284,7 +284,7 @@ export default function AdminPage() {
   const renderClasses = () => (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold text-white">لیست کلاس‌ها</h3>
+        <h3 className="text-lg font-bold text-slate-900">لیست کلاس‌ها</h3>
         <button className="btn-primary text-xs px-4 py-2">
           <Plus className="w-4 h-4" />
           ایجاد کلاس
@@ -294,30 +294,30 @@ export default function AdminPage() {
         {classData.map((cls, idx) => (
           <div key={idx} className="glass-card rounded-2xl p-5">
             <div className="flex items-start justify-between mb-4">
-              <h4 className="text-sm font-bold text-white leading-6">{cls.name}</h4>
-              <Settings className="w-4 h-4 text-slate-500 cursor-pointer hover:text-white transition-colors shrink-0" />
+              <h4 className="text-sm font-bold text-slate-900 leading-6">{cls.name}</h4>
+              <Settings className="w-4 h-4 text-slate-400 cursor-pointer hover:text-slate-900 transition-colors shrink-0" />
             </div>
             <div className="space-y-2.5 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 flex items-center gap-1.5">
+                <span className="text-slate-500 flex items-center gap-1.5">
                   <GraduationCap className="w-3.5 h-3.5" />
                   مربی
                 </span>
-                <span className="text-white font-medium">{cls.instructor}</span>
+                <span className="text-slate-900 font-medium">{cls.instructor}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 flex items-center gap-1.5">
+                <span className="text-slate-500 flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5" />
                   دانش‌آموز
                 </span>
-                <span className="text-white font-medium">{cls.students} نفر</span>
+                <span className="text-slate-900 font-medium">{cls.students} نفر</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-slate-400 flex items-center gap-1.5">
+                <span className="text-slate-500 flex items-center gap-1.5">
                   <BarChart3 className="w-3.5 h-3.5" />
                   برنامه
                 </span>
-                <span className="text-white font-medium text-xs">{cls.schedule}</span>
+                <span className="text-slate-900 font-medium text-xs">{cls.schedule}</span>
               </div>
             </div>
           </div>
@@ -330,7 +330,7 @@ export default function AdminPage() {
   const renderExams = () => (
     <div className="glass-card rounded-2xl p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold text-white">لیست آزمون‌ها</h3>
+        <h3 className="text-lg font-bold text-slate-900">لیست آزمون‌ها</h3>
         <button className="btn-primary text-xs px-4 py-2">
           <Plus className="w-4 h-4" />
           ایجاد آزمون
@@ -339,7 +339,7 @@ export default function AdminPage() {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-slate-500 text-xs border-b border-white/10">
+            <tr className="text-slate-400 text-xs border-b border-gray-200">
               <th className="text-right pb-3 font-medium">نام آزمون</th>
               <th className="text-right pb-3 font-medium">تعداد شرکت‌کننده</th>
               <th className="text-right pb-3 font-medium hidden sm:table-cell">میانگین نمره</th>
@@ -349,11 +349,11 @@ export default function AdminPage() {
           </thead>
           <tbody className="divide-y divide-white/5">
             {examData.map((exam, idx) => (
-              <tr key={idx} className="hover:bg-white/[0.03] transition-colors">
-                <td className="py-3 text-white font-medium">{exam.name}</td>
-                <td className="py-3 text-slate-300">{exam.students} نفر</td>
+              <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                <td className="py-3 text-slate-900 font-medium">{exam.name}</td>
+                <td className="py-3 text-slate-600">{exam.students} نفر</td>
                 <td className="py-3 text-[#0d9488] font-bold hidden sm:table-cell">{exam.avgScore}</td>
-                <td className="py-3 text-slate-400">{exam.date}</td>
+                <td className="py-3 text-slate-500">{exam.date}</td>
                 <td className="py-3">
                   <span className={`text-xs font-bold border rounded-full px-2.5 py-0.5 ${statusColors[exam.status] || ''}`}>
                     {exam.status}
@@ -369,12 +369,12 @@ export default function AdminPage() {
 
   /* ─── Dashboard (after login) ─── */
   return (
-    <div dir="rtl" className="pt-24 pb-16 bg-[#0a1628] min-h-screen flex flex-col">
+    <div dir="rtl" className="pt-24 pb-16 bg-[#f9fafb] min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 w-full">
         {/* ─── Title + Logout ─── */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-white">پنل مدیریت ویرا</h1>
+          <h1 className="text-2xl font-bold text-slate-900">پنل مدیریت ویرا</h1>
           <button
             onClick={() => {
               setIsLoggedIn(false);
@@ -397,8 +397,8 @@ export default function AdminPage() {
                   <Icon className={`w-6 h-6 ${stat.color}`} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xl font-bold text-white truncate">{stat.value}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">{stat.label}</p>
+                  <p className="text-xl font-bold text-slate-900 truncate">{stat.value}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{stat.label}</p>
                 </div>
               </div>
             );
@@ -417,7 +417,7 @@ export default function AdminPage() {
                   flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200
                   ${activeTab === tab.key
                     ? 'bg-[#0d9488]/20 text-[#0d9488] shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-gray-100'
                   }
                 `}
               >

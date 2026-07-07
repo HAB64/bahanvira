@@ -63,20 +63,20 @@ export default function PortalPage() {
   const completedTasks = checkedTasks.filter(Boolean).length;
 
   return (
-    <div dir="rtl" className="pt-24 pb-16 bg-[#0a1628] min-h-screen flex flex-col">
+    <div dir="rtl" className="pt-24 pb-16 bg-[#f9fafb] min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 w-full">
         {/* ─── Title ─── */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-white">پنل دانش‌آموز</h1>
-          <p className="text-slate-400 mt-2">علی محمدی</p>
+          <h1 className="text-2xl font-bold text-slate-900">پنل دانش‌آموز</h1>
+          <p className="text-slate-500 mt-2">علی محمدی</p>
         </div>
 
         {/* ─── Welcome Bar ─── */}
         <div className="glass-card rounded-2xl p-6 mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h2 className="text-xl font-bold text-white">خوش آمدید، علی!</h2>
+              <h2 className="text-xl font-bold text-slate-900">خوش آمدید، علی!</h2>
               <div className="flex items-center gap-3 mt-2">
                 <span className="inline-flex items-center gap-1.5 text-xs font-bold bg-[#0d9488]/15 text-[#0d9488] border border-[#0d9488]/30 rounded-full px-3 py-1">
                   <TrendingUp className="w-3 h-3" />
@@ -86,10 +86,10 @@ export default function PortalPage() {
             </div>
             <div className="sm:w-64">
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-slate-400">پیشرفت کلی</span>
-                <span className="text-white font-bold">۶۵٪</span>
+                <span className="text-slate-500">پیشرفت کلی</span>
+                <span className="text-slate-900 font-bold">۶۵٪</span>
               </div>
-              <div className="h-3 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-3 rounded-full bg-gray-100 overflow-hidden">
                 <div
                   className="h-full rounded-full bg-gradient-to-l from-[#0d9488] to-[#0f766e]"
                   style={{ width: '65%' }}
@@ -106,8 +106,8 @@ export default function PortalPage() {
             return (
               <div key={stat.label} className="glass-card-lite rounded-2xl p-5 text-center">
                 <Icon className={`w-6 h-6 mx-auto mb-3 ${stat.color}`} />
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-sm text-slate-400 mt-1">{stat.label}</p>
+                <p className="text-2xl font-bold text-slate-900">{stat.value}</p>
+                <p className="text-sm text-slate-500 mt-1">{stat.label}</p>
               </div>
             );
           })}
@@ -121,16 +121,16 @@ export default function PortalPage() {
             <div className="glass-card rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-5">
                 <BookOpen className="w-5 h-5 text-[#0d9488]" />
-                <h3 className="text-lg font-bold text-white">دوره‌های فعال</h3>
+                <h3 className="text-lg font-bold text-slate-900">دوره‌های فعال</h3>
               </div>
               <div className="space-y-5">
                 {activeCourses.map((course) => (
                   <div key={course.name}>
                     <div className="flex items-center justify-between text-sm mb-2">
-                      <span className="text-slate-300">{course.name}</span>
-                      <span className="text-white font-bold">{course.progress}٪</span>
+                      <span className="text-slate-600">{course.name}</span>
+                      <span className="text-slate-900 font-bold">{course.progress}٪</span>
                     </div>
-                    <div className="h-2.5 rounded-full bg-white/10 overflow-hidden">
+                    <div className="h-2.5 rounded-full bg-gray-100 overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
                           course.progress >= 60
@@ -149,20 +149,20 @@ export default function PortalPage() {
             <div className="glass-card rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-5">
                 <Clock className="w-5 h-5 text-[#f97316]" />
-                <h3 className="text-lg font-bold text-white">آزمون‌های اخیر</h3>
+                <h3 className="text-lg font-bold text-slate-900">آزمون‌های اخیر</h3>
               </div>
               <div className="space-y-3">
                 {recentExams.map((exam, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5"
+                    className="flex items-center justify-between p-3 rounded-xl bg-gray-100 border border-white/5"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-white truncate">{exam.title}</p>
+                      <p className="text-sm font-bold text-slate-900 truncate">{exam.title}</p>
                       <p className="text-xs text-slate-500 mt-0.5">{exam.date}</p>
                     </div>
                     <div className="flex items-center gap-3 shrink-0 mr-4">
-                      <span className="text-sm font-bold text-white">{exam.score}</span>
+                      <span className="text-sm font-bold text-slate-900">{exam.score}</span>
                       <span className="text-xs font-bold bg-[#0d9488]/15 text-[#0d9488] border border-[#0d9488]/30 rounded-full px-2.5 py-0.5">
                         {exam.passed ? 'قبول' : 'مردود'}
                       </span>
@@ -180,15 +180,15 @@ export default function PortalPage() {
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <CheckSquare className="w-5 h-5 text-[#eab308]" />
-                  <h3 className="text-lg font-bold text-white">تمرین امروز</h3>
+                  <h3 className="text-lg font-bold text-slate-900">تمرین امروز</h3>
                 </div>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   {completedTasks}/{dailyTasks.length} انجام شده
                 </span>
               </div>
 
               {/* Practice progress */}
-              <div className="h-1.5 rounded-full bg-white/10 overflow-hidden mb-5">
+              <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden mb-5">
                 <div
                   className="h-full rounded-full bg-gradient-to-l from-[#eab308] to-[#ca8a04] transition-all duration-300"
                   style={{ width: `${(completedTasks / dailyTasks.length) * 100}%` }}
@@ -199,7 +199,7 @@ export default function PortalPage() {
                 {dailyTasks.map((task, idx) => (
                   <label
                     key={idx}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-white/5 border border-white/5 cursor-pointer transition-all hover:bg-white/[0.08]"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-gray-100 border border-white/5 cursor-pointer transition-all hover:bg-white/[0.08]"
                   >
                     <div className="relative shrink-0">
                       <input
@@ -219,7 +219,7 @@ export default function PortalPage() {
                         `}
                       >
                         {checkedTasks[idx] && (
-                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <svg className="w-3 h-3 text-slate-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
                         )}
@@ -227,7 +227,7 @@ export default function PortalPage() {
                     </div>
                     <span
                       className={`text-sm transition-all ${
-                        checkedTasks[idx] ? 'text-slate-500 line-through' : 'text-slate-300'
+                        checkedTasks[idx] ? 'text-slate-500 line-through' : 'text-slate-600'
                       }`}
                     >
                       {task}
@@ -241,20 +241,20 @@ export default function PortalPage() {
             <div className="glass-card rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-5">
                 <Award className="w-5 h-5 text-[#eab308]" />
-                <h3 className="text-lg font-bold text-white">گواهینامه‌های من</h3>
+                <h3 className="text-lg font-bold text-slate-900">گواهینامه‌های من</h3>
               </div>
               <div className="space-y-3">
                 {certificates.map((cert, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5"
+                    className="flex items-center justify-between p-3 rounded-xl bg-gray-100 border border-white/5"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="shrink-0 w-10 h-10 rounded-lg bg-[#eab308]/15 flex items-center justify-center">
                         <Award className="w-5 h-5 text-[#eab308]" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-white truncate">{cert.title}</p>
+                        <p className="text-sm font-bold text-slate-900 truncate">{cert.title}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{cert.date}</p>
                       </div>
                     </div>
