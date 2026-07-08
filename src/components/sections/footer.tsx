@@ -94,7 +94,7 @@ export default function Footer() {
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 mt-1 shrink-0 text-white/30" />
-                <span className="text-sm text-white/50 leading-6">تهران، خیابان انقلاب، پلاک ۱۲۳</span>
+                <span className="text-sm text-white/50 leading-6">مازندران، محمودآباد، خیابان امام، نسیم ۴</span>
               </div>
               <a href="tel:09111277194" className="flex items-center gap-3 text-sm text-white/50 hover:text-[#2F80ED] transition-colors">
                 <Phone className="h-4 w-4 shrink-0 text-white/30" />
