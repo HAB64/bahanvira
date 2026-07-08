@@ -1,178 +1,79 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { CheckCircle, Trophy, Rocket, Crown, Star, Zap } from "lucide-react";
 
-const steps = [
-  {
-    number: 1,
-    title: 'آشنایی با چرتکه',
-    level: 'سطح ۱-۳',
-    desc: 'یادگیری حرکت مهره‌ها و عملیات ساده جمع و تفریق',
-    color: 'orange',
-  },
-  {
-    number: 2,
-    title: 'جمع و تفریق',
-    level: 'سطح ۴-۶',
-    desc: 'تسلط بر جمع و تفریق چندرقمی با چرتکه',
-    color: 'teal',
-  },
-  {
-    number: 3,
-    title: 'ضرب و تقسیم',
-    level: 'سطح ۷-۹',
-    desc: 'یادگیری ضرب و تقسیم با چرتکه دهگانی',
-    color: 'purple',
-  },
-  {
-    number: 4,
-    title: 'حساب ذهنی',
-    level: 'سطح ۱۰-۱۲',
-    desc: 'انجام محاسبات بدون چرتکه فیزیکی',
-    color: 'blue',
-  },
-  {
-    number: 5,
-    title: 'مسابقات',
-    level: 'سطح حرفه‌ای',
-    desc: 'آمادگی برای مسابقات سرعت و دقت',
-    color: 'amber',
-  },
+const levels = [
+  { level: 1, title: "آشنایی با چرتکه", subtitle: "شروع سفر", description: "در این مرحله با ساختار چرتکه، مهره‌ها و نحوه نمایش اعداد آشنا می‌شوید. حرکت مهره‌ها و مفهوم ارزش مکانی را یاد می‌گیرید.", skills: ["شناخت چرتکه", "نمایش اعداد", "حرکت مهره‌ها"], icon: Zap, color: "#2F80ED", bgColor: "bg-blue-500/10" },
+  { level: 2, title: "جمع و تفریق", subtitle: "تسلط بر پایه‌ها", description: "یادگیری جمع و تفریق یک‌رقمی و چندرقمی بر روی چرتکه. تمرکز بر سرعت و دقت در حرکت مهره‌ها و افزایش اعتماد به نفس.", skills: ["جمع یک‌رقمی", "تفریق یک‌رقمی", "اعداد چندرقمی"], icon: Rocket, color: "#14B8A6", bgColor: "bg-teal-500/10" },
+  { level: 3, title: "ضرب و تقسیم", subtitle: "مهارت‌های پیشرفته", description: "یادگیری ضرب و تقسیم بر روی چرتکه و شروع تصویرسازی ذهنی. ترکیب چهار عمل اصلی در یک محاسبه پیچیده.", skills: ["ضرب ذهنی", "تقسیم ذهنی", "ترکیب اعمال"], icon: Star, color: "#F2994A", bgColor: "bg-orange-500/10" },
+  { level: 4, title: "محاسبه ذهنی", subtitle: "چرتکه در ذهن", description: "بدون نیاز به چرتکه فیزیکی، تمام محاسبات را در ذهن انجام دهید. سرعت و دقت شما به سطح خیره‌کننده‌ای می‌رسد.", skills: ["تصویرسازی ذهنی", "سرعت بالا", "محاسبه بدون ابزار"], icon: CheckCircle, color: "#8B5CF6", bgColor: "bg-purple-500/10" },
+  { level: 5, title: "قهرمان مسابقات", subtitle: "بالاترین سطح", description: "آمادگی کامل برای مسابقات ملی و بین‌المللی. تکنیک‌های پیشرفته و تمرینات ویژه برای رسیدن به رتبه‌های برتر.", skills: ["مسابقات ملی", "مسابقات بین‌المللی", "رکوردشکنی"], icon: Trophy, color: "#27AE60", bgColor: "bg-emerald-500/10" },
 ];
 
-const colorMap: Record<string, { active: string; bg: string; text: string; badge: string; line: string }> = {
-  orange: { active: 'bg-gradient-to-br from-orange-400 to-orange-600 border-orange-400 shadow-orange-500/25', bg: 'bg-orange-50', text: 'text-orange-500', badge: 'bg-orange-100 text-orange-600', line: 'bg-orange-400' },
-  teal: { active: 'bg-gradient-to-br from-teal-400 to-teal-600 border-teal-400 shadow-teal-500/25', bg: 'bg-teal-50', text: 'text-teal-500', badge: 'bg-teal-100 text-teal-600', line: 'bg-teal-400' },
-  purple: { active: 'bg-gradient-to-br from-purple-400 to-purple-600 border-purple-400 shadow-purple-500/25', bg: 'bg-purple-50', text: 'text-purple-500', badge: 'bg-purple-100 text-purple-600', line: 'bg-purple-400' },
-  blue: { active: 'bg-gradient-to-br from-blue-400 to-blue-600 border-blue-400 shadow-blue-500/25', bg: 'bg-blue-50', text: 'text-blue-500', badge: 'bg-blue-100 text-blue-600', line: 'bg-blue-400' },
-  amber: { active: 'bg-gradient-to-br from-amber-400 to-amber-600 border-amber-400 shadow-amber-500/25', bg: 'bg-amber-50', text: 'text-amber-500', badge: 'bg-amber-100 text-amber-600', line: 'bg-amber-400' },
-};
-
 export default function LearningPath() {
-  const [activeStep, setActiveStep] = useState(0);
-
-  const stepColors = steps.map(s => colorMap[s.color]);
-
   return (
-    <section className="py-16 sm:py-20 relative overflow-hidden bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="section-heading">مسیر یادگیری چرتکه</h2>
-          <p className="section-subheading max-w-2xl mx-auto">
-            از مبتدی تا حرفه‌ای، مسیر یادگیری چرتکه در ۵ مرحله
-          </p>
+    <section className="relative overflow-hidden bg-white py-20 sm:py-24" dir="rtl">
+      <div className="pointer-events-none absolute top-0 right-0 h-full w-full opacity-30" style={{ background: "linear-gradient(135deg, rgba(39,174,96,0.08) 0%, transparent 40%, rgba(15,23,42,0.02) 100%)" }} />
+      <div className="animate-float pointer-events-none absolute top-16 left-[8%] h-4 w-4 rounded-full bg-[#27AE60]/20" />
+      <div className="animate-float-slow pointer-events-none absolute bottom-20 right-[12%] h-6 w-6 rounded-lg bg-[#2F80ED]/15 rotate-45" />
+
+      <div className="relative mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="mb-16 sm:mb-20 text-center">
+          <span className="section-badge">مسیر یادگیری</span>
+          <h2 className="section-heading">از مبتدی تا قهرمان</h2>
+          <p className="section-subheading mx-auto max-w-2xl">یک مسیر مشخص و ساختارمند از شروع تا رسیدن به بالاترین سطح مهارت چرتکه. هر مرحله شما را یک قدم به قهرمانی نزدیک‌تر می‌کند.</p>
         </div>
 
-        {/* Desktop Horizontal Stepper */}
-        <div className="hidden md:flex flex-col items-center">
-          <div className="flex items-start justify-between w-full max-w-5xl relative">
-            {/* Connector line behind circles */}
-            <div className="absolute top-7 right-[10%] left-[10%] h-0.5 bg-gray-200" />
-            <div
-              className="absolute top-7 right-[10%] h-0.5 bg-gradient-to-l from-orange-400 to-teal-500 transition-all duration-700 ease-out"
-              style={{ width: `${(activeStep / (steps.length - 1)) * 80}%` }}
-            />
+        <div className="relative">
+          {/* Connecting line */}
+          <div className="absolute right-6 top-0 bottom-0 w-0.5 md:right-1/2 md:-translate-x-1/2" style={{ background: "linear-gradient(to bottom, #2F80ED, #14B8A6, #F2994A, #8B5CF6, #27AE60)" }} />
 
-            {steps.map((step, index) => {
-              const colors = colorMap[step.color];
+          <div className="space-y-10 sm:space-y-12">
+            {levels.map((level, index) => {
+              const Icon = level.icon;
+              const isEven = index % 2 === 0;
               return (
-                <div
-                  key={step.number}
-                  className="flex flex-col items-center flex-1 relative z-10 cursor-pointer"
-                  onClick={() => setActiveStep(index)}
-                >
-                  {/* Circle */}
-                  <div
-                    className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-500 border-2 ${
-                      index <= activeStep
-                        ? `${colors.active} text-white shadow-lg`
-                        : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100 hover:border-gray-300'
-                    }`}
-                  >
-                    {index < activeStep ? (
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      step.number
-                    )}
+                <div key={index} className={`relative flex items-start gap-6 md:gap-0 ${isEven ? "md:flex-row" : "md:flex-row-reverse"}`}>
+                  <div className={`premium-card-static flex-1 p-5 sm:p-6 md:w-[calc(50%-2rem)] ${isEven ? "md:ml-auto md:mr-12" : "md:mr-auto md:ml-12"}`}>
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${level.bgColor}`}>
+                        <Icon size={24} style={{ color: level.color }} />
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold" style={{ color: level.color }}>{level.subtitle}</div>
+                        <h3 className="text-lg font-bold text-[#102A43]">{level.title}</h3>
+                      </div>
+                    </div>
+                    <p className="mb-4 text-sm leading-7 text-[#718096]">{level.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {level.skills.map((skill, i) => (
+                        <span key={i} className="rounded-lg px-3 py-1.5 text-xs font-medium" style={{ backgroundColor: `${level.color}10`, color: level.color }}>{skill}</span>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Text below */}
-                  <div className="mt-4 text-center px-2">
-                    <h3 className={`text-sm font-bold transition-colors duration-300 ${index <= activeStep ? 'text-slate-900' : 'text-gray-400'}`}>
-                      {step.title}
-                    </h3>
-                    <span className={`inline-block mt-1 text-xs px-2.5 py-0.5 rounded-full font-medium ${
-                      index <= activeStep ? colors.badge : 'bg-gray-100 text-gray-400'
-                    }`}>
-                      {step.level}
-                    </span>
+                  {/* Center Node */}
+                  <div className="absolute right-6 top-4 z-10 hidden md:right-1/2 md:block md:-translate-x-1/2">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-4 bg-white shadow-lg" style={{ borderColor: level.color }}>
+                      <span className="text-sm font-extrabold" style={{ color: level.color }}>{level.level}</span>
+                    </div>
+                  </div>
+                  <div className="absolute right-6 top-4 z-10 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border-4 bg-white shadow-md md:hidden" style={{ borderColor: level.color }}>
+                    <span className="text-xs font-extrabold" style={{ color: level.color }}>{level.level}</span>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* Active step detail card */}
-          <div className="bright-card p-6 mt-10 w-full max-w-2xl text-center transition-all duration-500">
-            <span className={`text-xs font-bold tracking-wide ${colorMap[steps[activeStep].color].text}`}>
-              مرحله {steps[activeStep].number} از {steps.length}
-            </span>
-            <h3 className="text-xl font-bold text-slate-900 mt-2">
-              {steps[activeStep].title}
-            </h3>
-            <p className="text-slate-500 mt-2 leading-relaxed text-sm sm:text-base">
-              {steps[activeStep].desc}
-            </p>
+          {/* Final Trophy */}
+          <div className="mt-14 sm:mt-16 flex flex-col items-center text-center">
+            <div className="animate-bounce-soft mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#27AE60]/10">
+              <Crown size={32} className="text-[#27AE60]" />
+            </div>
+            <p className="text-lg font-bold text-[#102A43]">مسیر موفقیت شما از همینجا شروع می‌شود!</p>
+            <a href="#register" className="btn-secondary-green mt-4">شروع یادگیری رایگان</a>
           </div>
-        </div>
-
-        {/* Mobile Vertical Stepper */}
-        <div className="md:hidden space-y-0">
-          {steps.map((step, index) => {
-            const colors = colorMap[step.color];
-            return (
-              <div key={step.number} className="flex gap-4 cursor-pointer" onClick={() => setActiveStep(index)}>
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 transition-all duration-500 border-2 ${
-                      index <= activeStep
-                        ? `${colors.active} text-white shadow-lg`
-                        : 'bg-gray-50 border-gray-200 text-gray-400'
-                    }`}
-                  >
-                    {index < activeStep ? (
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    ) : (
-                      step.number
-                    )}
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div className={`w-0.5 flex-1 min-h-[24px] mt-2 transition-colors duration-500 ${index < activeStep ? 'bg-orange-400' : 'bg-gray-200'}`} />
-                  )}
-                </div>
-
-                <div className={`pb-8 ${index === steps.length - 1 ? 'pb-0' : ''}`}>
-                  <div className="bright-card-flat p-4 rounded-xl">
-                    <h3 className={`text-base font-bold transition-colors duration-300 ${index <= activeStep ? 'text-slate-900' : 'text-gray-400'}`}>
-                      {step.title}
-                    </h3>
-                    <span className={`inline-block mt-1.5 text-xs px-2.5 py-0.5 rounded-full font-medium ${
-                      index <= activeStep ? colors.badge : 'bg-gray-100 text-gray-400'
-                    }`}>
-                      {step.level}
-                    </span>
-                    <p className="text-slate-500 mt-2 leading-relaxed text-sm">{step.desc}</p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
         </div>
       </div>
     </section>

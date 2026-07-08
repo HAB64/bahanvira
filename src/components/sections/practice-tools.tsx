@@ -1,103 +1,56 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Calculator, Clock, FileText, Award, ArrowLeft } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-
-interface Tool {
-  icon: LucideIcon;
-  title: string;
-  desc: string;
-  btnText: string;
-  href: string;
-  iconBg: string;
-  iconColor: string;
-  btnBg: string;
-  hoverBorder: string;
-}
+import { Brain, Timer, BarChart3, Gamepad2, Headphones, MonitorSmartphone, ArrowLeft } from "lucide-react";
 
 const tools = [
-  {
-    icon: Calculator,
-    title: 'چرتکه دهگانی ویرا',
-    desc: 'چرتکه دیجیتال تعاملی برای تمرین روزانه',
-    btnText: 'شروع تمرین',
-    href: '/abacus',
-    iconBg: 'bg-orange-100',
-    iconColor: 'text-orange-500',
-    btnBg: 'bg-orange-50 text-orange-600 hover:bg-orange-100 border-orange-200 hover:border-orange-300',
-    hoverBorder: 'hover:border-orange-200',
-  },
-  {
-    icon: Clock,
-    title: 'تایمر تمرین سرعت',
-    desc: 'تایمر هوشمند برای تمرین سرعت‌بخشی محاسبات',
-    btnText: 'شروع',
-    href: '#',
-    iconBg: 'bg-teal-100',
-    iconColor: 'text-teal-500',
-    btnBg: 'bg-teal-50 text-teal-600 hover:bg-teal-100 border-teal-200 hover:border-teal-300',
-    hoverBorder: 'hover:border-teal-200',
-  },
-  {
-    icon: FileText,
-    title: 'آزمون آنلاین',
-    desc: 'آزمون‌های دوره‌ای برای سنجش پیشرفت',
-    btnText: 'شرکت در آزمون',
-    href: '/exam',
-    iconBg: 'bg-purple-100',
-    iconColor: 'text-purple-500',
-    btnBg: 'bg-purple-50 text-purple-600 hover:bg-purple-100 border-purple-200 hover:border-purple-300',
-    hoverBorder: 'hover:border-purple-200',
-  },
-  {
-    icon: Award,
-    title: 'گواهینامه دیجیتال',
-    desc: 'دریافت گواهینامه پس از اتمام هر سطح',
-    btnText: 'مشاهده نمونه',
-    href: '#',
-    iconBg: 'bg-amber-100',
-    iconColor: 'text-amber-500',
-    btnBg: 'bg-amber-50 text-amber-600 hover:bg-amber-100 border-amber-200 hover:border-amber-300',
-    hoverBorder: 'hover:border-amber-200',
-  },
+  { icon: Timer, title: "تایمر تمرین هوشمند", description: "تایمر قابل تنظیم برای تمرین‌های روزانه با قابلیت تنظیم فاصله استراحت و نمایش آمار عملکرد هر جلسه تمرین.", color: "#2F80ED", bgColor: "bg-blue-500/10" },
+  { icon: Brain, title: "آزمون‌های ذهنی", description: "مجموعه‌ای از آزمون‌های محاسباتی با سطح‌بندی خودکار. سوالات بر اساس عملکرد شما تطبیق پیدا می‌کنند.", color: "#8B5CF6", bgColor: "bg-purple-500/10" },
+  { icon: BarChart3, title: "داشبورد پیشرفت", description: "نمودارهای دقیق از پیشرفت شما در طول زمان. رصد سرعت، دقت و نقاط قوت و ضعف به صورت بصری و جذاب.", color: "#6366F1", bgColor: "bg-indigo-500/10" },
+  { icon: Gamepad2, title: "بازی‌های آموزشی", description: "گیمیفیکیشن فرآیند یادگیری با بازی‌های جذاب. کسب امتیاز، باز کردن مراحل جدید و رقابت با دوستان.", color: "#F2994A", bgColor: "bg-orange-500/10" },
+  { icon: Headphones, title: "تمرین شنیداری", description: "تمرین محاسبات با روش شنیداری مشابه مسابقات واقعی. اعداد به صورت صوتی پخش و پاسخ ثبت می‌شود.", color: "#A855F7", bgColor: "bg-fuchsia-500/10" },
+  { icon: MonitorSmartphone, title: "اپلیکیشن موبایل", description: "تمرین در هر زمان و مکان با اپلیکیشن اختصاصی. همگام‌سازی خودکار پیشرفت بین تمام دستگاه‌ها.", color: "#2F80ED", bgColor: "bg-sky-500/10" },
 ];
 
 export default function PracticeTools() {
   return (
-    <section className="py-16 sm:py-20 relative overflow-hidden bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="section-heading">ابزارهای تمرین آنلاین</h2>
-          <p className="section-subheading max-w-2xl mx-auto">
-            با ابزارهای تعاملی، یادگیری چرتکه را سرعت ببخشید
-          </p>
+    <section className="section-creative relative overflow-hidden py-20 sm:py-24" dir="rtl">
+      <div className="pointer-events-none absolute -top-24 right-[5%] h-[400px] w-[400px] rounded-full opacity-20 blur-3xl" style={{ background: "radial-gradient(circle, #8B5CF6 0%, transparent 70%)" }} />
+      <div className="pointer-events-none absolute -bottom-24 left-[10%] h-[350px] w-[350px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #2F80ED 0%, transparent 70%)" }} />
+      <div className="animate-float pointer-events-none absolute top-20 left-[12%] h-4 w-4 rounded-full bg-[#8B5CF6]/25" />
+      <div className="animate-float-slow pointer-events-none absolute top-36 right-[8%] h-5 w-5 rounded-lg bg-[#2F80ED]/20 rotate-12" />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mb-14 sm:mb-16 text-center">
+          <span className="section-badge">ابزارهای تمرین</span>
+          <h2 className="section-heading">تمرین هوشمند، پیشرفت سریع‌تر</h2>
+          <p className="section-subheading mx-auto max-w-2xl">ابزارهای دیجیتال متنوع برای تمرین روزانه و پیگیری پیشرفت. یادگیری چرتکه هرگز این‌قدر جذاب نبوده است.</p>
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {tools.map((tool) => {
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {tools.map((tool, index) => {
             const Icon = tool.icon;
             return (
-              <div key={tool.title} className={`bright-card p-6 flex flex-col group transition-all duration-300 ${tool.hoverBorder}`}>
-                <div className={`w-12 h-12 rounded-xl ${tool.iconBg} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon className={`w-6 h-6 ${tool.iconColor}`} />
+              <div key={index} className="premium-card group relative overflow-hidden p-7">
+                <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: `linear-gradient(135deg, ${tool.color}08 0%, transparent 60%)` }} />
+                <div className="relative">
+                  <div className={`mb-5 flex h-14 w-14 items-center justify-center rounded-2xl ${tool.bgColor} transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                    <Icon size={26} style={{ color: tool.color }} />
+                  </div>
+                  <h3 className="mb-3 text-lg font-bold text-[#102A43]">{tool.title}</h3>
+                  <p className="mb-5 text-sm leading-7 text-[#718096]">{tool.description}</p>
+                  <div className="flex items-center gap-1.5 text-xs font-semibold opacity-0 transition-all duration-300 group-hover:opacity-100" style={{ color: tool.color, transform: "translateX(-8px)" }}>
+                    <span>کشف کنید</span>
+                    <ArrowLeft size={14} />
+                  </div>
                 </div>
-
-                <h3 className="text-lg font-bold text-slate-900 mb-3">{tool.title}</h3>
-                <p className="text-sm leading-relaxed text-slate-500 mb-6 flex-1">{tool.desc}</p>
-
-                <Link
-                  href={tool.href}
-                  className={`inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 border ${tool.btnBg}`}
-                >
-                  {tool.btnText}
-                  <ArrowLeft className="w-4 h-4" />
-                </Link>
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-12 sm:mt-14 flex flex-col items-center text-center">
+          <p className="mb-4 text-sm text-[#718096]">و تمامی این ابزارها به‌صورت رایگان در اختیار دانش‌آموزان ما قرار دارد</p>
+          <a href="#register" className="btn-purple">شروع تمرین رایگان</a>
         </div>
       </div>
     </section>

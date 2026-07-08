@@ -1,78 +1,59 @@
-'use client';
+"use client";
 
-import { CheckCircle2 } from 'lucide-react';
-import Image from 'next/image';
+import { CheckCircle2 } from "lucide-react";
+import Image from "next/image";
 
 const advantages = [
-  { title: 'روش آموزشی منحصر به فرد', desc: 'ترکیب چرتکه فیزیکی و تمرینات دیجیتال' },
-  { title: 'مربیان با تجربه و دارای گواهینامه', desc: 'تمام مربیان دارای گواهینامه بین‌المللی' },
-  { title: 'کلاس‌های حضوری و آنلاین', desc: 'انعطاف‌پذیری کامل در نحوه حضور' },
-  { title: 'گزارش پیشرفت هفتگی', desc: 'والدین همیشه از وضعیت فرزندشان مطلع هستند' },
-  { title: 'آزمون‌های دوره‌ای استاندارد', desc: 'سنجش مستمر پیشرفت دانش‌آموزان' },
-  { title: 'محیط دوستانه و رقابتی', desc: 'ایجاد انگیزه از طریق مسابقات داخلی' },
+  { title: "روش آموزشی منحصر به فرد", desc: "ترکیب چرتکه فیزیکی و تمرینات دیجیتال برای بهترین نتیجه", color: "#2F80ED" },
+  { title: "مربیان دارای گواهینامه بین‌المللی", desc: "تمام مربیان ما گواهینامه معتبر بین‌المللی دارند", color: "#27AE60" },
+  { title: "کلاس‌های حضوری و آنلاین", desc: "انعطاف‌پذیری کامل در نحوه حضور و زمان‌بندی کلاس‌ها", color: "#F2994A" },
+  { title: "گزارش پیشرفت هفتگی", desc: "والدین همیشه از وضعیت فرزندشان مطلع هستند", color: "#8B5CF6" },
+  { title: "آزمون‌های دوره‌ای استاندارد", desc: "سنجش مستمر و دقیق پیشرفت دانش‌آموزان", color: "#14B8A6" },
+  { title: "محیط دوستانه و رقابتی", desc: "ایجاد انگیزه از طریق مسابقات داخلی و جوایز", color: "#FFD54F" },
 ];
 
 export default function WhyVira() {
   return (
-    <section id="why-vira" className="py-16 sm:py-20 relative overflow-hidden section-cool">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-        {/* Header */}
-        <div className="text-center">
-          <h2 className="section-heading">چرا ویرا؟</h2>
-          <p className="section-subheading max-w-2xl mx-auto">
-            تفاوت ما با سایر آموزشگاه‌ها
-          </p>
+    <section id="why-vira" className="relative overflow-hidden bg-white py-20 sm:py-24" dir="rtl">
+      <div className="pointer-events-none absolute -top-20 left-[20%] h-[350px] w-[350px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #2F80ED 0%, transparent 70%)" }} />
+      <div className="animate-float-slow pointer-events-none absolute top-24 right-[8%] h-5 w-5 rounded-lg bg-[#27AE60]/15 rotate-12" />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mb-14 sm:mb-16 text-center">
+          <span className="section-badge">مزایای ویرا</span>
+          <h2 className="section-heading">چرا ویرا متفاوت است؟</h2>
+          <p className="section-subheading mx-auto max-w-2xl">تفاوت ما با سایر آموزشگاه‌ها در کیفیت، روش و نتایج است</p>
         </div>
 
-        {/* Two-column layout */}
         <div className="mt-12 grid gap-10 lg:grid-cols-2 items-start">
-          {/* Left: Advantages */}
           <div className="space-y-4">
-            {advantages.map((item, i) => {
-              const isEven = i % 2 === 0;
-              return (
-                <div
-                  key={item.title}
-                  className={`bright-card-flat p-5 flex items-start gap-4 transition-all duration-300 hover:shadow-md ${
-                    isEven ? 'hover:border-orange-200' : 'hover:border-teal-200'
-                  }`}
-                >
-                  <CheckCircle2
-                    className={`h-6 w-6 shrink-0 mt-0.5 ${isEven ? 'text-orange-500' : 'text-teal-500'}`}
-                  />
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">{item.title}</h3>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">{item.desc}</p>
-                  </div>
+            {advantages.map((item) => (
+              <div key={item.title} className="premium-card-static group flex items-start gap-4 p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ backgroundColor: `${item.color}12` }}>
+                  <CheckCircle2 size={20} style={{ color: item.color }} />
                 </div>
-              );
-            })}
+                <div>
+                  <h3 className="text-sm font-bold text-[#102A43]">{item.title}</h3>
+                  <p className="mt-1 text-xs leading-6 text-[#718096]">{item.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* Right: Abacus showcase card */}
-          <div className="bright-card p-8 flex flex-col items-center justify-center relative overflow-hidden">
-            {/* Abacus real image */}
-            <div className="relative w-full rounded-2xl overflow-hidden shadow-lg mb-8">
-              <div className="absolute inset-0 bg-gradient-to-b from-orange-100/30 to-teal-100/30 z-10 pointer-events-none rounded-2xl" />
-              <Image
-                src="/chertke-dohgani-vira.png"
-                alt="چرتکه دهگانی ویرا"
-                width={500}
-                height={350}
-                className="w-full h-auto object-contain p-6 rounded-2xl"
-              />
+          <div className="glass-card p-8 flex flex-col items-center relative overflow-hidden">
+            <div className="relative mb-8 w-full overflow-hidden rounded-2xl">
+              <div className="absolute inset-0 z-10 rounded-2xl pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(47,128,237,0.1) 0%, rgba(39,174,96,0.1) 100%)" }} />
+              <Image src="/chertke-dohgani-vira.png" alt="چرتکه دهگانی ویرا" width={500} height={350} className="w-full h-auto object-contain p-6 rounded-2xl" />
             </div>
-
-            {/* Achievement badges */}
             <div className="flex flex-wrap justify-center gap-3">
               {[
-                { num: '+۵۰۰', label: 'دانش‌آموز', color: 'text-orange-500' },
-                { num: '+۳۰', label: 'نمایندگی', color: 'text-teal-500' },
-                { num: '+۲۰', label: 'شهر', color: 'text-purple-500' },
+                { num: "+۵۰۰", label: "دانش‌آموز", color: "#F2994A" },
+                { num: "+۳۰", label: "نمایندگی", color: "#27AE60" },
+                { num: "+۲۰", label: "شهر", color: "#8B5CF6" },
               ].map((badge) => (
-                <div key={badge.label} className="bright-card-flat px-4 py-2.5 text-center">
-                  <div className={`text-base font-bold ${badge.color}`}>{badge.num}</div>
-                  <div className="text-[11px] text-slate-400">{badge.label}</div>
+                <div key={badge.label} className="rounded-2xl px-5 py-3 text-center" style={{ backgroundColor: `${badge.color}08`, border: `1px solid ${badge.color}15` }}>
+                  <div className="text-base font-extrabold" style={{ color: badge.color }}>{badge.num}</div>
+                  <div className="text-[11px] text-[#718096]">{badge.label}</div>
                 </div>
               ))}
             </div>

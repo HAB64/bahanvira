@@ -1,163 +1,62 @@
-'use client';
+"use client";
 
-import { Grid3X3, Brain, Zap, Trophy, Rocket, BookOpen, Clock, Users, ArrowLeft } from 'lucide-react';
-import Image from 'next/image';
+import { Grid3X3, Brain, Zap, Trophy, Rocket, BookOpen, Clock, Users, ArrowLeft } from "lucide-react";
 
 const courses = [
-  {
-    badge: { text: 'پرطرفدار', color: 'bg-orange-100 text-orange-600' },
-    icon: Grid3X3,
-    iconBg: 'bg-orange-100',
-    iconColor: 'text-orange-500',
-    title: 'چرتکه مبتدی',
-    desc: 'آموزش اصول اولیه چرتکه دهگانی برای سنین ۵ تا ۸ سال',
-    duration: '۳۶ ساعته',
-    sessions: '۱۲ جلسه',
-    accentColor: 'hover:border-orange-200',
-  },
-  {
-    badge: { text: 'پرطرفدار', color: 'bg-teal-100 text-teal-600' },
-    icon: Brain,
-    iconBg: 'bg-teal-100',
-    iconColor: 'text-teal-500',
-    title: 'حساب ذهنی ۱',
-    desc: 'تقویت محاسبات ذهنی بدون چرتکه فیزیکی',
-    duration: '۲۴ ساعته',
-    sessions: '۸ جلسه',
-    accentColor: 'hover:border-teal-200',
-  },
-  {
-    badge: { text: 'جدید', color: 'bg-purple-100 text-purple-600' },
-    icon: Zap,
-    iconBg: 'bg-amber-100',
-    iconColor: 'text-amber-500',
-    title: 'چرتکه متوسط',
-    desc: 'تکمیل مهارت‌های چرتکه و ورود به محاسبات پیچیده',
-    duration: '۴۸ ساعته',
-    sessions: '۱۶ جلسه',
-    accentColor: 'hover:border-purple-200',
-  },
-  {
-    badge: null,
-    icon: Trophy,
-    iconBg: 'bg-purple-100',
-    iconColor: 'text-purple-500',
-    title: 'آمادگی مسابقات',
-    desc: 'تمرین‌های ویژه برای آمادگی شرکت در مسابقات ملی و بین‌المللی',
-    duration: '۲۰ ساعته',
-    sessions: '۱۰ جلسه',
-    accentColor: 'hover:border-purple-200',
-  },
-  {
-    badge: { text: 'ظرفیت محدود', color: 'bg-rose-100 text-rose-600' },
-    icon: Rocket,
-    iconBg: 'bg-rose-100',
-    iconColor: 'text-rose-500',
-    title: 'چرتکه پیشرفته',
-    desc: 'محاسبات چندرقمی پیچیده و سرعت‌بخشی حرفه‌ای',
-    duration: '۶۰ ساعته',
-    sessions: '۲۰ جلسه',
-    accentColor: 'hover:border-rose-200',
-  },
-  {
-    badge: null,
-    icon: BookOpen,
-    iconBg: 'bg-blue-100',
-    iconColor: 'text-blue-500',
-    title: 'مربی‌گری چرتکه',
-    desc: 'دوره تربیت مربی چرتکه برای علاقه‌مندان به تدریس',
-    duration: '۸۰ ساعته',
-    sessions: '۲۵ جلسه',
-    accentColor: 'hover:border-blue-200',
-  },
+  { badge: "محبوب‌ترین", badgeColor: "#F2994A", icon: Grid3X3, iconBg: "bg-orange-500/10", iconColor: "#F2994A", title: "چرتکه مبتدی", desc: "آموزش اصول اولیه چرتکه دهگانی برای سنین ۵ تا ۸ سال. شروعی مطمئن و جذاب برای مسیر یادگیری چرتکه.", duration: "۳۶ ساعت", sessions: "۱۲ جلسه", ageGroup: "۵ تا ۸ سال" },
+  { badge: "پرطرفدار", badgeColor: "#27AE60", icon: Brain, iconBg: "bg-emerald-500/10", iconColor: "#27AE60", title: "حساب ذهنی ۱", desc: "تقویت محاسبات ذهنی بدون چرتکه فیزیکی. تمرکز بر تصویرسازی ذهنی اعداد و افزایش سرعت پردازش.", duration: "۲۴ ساعت", sessions: "۸ جلسه", ageGroup: "۷ تا ۱۲ سال" },
+  { badge: "جدید", badgeColor: "#8B5CF6", icon: Zap, iconBg: "bg-purple-500/10", iconColor: "#8B5CF6", title: "چرتکه متوسط", desc: "تکمیل مهارت‌های چرتکه و ورود به محاسبات پیچیده‌تر. آمادگی برای مرحله پیشرفته.", duration: "۴۸ ساعت", sessions: "۱۶ جلسه", ageGroup: "۸ تا ۱۲ سال" },
+  { badge: null, badgeColor: "#2F80ED", icon: Trophy, iconBg: "bg-blue-500/10", iconColor: "#2F80ED", title: "آمادگی مسابقات", desc: "تمرین‌های ویژه برای آمادگی شرکت در مسابقات ملی و بین‌المللی چرتکه. تکنیک‌های سرعت.", duration: "۲۰ ساعت", sessions: "۱۰ جلسه", ageGroup: "۸ تا ۱۵ سال" },
+  { badge: "ظرفیت محدود", badgeColor: "#E53E3E", icon: Rocket, iconBg: "bg-rose-500/10", iconColor: "#E53E3E", title: "چرتکه پیشرفته", desc: "محاسبات چندرقمی پیچیده و سرعت‌بخشی حرفه‌ای. برای دانش‌آموزان مستعد و آماده.", duration: "۶۰ ساعت", sessions: "۲۰ جلسه", ageGroup: "۱۰ تا ۱۶ سال" },
+  { badge: null, badgeColor: "#14B8A6", icon: BookOpen, iconBg: "bg-teal-500/10", iconColor: "#14B8A6", title: "مربی‌گری چرتکه", desc: "دوره تربیت مربی چرتکه برای علاقه‌مندان به تدریس. کسب مدرک معتبر و شروع کار.", duration: "۸۰ ساعت", sessions: "۲۵ جلسه", ageGroup: "بالای ۱۸ سال" },
 ];
 
 export default function Courses() {
   return (
-    <section id="courses" className="py-16 sm:py-20 relative overflow-hidden section-warm">
-      {/* Decorative background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-200/20 rounded-full blur-3xl pointer-events-none" />
+    <section id="courses" className="section-cool relative overflow-hidden py-20 sm:py-24" dir="rtl">
+      <div className="pointer-events-none absolute -top-20 left-[10%] h-[400px] w-[400px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #2F80ED 0%, transparent 70%)" }} />
+      <div className="pointer-events-none absolute -bottom-20 right-[10%] h-[350px] w-[350px] rounded-full opacity-10 blur-3xl" style={{ background: "radial-gradient(circle, #8B5CF6 0%, transparent 70%)" }} />
+      <div className="animate-float pointer-events-none absolute top-20 right-[8%] h-3 w-3 rounded-full bg-[#2F80ED]/30" />
+      <div className="animate-float-slow pointer-events-none absolute bottom-28 left-[12%] h-5 w-5 rounded-lg bg-[#27AE60]/20 rotate-12" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <span className="inline-block rounded-full bg-orange-100 px-4 py-1.5 text-xs font-semibold text-orange-600 mb-4">
-            دوره‌های آموزشی
-          </span>
-          <h2 className="section-heading text-3xl sm:text-4xl">دوره‌های پرطرفدار ما</h2>
-          <p className="section-subheading mt-4 max-w-2xl mx-auto text-sm sm:text-base">
-            دوره‌هایی که بیشترین تقاضا را دارند و نتایج فوق‌العاده‌ای ارائه داده‌اند.
-          </p>
-          <div className="mt-6 flex justify-center">
-            <Image
-              src="/chertke-dohgani-vira.png"
-              alt="چرتکه دهگانی ویرا"
-              width={320}
-              height={160}
-              className="h-28 sm:h-36 w-auto object-contain drop-shadow-md opacity-90"
-            />
-          </div>
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mb-14 sm:mb-16 text-center">
+          <span className="section-badge">دوره‌های آموزشی</span>
+          <h2 className="section-heading">مسیر یادگیری حرفه‌ای چرتکه</h2>
+          <p className="section-subheading mx-auto max-w-2xl">دوره‌های متنوع با طراحی علمی برای هر سنی. از مبتدی تا سطح مسابقات بین‌المللی.</p>
         </div>
 
-        {/* Course Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {courses.map((course) => {
-            const IconComponent = course.icon;
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {courses.map((course, index) => {
+            const Icon = course.icon;
             return (
-              <a
-                key={course.title}
-                href="#"
-                className={`bright-card overflow-hidden group block p-5 transition-all duration-300 ${course.accentColor}`}
-              >
-                {/* Badge */}
-                <div className="flex justify-start mb-4">
-                  {course.badge && (
-                    <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${course.badge.color}`}>
-                      {course.badge.text}
-                    </span>
-                  )}
-                </div>
-
-                {/* Icon */}
-                <div className={`w-14 h-14 rounded-2xl ${course.iconBg} flex items-center justify-center mb-4`}>
-                  <IconComponent className={`w-7 h-7 ${course.iconColor}`} />
-                </div>
-
-                {/* Title */}
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors duration-200">
-                  {course.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-slate-500 text-sm leading-relaxed mb-4">
-                  {course.desc}
-                </p>
-
-                {/* Meta Row */}
-                <div className="flex items-center gap-4 text-xs text-slate-400 pt-3 border-t border-gray-100">
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    {course.duration}
+              <a key={index} href="#" className="premium-card group block overflow-hidden p-6 sm:p-7">
+                {course.badge && (
+                  <span className="mb-4 inline-block rounded-full px-3 py-1 text-xs font-bold text-white" style={{ backgroundColor: course.badgeColor }}>
+                    {course.badge}
                   </span>
-                  <span className="flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5" />
-                    {course.sessions}
-                  </span>
+                )}
+                <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${course.iconBg} transition-transform duration-300 group-hover:scale-110`}>
+                  <Icon size={28} style={{ color: course.iconColor }} />
+                </div>
+                <h3 className="mb-2 text-lg font-bold text-[#102A43] transition-colors duration-200 group-hover:text-[#2F80ED]">{course.title}</h3>
+                <p className="mb-5 text-sm leading-7 text-[#718096]">{course.desc}</p>
+                <div className="flex items-center gap-4 border-t border-[#E8EDF3] pt-4 text-xs text-[#718096]">
+                  <span className="flex items-center gap-1.5"><Users size={14} />{course.ageGroup}</span>
+                  <span className="flex items-center gap-1.5"><Clock size={14} />{course.duration}</span>
+                  <span className="flex items-center gap-1.5"><Grid3X3 size={14} />{course.sessions}</span>
+                </div>
+                <div className="mt-4 flex items-center gap-2 text-sm font-semibold text-[#2F80ED] opacity-0 transition-all duration-300 group-hover:opacity-100">
+                  <span>اطلاعات بیشتر</span>
+                  <ArrowLeft size={16} className="transition-transform duration-200 group-hover:-translate-x-1" />
                 </div>
               </a>
             );
           })}
         </div>
 
-        {/* View All Link */}
-        <div className="text-center mt-10">
-          <a
-            href="#"
-            className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-600 text-sm font-medium transition-colors duration-200"
-          >
-            مشاهده همه دوره‌ها
-            <ArrowLeft className="w-4 h-4" />
-          </a>
+        <div className="mt-10 sm:mt-12 text-center">
+          <a href="/courses" className="btn-ghost">مشاهده همه دوره‌ها</a>
         </div>
       </div>
     </section>

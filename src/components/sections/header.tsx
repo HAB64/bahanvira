@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Menu, X, Phone, User, LogIn, ChevronDown, GraduationCap } from "lucide-react";
+import {
+  Menu,
+  X,
+  Phone,
+  User,
+  LogIn,
+  ChevronDown,
+  GraduationCap,
+} from "lucide-react";
 
 const navLinks = [
   { label: "صفحه اصلی", href: "/" },
@@ -26,8 +34,8 @@ export default function Header() {
   const dropdownTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 16);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -65,144 +73,173 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        scrolled
-          ? "bg-white/92 backdrop-blur-xl shadow-md shadow-black/[0.04] border-b border-gray-100"
-          : "bg-transparent border-b border-transparent"
-      }`}
-    >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5 shrink-0">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-md shadow-orange-500/20">
-            <GraduationCap className="h-5 w-5" />
-          </div>
-          <div className="flex flex-col">
-            <span className={`text-sm font-bold leading-tight transition-colors duration-300 ${scrolled ? "text-slate-900" : "text-slate-800"}`}>
-              ویرا | چرتکه دهگانی
-            </span>
-            <span className={`text-[10px] leading-tight transition-colors duration-300 ${scrolled ? "text-slate-400" : "text-slate-500"}`}>
-              آموزش چرتکه و حساب ذهنی
-            </span>
-          </div>
-        </a>
+    <>
+      <header
+        dir="rtl"
+        className={`sticky top-0 z-50 w-full transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          scrolled
+            ? "glass-header"
+            : "bg-transparent"
+        }`}
+      >
+        {/* Gradient bottom border — visible on scroll */}
+        <div
+          className={`absolute bottom-0 right-0 left-0 h-px transition-opacity duration-500 ${
+            scrolled ? "opacity-100" : "opacity-0"
+          }`}
+          style={{
+            background:
+              "linear-gradient(90deg, transparent 0%, rgba(47,128,237,0.25) 20%, rgba(139,92,246,0.2) 50%, rgba(39,174,96,0.2) 80%, transparent 100%)",
+          }}
+        />
 
-        {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1">
-          {navLinks.map((link) =>
-            link.hasDropdown ? (
-              <div
-                key={link.href}
-                className="relative"
-                onMouseEnter={handleDropdownEnter}
-                onMouseLeave={handleDropdownLeave}
-              >
-                <button
-                  type="button"
-                  onClick={() => setDropdownOpen((prev) => !prev)}
-                  className={`text-sm font-medium rounded-lg transition-all duration-200 px-4 py-2 flex items-center gap-1 ${
-                    scrolled
-                      ? "text-slate-600 hover:text-orange-600 hover:bg-orange-50"
-                      : "text-slate-600 hover:text-orange-600 hover:bg-orange-50/70"
-                  }`}
-                >
-                  {link.label}
-                  <ChevronDown
-                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                      dropdownOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {/* Dropdown */}
-                <div
-                  className={`absolute top-full right-0 mt-1 w-52 rounded-xl border border-gray-100 bg-white shadow-xl shadow-black/[0.06] py-2 transition-all duration-200 ${
-                    dropdownOpen
-                      ? "opacity-100 translate-y-0 pointer-events-auto"
-                      : "opacity-0 -translate-y-2 pointer-events-none"
-                  }`}
-                >
-                  {courseDropdownItems.map((item) => (
-                    <a
-                      key={item.href}
-                      href={item.href}
-                      className="block text-sm font-medium text-slate-600 hover:text-orange-600 hover:bg-orange-50 px-4 py-2.5 transition-colors"
-                    >
-                      {item.label}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <a
-                key={link.href}
-                href={link.href}
-                className={`text-sm font-medium rounded-lg transition-all duration-200 px-4 py-2 flex items-center gap-1.5 ${
-                  scrolled
-                    ? "text-slate-600 hover:text-orange-600 hover:bg-orange-50"
-                    : "text-slate-600 hover:text-orange-600 hover:bg-orange-50/70"
+        <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* ── Logo ──────────────────────────────────────── */}
+          <a href="/" className="flex items-center gap-3 shrink-0 group">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-2xl text-white shadow-lg transition-all duration-500 ${
+                scrolled
+                  ? "bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/25"
+                  : "bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/20 group-hover:shadow-blue-500/30"
+              }`}
+            >
+              <GraduationCap className="h-5 w-5" strokeWidth={2} />
+            </div>
+            <div className="flex flex-col">
+              <span
+                className={`text-[15px] font-extrabold leading-tight tracking-tight transition-colors duration-500 ${
+                  scrolled ? "text-[#102A43]" : "text-[#102A43]"
                 }`}
               >
-                {link.label}
-                {link.comingSoon && (
-                  <span className="text-[10px] font-medium bg-purple-100 text-purple-600 rounded-full px-2 py-0.5 leading-none">
-                    به‌زودی
-                  </span>
-                )}
-              </a>
-            )
-          )}
-        </nav>
-
-        {/* Desktop Actions */}
-        <div className="hidden lg:flex items-center gap-3">
-          <a
-            href="tel:02191302584"
-            className={`flex items-center gap-1.5 text-sm transition-colors ${
-              scrolled ? "text-slate-500 hover:text-orange-600" : "text-slate-500 hover:text-orange-600"
-            }`}
-            dir="ltr"
-          >
-            <Phone className="h-3.5 w-3.5" />
-            ۰۲۱-۹۱۳۰۲۵۸۴
+                ویرا | چرتکه دهگانی
+              </span>
+              <span
+                className={`text-[11px] leading-tight font-medium transition-colors duration-500 ${
+                  scrolled ? "text-[#718096]" : "text-[#718096]/80"
+                }`}
+              >
+                آموزش چرتکه و حساب ذهنی
+              </span>
+            </div>
           </a>
 
-          <div className="h-5 w-px bg-gray-200" />
+          {/* ── Desktop Navigation ─────────────────────────── */}
+          <nav className="hidden lg:flex items-center gap-0.5">
+            {navLinks.map((link) =>
+              link.hasDropdown ? (
+                <div
+                  key={link.href}
+                  className="relative"
+                  onMouseEnter={handleDropdownEnter}
+                  onMouseLeave={handleDropdownLeave}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setDropdownOpen((prev) => !prev)}
+                    className="relative text-[13.5px] font-semibold rounded-xl transition-all duration-300 px-4 py-2.5 flex items-center gap-1.5 text-[#4A5568] hover:text-[#2F80ED] hover:bg-[#2F80ED]/[0.06]"
+                  >
+                    {link.label}
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 transition-transform duration-300 ${
+                        dropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
 
-          <a
-            href="/portal"
-            className={`flex items-center gap-1.5 text-sm font-medium transition-colors ${
-              scrolled ? "text-slate-600 hover:text-orange-600" : "text-slate-600 hover:text-orange-600"
-            }`}
-          >
-            <LogIn className="h-4 w-4" />
-            ورود
-          </a>
+                  {/* ── Dropdown ───────────────────────────── */}
+                  <div
+                    className={`absolute top-full right-0 mt-2 w-56 rounded-2xl border border-[#E8EDF3]/80 bg-white/95 backdrop-blur-2xl shadow-xl shadow-[#102A43]/[0.06] py-2.5 transition-all duration-300 origin-top-right ${
+                      dropdownOpen
+                        ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                        : "opacity-0 scale-95 -translate-y-1.5 pointer-events-none"
+                    }`}
+                  >
+                    <div className="px-4 pb-2 mb-1 border-b border-[#E8EDF3]/60">
+                      <p className="text-[11px] font-bold text-[#A0AEC0] uppercase tracking-wider">
+                        دسته‌بندی دوره‌ها
+                      </p>
+                    </div>
+                    {courseDropdownItems.map((item) => (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        className="flex items-center gap-2.5 text-sm font-medium text-[#4A5568] hover:text-[#2F80ED] hover:bg-[#2F80ED]/[0.04] px-4 py-2.5 transition-all duration-200"
+                      >
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#2F80ED]/40" />
+                        {item.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="relative text-[13.5px] font-semibold rounded-xl transition-all duration-300 px-4 py-2.5 flex items-center gap-1.5 text-[#4A5568] hover:text-[#2F80ED] hover:bg-[#2F80ED]/[0.06]"
+                >
+                  {link.label}
+                  {link.comingSoon && (
+                    <span className="text-[10px] font-bold bg-[#8B5CF6]/[0.08] text-[#8B5CF6] rounded-full px-2.5 py-0.5 leading-none border border-[#8B5CF6]/[0.12]">
+                      به‌زودی
+                    </span>
+                  )}
+                </a>
+              )
+            )}
+          </nav>
 
-          <a
-            href="/portal?tab=register"
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium text-sm rounded-lg px-4 py-2 transition-all shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30"
+          {/* ── Desktop Actions ───────────────────────────── */}
+          <div className="hidden lg:flex items-center gap-2">
+            {/* Phone — subtle */}
+            <a
+              href="tel:02191302584"
+              className="flex items-center gap-1.5 text-[12px] font-medium text-[#A0AEC0] hover:text-[#2F80ED] transition-colors duration-300 px-2.5 py-2 rounded-lg"
+              dir="ltr"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              ۰۲۱-۹۱۳۰۲۵۸۴
+            </a>
+
+            <div className="h-5 w-px bg-[#E8EDF3] mx-1" />
+
+            {/* Login — ghost style */}
+            <a
+              href="/portal"
+              className="flex items-center gap-1.5 text-[13px] font-semibold text-[#4A5568] hover:text-[#2F80ED] transition-all duration-300 px-4 py-2.5 rounded-xl hover:bg-[#2F80ED]/[0.06]"
+            >
+              <LogIn className="h-4 w-4" />
+              ورود
+            </a>
+
+            {/* Register — primary */}
+            <a
+              href="/portal?tab=register"
+              className="inline-flex items-center justify-center gap-2 font-bold text-[13px] px-6 py-2.5 rounded-xl text-white transition-all duration-300 bg-gradient-to-l from-blue-500 to-blue-600 shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/30 hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5"
+            >
+              <User className="h-4 w-4" />
+              ثبت‌نام
+            </a>
+          </div>
+
+          {/* ── Mobile Hamburger ──────────────────────────── */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(true)}
+            className="lg:hidden flex items-center justify-center h-10 w-10 rounded-xl text-[#4A5568] hover:bg-[#2F80ED]/[0.06] transition-all duration-300"
+            aria-label="باز کردن منو"
           >
-            ثبت‌نام
-          </a>
+            <Menu className="h-5 w-5" />
+          </button>
         </div>
+      </header>
 
-        {/* Mobile Hamburger */}
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen(true)}
-          className={`lg:hidden flex items-center justify-center h-10 w-10 rounded-lg transition-colors ${
-            scrolled ? "text-slate-700 hover:bg-gray-100" : "text-slate-700 hover:bg-gray-100/70"
-          }`}
-          aria-label="باز کردن منو"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-      </div>
+      {/* ═══════════════════════════════════════════════════════
+          MOBILE MENU
+          ═══════════════════════════════════════════════════════ */}
 
-      {/* Mobile Menu Overlay */}
+      {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-50 bg-black/30 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 z-[60] bg-[#102A43]/[0.3] backdrop-blur-md transition-all duration-500 lg:hidden ${
           mobileMenuOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
@@ -210,50 +247,62 @@ export default function Header() {
         onClick={() => setMobileMenuOpen(false)}
       />
 
-      {/* Mobile Menu Panel */}
+      {/* Panel */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-72 bg-white shadow-2xl shadow-black/[0.08] transition-transform duration-300 ease-out lg:hidden ${
+        dir="rtl"
+        className={`fixed top-0 right-0 z-[70] h-full w-[300px] bg-[#F8FBFF]/[0.97] backdrop-blur-2xl shadow-2xl shadow-[#102A43]/[0.12] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] lg:hidden flex flex-col ${
           mobileMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Mobile Menu Header */}
-        <div className="flex items-center justify-between px-4 h-16 border-b border-gray-100">
-          <a href="/" className="flex items-center gap-2" onClick={() => setMobileMenuOpen(false)}>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 text-white">
-              <GraduationCap className="h-4 w-4" />
+        {/* ── Panel Header ──────────────────────────────── */}
+        <div className="flex items-center justify-between px-5 h-[68px] border-b border-[#E8EDF3]/60">
+          <a
+            href="/"
+            className="flex items-center gap-2.5"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/25">
+              <GraduationCap className="h-4.5 w-4.5" strokeWidth={2} />
             </div>
-            <span className="text-sm font-bold text-slate-900">ویرا</span>
+            <div className="flex flex-col">
+              <span className="text-sm font-extrabold text-[#102A43] leading-tight">
+                ویرا | چرتکه دهگانی
+              </span>
+              <span className="text-[10px] font-medium text-[#718096] leading-tight">
+                آموزش چرتکه و حساب ذهنی
+              </span>
+            </div>
           </a>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center justify-center h-9 w-9 rounded-lg text-slate-500 hover:bg-gray-100 transition-colors"
+            className="flex items-center justify-center h-9 w-9 rounded-xl text-[#718096] hover:bg-[#2F80ED]/[0.06] hover:text-[#2F80ED] transition-all duration-300"
             aria-label="بستن منو"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Mobile Menu Nav */}
-        <nav className="flex flex-col py-4 overflow-y-auto" style={{ maxHeight: "calc(100vh - 64px - 140px)" }}>
+        {/* ── Panel Nav ─────────────────────────────────── */}
+        <nav className="flex-1 overflow-y-auto py-3">
           {navLinks.map((link) =>
             link.hasDropdown ? (
               <div key={link.href}>
                 <button
                   type="button"
                   onClick={() => setMobileDropdownOpen((prev) => !prev)}
-                  className="flex items-center justify-between w-full text-sm font-medium text-slate-600 hover:text-orange-600 hover:bg-orange-50 px-4 py-3 transition-colors"
+                  className="flex items-center justify-between w-full text-[14px] font-semibold text-[#4A5568] hover:text-[#2F80ED] hover:bg-[#2F80ED]/[0.04] px-5 py-3.5 transition-all duration-300"
                 >
-                  {link.label}
+                  <span>{link.label}</span>
                   <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-200 ${
+                    className={`h-4 w-4 transition-transform duration-300 text-[#A0AEC0] ${
                       mobileDropdownOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 <div
-                  className={`overflow-hidden transition-all duration-200 ${
-                    mobileDropdownOpen ? "max-h-24" : "max-h-0"
+                  className={`overflow-hidden transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                    mobileDropdownOpen ? "max-h-28" : "max-h-0"
                   }`}
                 >
                   {courseDropdownItems.map((item) => (
@@ -261,8 +310,9 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
-                      className="block text-sm text-slate-400 hover:text-orange-600 hover:bg-orange-50 pr-8 pl-4 py-2.5 transition-colors"
+                      className="flex items-center gap-2.5 text-[13px] font-medium text-[#718096] hover:text-[#2F80ED] hover:bg-[#2F80ED]/[0.04] pr-9 pl-5 py-3 transition-all duration-300"
                     >
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#2F80ED]/30" />
                       {item.label}
                     </a>
                   ))}
@@ -273,11 +323,11 @@ export default function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between text-sm font-medium text-slate-600 hover:text-orange-600 hover:bg-orange-50 px-4 py-3 transition-colors"
+                className="flex items-center justify-between text-[14px] font-semibold text-[#4A5568] hover:text-[#2F80ED] hover:bg-[#2F80ED]/[0.04] px-5 py-3.5 transition-all duration-300"
               >
-                {link.label}
+                <span>{link.label}</span>
                 {link.comingSoon && (
-                  <span className="text-[10px] font-medium bg-purple-100 text-purple-600 rounded-full px-2 py-0.5 leading-none">
+                  <span className="text-[10px] font-bold bg-[#8B5CF6]/[0.08] text-[#8B5CF6] rounded-full px-2.5 py-0.5 leading-none border border-[#8B5CF6]/[0.12]">
                     به‌زودی
                   </span>
                 )}
@@ -286,34 +336,38 @@ export default function Header() {
           )}
         </nav>
 
-        {/* Mobile Menu Footer */}
-        <div className="absolute bottom-0 right-0 left-0 border-t border-gray-100 p-4 bg-white">
+        {/* ── Panel Footer ──────────────────────────────── */}
+        <div className="border-t border-[#E8EDF3]/60 p-5 bg-white/50 backdrop-blur-sm">
+          {/* Phone */}
           <a
             href="tel:02191302584"
-            className="flex items-center gap-2 text-sm text-slate-500 hover:text-orange-600 mb-3 transition-colors"
+            className="flex items-center gap-2.5 text-[12px] font-medium text-[#A0AEC0] hover:text-[#2F80ED] mb-4 transition-colors duration-300"
           >
-            <Phone className="h-4 w-4" />
+            <Phone className="h-3.5 w-3.5" />
             <span dir="ltr">۰۲۱-۹۱۳۰۲۵۸۴</span>
           </a>
-          <div className="flex gap-2">
+
+          {/* CTA Buttons */}
+          <div className="flex gap-2.5">
             <a
               href="/portal"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-slate-600 border border-gray-200 rounded-lg py-2.5 hover:bg-gray-50 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 text-[13px] font-semibold text-[#4A5568] border border-[#E8EDF3] rounded-xl py-3 hover:bg-[#2F80ED]/[0.04] hover:border-[#2F80ED]/20 hover:text-[#2F80ED] transition-all duration-300 bg-white/60 backdrop-blur-sm"
             >
-              <User className="h-4 w-4" />
+              <LogIn className="h-4 w-4" />
               ورود
             </a>
             <a
               href="/portal?tab=register"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex-1 flex items-center justify-center bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium text-sm rounded-lg py-2.5 transition-all"
+              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-l from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-[13px] rounded-xl py-3 transition-all duration-300 shadow-md shadow-blue-500/25"
             >
+              <User className="h-4 w-4" />
               ثبت‌نام
             </a>
           </div>
         </div>
       </div>
-    </header>
+    </>
   );
 }
