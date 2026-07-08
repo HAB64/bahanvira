@@ -1,4 +1,13 @@
-'use client';
+#!/usr/bin/env python3
+"""Generate fully functional admin page with CRUD operations."""
+import os
+
+OUT = "/home/z/my-project/src/app/admin/page.tsx"
+
+parts = []
+
+# Part 1: Imports, Types, Shared Components
+parts.append(r"""'use client';
 
 import { useState } from 'react';
 import {
@@ -85,8 +94,10 @@ const sidebarCategories: { title: string; icon: React.ElementType; items: MenuIt
     { key: 'marketing', label: 'کمپین\u200cها و بازاریابی', icon: Megaphone }, { key: 'emails', label: 'قالب ایمیل و پیامک', icon: Send },
   ]},
 ];
+""")
 
-
+# Part 2: Dashboard
+parts.append(r"""
 const dashStats = [
   { label: 'دانش\u200cآموز فعال', value: '۱۲۳', icon: Users, color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-200' },
   { label: 'مربی', value: '۸', icon: GraduationCap, color: 'text-teal-500', bg: 'bg-teal-50', border: 'border-teal-200' },
@@ -147,8 +158,10 @@ function DashboardTab({ nav }: { nav: (k: TabKey) => void }) {
     </div>
   );
 }
+""")
 
-
+# Part 3: Students Tab with full CRUD
+parts.append(r"""
 function StudentsTab() {
   const [data, setData] = useState([
     { id: 1, name: 'سارا احمدی', phone: '۰۹۱۲۱۲۳۴۵۶۷', level: 'سطح ۳', date: '۱۴۰۴/۰۱/۱۵', status: 'فعال', paid: 'تسویه شده' },
@@ -211,8 +224,10 @@ function StudentsTab() {
     </Modal>
   </div>);
 }
+""")
 
-
+# Part 4: Classes, Exams, CRM, Financial, Users, Settings (compact)
+parts.append(r"""
 function ClassesTab() {
   const [data, setData] = useState([
     { id: 1, name: 'چرتکه مبتدی - گروه الف', instructor: 'استاد رضایی', students: 18, schedule: 'شنبه و دوشنبه - ۱۶:۰۰' },
@@ -291,8 +306,10 @@ function ExamsTab() {
     </Modal>
   </div>);
 }
+""")
 
-
+# Part 5: CRM, Financial, Users, Settings
+parts.append(r"""
 function CRMInlineTab() {
   const [data, setData] = useState([
     { id: 1, name: 'زهرا محمدی', phone: '۰۹۱۲۳۴۵۶۷۸۹', source: 'اینستاگرام', status: 'ثبت\u200cنام شده', course: 'چرتکه مبتدی', date: '۱۴۰۴/۰۳/۲۰', assignee: 'مستر رضایی' },
@@ -429,8 +446,10 @@ function SettingsTab() {
       <button onClick={save} className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium px-6 py-2.5 rounded-xl hover:shadow-lg hover:shadow-orange-500/20 transition-all flex items-center gap-2"><Save className="w-4 h-4" />ذخیره</button></div></div>
   </div>);
 }
+""")
 
-
+# Part 6: Main Admin Page
+parts.append(r"""
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [password, setPassword] = useState('');
@@ -529,3 +548,9 @@ export default function AdminPage() {
     </div>
   );
 }
+""")
+
+with open(OUT, 'w', encoding='utf-8') as f:
+    f.write('\n'.join(parts))
+
+print(f'Written {len(parts)} parts, total chars: {sum(len(p) for p in parts)}')
