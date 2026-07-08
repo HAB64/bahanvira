@@ -413,7 +413,7 @@ function UsersTab() {
 
 function SettingsTab() {
   const [saved, setSaved] = useState(false);
-  const [g, setG] = useState({ name: 'چرتکه دهگانی ویرا', phone: '۰۲۱-۹۱۳۰۲۵۸۴', email: 'info@bahanvira.ir', address: 'تهران، خیابان انقلاب، پلاک ۱۲۳' });
+  const [g, setG] = useState({ name: 'چرتکه دهگانی ویرا', phone: '۰۲۱-۹۱۳۰۲۵۸۴', email: 'info@bahanvira.ir', address: 'مازندران، محمودآباد، خیابان امام، نسیم ۴' });
   const [s, setS] = useState({ instagram: 'https://instagram.com/bahanvira', telegram: 'https://t.me/bahanvira' });
   const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2500); };
   return (<div className="space-y-6" dir="rtl">{saved && <Toast message="تنظیمات ذخیره شد" type="success" />}

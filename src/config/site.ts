@@ -14,9 +14,9 @@ export const siteConfig = {
   description: 'آموزش تخصصی چرتکه دهگانی و حساب ذهنی برای کودکان و نوجوانان. تقویت هوش ریاضی، تمرکز و اعتماد به نفس با روش نوین ویرا',
 
   location: {
-    latitude: 35.6892,
-    longitude: 51.3890,
-    address: 'تهران، ایران',
+    latitude: 36.6504,
+    longitude: 52.0652,
+    address: 'مازندران، محمودآباد، خیابان امام، نسیم ۴',
   },
 
   contact: {
