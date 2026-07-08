@@ -435,6 +435,7 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [showNotif, setShowNotif] = useState(false);
@@ -442,9 +443,39 @@ export default function AdminPage() {
     Object.fromEntries(sidebarCategories.map(c => [c.title, true]))
   );
 
-  const handleLogin = () => {
-    if (password === 'vira2024') { setIsLoggedIn(true); setPasswordError(''); }
-    else { setPasswordError('رمز عبور اشتباه است'); }
+  // Check session on mount
+  useState(() => {
+    fetch('/api/admin/me').then(r => {
+      if (r.ok) setIsLoggedIn(true);
+    }).catch(() => {});
+  });
+
+  const handleLogin = async () => {
+    setLoading(true);
+    setPasswordError('');
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setIsLoggedIn(true);
+      } else {
+        setPasswordError(data.error || 'خطا در ورود');
+      }
+    } catch {
+      setPasswordError('خطای شبکه. دوباره تلاش کنید.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try { await fetch('/api/admin/logout', { method: 'POST' }); } catch {}
+    setIsLoggedIn(false);
+    setPassword('');
   };
 
   const navigateTo = (key: TabKey) => { setActiveTab(key); setMobileSidebarOpen(false); };
@@ -483,7 +514,7 @@ export default function AdminPage() {
             <input type="password" value={password} onChange={e => { setPassword(e.target.value); setPasswordError(''); }} onKeyDown={e => e.key === 'Enter' && handleLogin()} placeholder="رمز عبور" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.06] text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 text-white placeholder:text-slate-500 transition-all" autoFocus />
             {passwordError && <p className="text-red-400 text-xs mt-2 text-center">{passwordError}</p>}
           </div>
-          <button onClick={handleLogin} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40">ورود</button></div>
+          <button onClick={handleLogin} disabled={loading} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 disabled:opacity-50 disabled:cursor-not-allowed">{loading ? 'در حال ورود...' : 'ورود'}</button></div>
         </div>
       </div>
     );
@@ -512,7 +543,7 @@ export default function AdminPage() {
             </div>
           </div>
         ))}</nav>
-        <div className="p-4 border-t border-white/[0.06] shrink-0"><button onClick={() => { setIsLoggedIn(false); setPassword(''); }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"><LogOut className="w-4 h-4" />خروج از پنل</button></div>
+        <div className="p-4 border-t border-white/[0.06] shrink-0"><button onClick={handleLogout} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"><LogOut className="w-4 h-4" />خروج از پنل</button></div>
       </aside>
       <div className="flex-1 min-w-0 flex flex-col">
         <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/60 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between shrink-0">
