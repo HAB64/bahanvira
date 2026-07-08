@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import {
   Brain,
   Calculator,
@@ -73,6 +72,112 @@ const stats = [
   { value: 95, suffix: "٪", label: "رضایت والدین", icon: Star, color: "text-[#8B5CF6]", bg: "bg-[#8B5CF6]/[0.08]" },
   { value: 50, suffix: "+", label: "مرکز آموزشی", icon: Calculator, color: "text-[#2F80ED]", bg: "bg-[#2F80ED]/[0.08]" },
 ];
+
+/* ── Static Abacus (one bead moves up/down) ─────── */
+function StaticAbacus() {
+  return (
+    <svg viewBox="0 0 500 380" className="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="frameGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8B6914" />
+          <stop offset="50%" stopColor="#C4943A" />
+          <stop offset="100%" stopColor="#8B6914" />
+        </linearGradient>
+        <linearGradient id="rodGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#B8860B" />
+          <stop offset="50%" stopColor="#DAA520" />
+          <stop offset="100%" stopColor="#B8860B" />
+        </linearGradient>
+        <filter id="beadShadow">
+          <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodOpacity="0.18" />
+        </filter>
+        {/* Bead gradients per rod */}
+        <linearGradient id="bead1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#EF4444" />
+          <stop offset="100%" stopColor="#B91C1C" />
+        </linearGradient>
+        <linearGradient id="bead2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#3B82F6" />
+          <stop offset="100%" stopColor="#1D4ED8" />
+        </linearGradient>
+        <linearGradient id="bead3" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#F59E0B" />
+          <stop offset="100%" stopColor="#D97706" />
+        </linearGradient>
+        <linearGradient id="bead4" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#10B981" />
+          <stop offset="100%" stopColor="#059669" />
+        </linearGradient>
+        <linearGradient id="bead5" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#8B5CF6" />
+          <stop offset="100%" stopColor="#6D28D9" />
+        </linearGradient>
+        {/* Moving bead glow */}
+        <filter id="movingGlow">
+          <feDropShadow dx="0" dy="0" stdDeviation="4" floodColor="#2F80ED" floodOpacity="0.5" />
+        </filter>
+      </defs>
+
+      {/* ── Frame (wooden border) ── */}
+      <rect x="20" y="20" width="460" height="340" rx="18" fill="url(#frameGrad)" />
+      <rect x="28" y="28" width="444" height="324" rx="14" fill="#FDF6E3" />
+      {/* Inner shadow line */}
+      <rect x="28" y="28" width="444" height="324" rx="14" fill="none" stroke="#C4943A" strokeWidth="0.5" opacity="0.3" />
+
+      {/* ── Horizontal bar (divider) ── */}
+      <rect x="35" y="185" width="430" height="10" rx="5" fill="url(#frameGrad)" opacity="0.7" />
+
+      {/* ── 5 Vertical Rods ── */}
+      {[110, 190, 270, 350, 430].map((cx, i) => (
+        <line key={i} x1={cx} y1={40} x2={cx} y2={340} stroke="url(#rodGrad)" strokeWidth="5" strokeLinecap="round" />
+      ))}
+
+      {/* ── Top beads (1 per rod, above bar) ── */}
+      <circle cx={110} cy="80" r="18" fill="url(#bead1)" filter="url(#beadShadow)" />
+      <circle cx={190} cy="80" r="18" fill="url(#bead2)" filter="url(#beadShadow)" />
+      <circle cx={270} cy="80" r="18" fill="url(#bead3)" filter="url(#beadShadow)" />
+      <circle cx={350} cy="80" r="18" fill="url(#bead4)" filter="url(#beadShadow)" />
+      <circle cx={430} cy="80" r="18" fill="url(#bead5)" filter="url(#beadShadow)" />
+
+      {/* Bead shine (top highlight) */}
+      {[110, 190, 270, 350, 430].map((cx, i) => (
+        <ellipse key={`shine-${i}`} cx={cx - 4} cy={73} rx="6" ry="4" fill="white" opacity="0.3" />
+      ))}
+
+      {/* ── Bottom beads (3 per rod, below bar) ── */}
+      {[110, 190, 270, 350, 430].map((cx, rodIdx) => {
+        const gradId = [`bead1`, `bead2`, `bead3`, `bead4`, `bead5`][rodIdx];
+        return [220, 258, 296].map((cy, beadIdx) => (
+          <circle key={`b-${rodIdx}-${beadIdx}`} cx={cx} cy={cy} r="18" fill={`url(#${gradId})`} filter="url(#beadShadow)" />
+        ));
+      })}
+
+      {/* Bottom bead shine */}
+      {[110, 190, 270, 350, 430].map((cx, rodIdx) =>
+        [220, 258, 296].map((cy, beadIdx) => (
+          <ellipse key={`bshine-${rodIdx}-${beadIdx}`} cx={cx - 4} cy={cy - 7} rx="6" ry="4" fill="white" opacity="0.25" />
+        ))
+      )}
+
+      {/* ── ONE moving bead (on middle rod, up & down) ── */}
+      <circle r="18" fill="url(#bead3)" filter="url(#movingGlow)">
+        <animateMotion dur="2.5s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1">
+          <mpath href="#movePath" />
+        </animateMotion>
+      </circle>
+      {/* Moving bead shine */}
+      <ellipse rx="6" ry="4" fill="white" opacity="0.4">
+        <animateMotion dur="2.5s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="spline" keySplines="0.45 0 0.55 1; 0.45 0 0.55 1">
+          <mpath href="#movePathShine" />
+        </animateMotion>
+      </ellipse>
+
+      {/* Hidden paths for vertical movement on rod 3 (cx=270) */}
+      <path id="movePath" d="M270,220 L270,296" fill="none" stroke="none" />
+      <path id="movePathShine" d="M266,213 L266,289" fill="none" stroke="none" />
+    </svg>
+  );
+}
 
 /* ── Hero Section ──────────────────────────────────── */
 export default function Hero() {
@@ -217,16 +322,7 @@ export default function Hero() {
               {/* Animated glow border */}
               <div className="absolute -inset-[1px] rounded-3xl z-0 animate-pulse-glow opacity-60 pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(47,128,237,0.2) 0%, rgba(139,92,246,0.15) 40%, rgba(39,174,96,0.15) 70%, rgba(242,153,74,0.2) 100%)" }} />
               <div className="relative z-10 rounded-2xl overflow-hidden bg-white/50 backdrop-blur-sm p-2">
-                <div className="animate-abacus-bounce">
-                  <Image
-                    src="/chertke-dohgani-vira.png"
-                    alt="چرتکه دهگانی ویرا"
-                    width={500}
-                    height={400}
-                    className="w-full h-auto object-contain"
-                    priority
-                  />
-                </div>
+                <StaticAbacus />
               </div>
             </div>
 
