@@ -13,14 +13,23 @@ const SESSION_SECRET = new TextEncoder().encode(
 const COOKIE_NAME = 'admin_session';
 const MAX_AGE = 24 * 60 * 60; // 24 hours in seconds
 
-// ── Verify password against bcrypt hash ─────────────────
+// ── Verify username + password ───────────────────────────
 
-export async function verifyAdminPassword(password: string): Promise<boolean> {
+export async function verifyAdminCredentials(username: string, password: string): Promise<boolean> {
+  const expectedUsername = process.env.ADMIN_USERNAME;
   const hash = process.env.ADMIN_PASSWORD_HASH;
-  if (!hash) {
-    console.error('[SECURITY] ADMIN_PASSWORD_HASH not set in .env');
+
+  if (!expectedUsername || !hash) {
+    console.error('[SECURITY] ADMIN_USERNAME or ADMIN_PASSWORD_HASH not set in .env');
     return false;
   }
+
+  // Username check (case-sensitive)
+  if (username.trim() !== expectedUsername.trim()) {
+    return false;
+  }
+
+  // Password check with bcrypt
   try {
     return await bcrypt.compare(password, hash);
   } catch (e) {
@@ -28,6 +37,10 @@ export async function verifyAdminPassword(password: string): Promise<boolean> {
     return false;
   }
 }
+
+// Legacy alias (kept for backward compat)
+export const verifyAdminPassword = (password: string) =>
+  verifyAdminCredentials(process.env.ADMIN_USERNAME || 'admin', password);
 
 // ── Create JWT session token ────────────────────────────
 

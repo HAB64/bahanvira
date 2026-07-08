@@ -433,8 +433,9 @@ function SettingsTab() {
 
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -452,21 +453,21 @@ export default function AdminPage() {
 
   const handleLogin = async () => {
     setLoading(true);
-    setPasswordError('');
+    setLoginError('');
     try {
       const res = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ username, password }),
       });
       const data = await res.json();
       if (res.ok) {
         setIsLoggedIn(true);
       } else {
-        setPasswordError(data.error || 'خطا در ورود');
+        setLoginError(data.error || 'خطا در ورود');
       }
     } catch {
-      setPasswordError('خطای شبکه. دوباره تلاش کنید.');
+      setLoginError('خطای شبکه. دوباره تلاش کنید.');
     } finally {
       setLoading(false);
     }
@@ -475,6 +476,7 @@ export default function AdminPage() {
   const handleLogout = async () => {
     try { await fetch('/api/admin/logout', { method: 'POST' }); } catch {}
     setIsLoggedIn(false);
+    setUsername('');
     setPassword('');
   };
 
@@ -511,8 +513,10 @@ export default function AdminPage() {
           <h1 className="text-2xl font-bold text-white text-center mb-2">ورود به پنل مدیریت</h1>
           <p className="text-sm text-slate-400 text-center mb-8">آموزگاه چرتکه دهگانی ویرا</p>
           <div className="space-y-4"><div>
-            <input type="password" value={password} onChange={e => { setPassword(e.target.value); setPasswordError(''); }} onKeyDown={e => e.key === 'Enter' && handleLogin()} placeholder="رمز عبور" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.06] text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 text-white placeholder:text-slate-500 transition-all" autoFocus />
-            {passwordError && <p className="text-red-400 text-xs mt-2 text-center">{passwordError}</p>}
+            <input type="text" value={username} onChange={e => { setUsername(e.target.value); setLoginError(''); }} onKeyDown={e => e.key === 'Enter' && handleLogin()} placeholder="نام کاربری" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.06] text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 text-white placeholder:text-slate-500 transition-all" autoFocus />
+          </div><div>
+            <input type="password" value={password} onChange={e => { setPassword(e.target.value); setLoginError(''); }} onKeyDown={e => e.key === 'Enter' && handleLogin()} placeholder="رمز عبور" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.06] text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 text-white placeholder:text-slate-500 transition-all" />
+            {loginError && <p className="text-red-400 text-xs mt-2 text-center">{loginError}</p>}
           </div>
           <button onClick={handleLogin} disabled={loading} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 disabled:opacity-50 disabled:cursor-not-allowed">{loading ? 'در حال ورود...' : 'ورود'}</button></div>
         </div>

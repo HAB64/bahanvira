@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════
 
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAdminPassword, createAdminSession, adminCookieOptions } from '@/lib/admin-auth';
+import { verifyAdminCredentials, createAdminSession, adminCookieOptions } from '@/lib/admin-auth';
 import { loginRateLimit } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
@@ -27,23 +27,24 @@ export async function POST(request: NextRequest) {
   }
 
   // ── Parse body ─────────────────────────────────
-  let password: string;
+  let username: string, password: string;
   try {
     const body = await request.json();
+    username = String(body.username || '').trim();
     password = String(body.password || '').trim();
   } catch {
     return NextResponse.json({ error: 'درخواست نامعتبر' }, { status: 400 });
   }
 
-  if (!password) {
-    return NextResponse.json({ error: 'رمز عبور الزامی است' }, { status: 400 });
+  if (!username || !password) {
+    return NextResponse.json({ error: 'نام کاربری و رمز عبور الزامی است' }, { status: 400 });
   }
 
-  // ── Verify password ────────────────────────────
-  const valid = await verifyAdminPassword(password);
+  // ── Verify credentials ──────────────────────────
+  const valid = await verifyAdminCredentials(username, password);
   if (!valid) {
     return NextResponse.json(
-      { error: 'رمز عبور اشتباه است' },
+      { error: 'نام کاربری یا رمز عبور اشتباه است' },
       {
         status: 401,
         headers: { 'X-RateLimit-Remaining': String(rateResult.remaining) },
