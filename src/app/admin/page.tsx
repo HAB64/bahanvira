@@ -437,6 +437,7 @@ export default function AdminPage() {
   const [passwordError, setPasswordError] = useState('');
   const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [showNotif, setShowNotif] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(
     Object.fromEntries(sidebarCategories.map(c => [c.title, true]))
   );
@@ -473,7 +474,7 @@ export default function AdminPage() {
 
   if (!isLoggedIn) {
     return (
-      <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-50 to-orange-50/30 flex items-center justify-center px-4">
+      <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-100 via-orange-50/50 to-amber-50/40 flex items-center justify-center px-4">
         <div className="bg-white rounded-3xl shadow-xl shadow-black/[0.06] p-8 w-full max-w-sm border border-gray-100">
           <div className="flex justify-center mb-6"><div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20"><Lock className="w-8 h-8 text-white" /></div></div>
           <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">ورود به پنل مدیریت</h1>
@@ -489,9 +490,9 @@ export default function AdminPage() {
   }
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gray-50/80 flex">
+    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-orange-50/20 flex">
       {mobileSidebarOpen && <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden" onClick={() => setMobileSidebarOpen(false)} />}
-      <aside className={"fixed lg:sticky top-0 right-0 z-50 lg:z-10 h-screen w-72 bg-white border-l border-gray-100 flex flex-col transition-transform duration-300 ease-out " + (mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0') + " shadow-xl lg:shadow-none"}>
+      <aside className={"fixed lg:sticky top-0 right-0 z-50 lg:z-10 h-screen w-72 bg-gradient-to-b from-white to-orange-50/30 border-l border-orange-100/50 flex flex-col transition-transform duration-300 ease-out " + (mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0') + " shadow-xl lg:shadow-none"}>
         <div className="p-5 border-b border-gray-100 flex items-center gap-3 shrink-0">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md shadow-orange-500/20"><GraduationCap className="w-5 h-5 text-white" /></div>
           <div className="flex-1 min-w-0"><h2 className="text-sm font-bold text-slate-900 truncate">ویرا | چرتکه دهگانی</h2><p className="text-[11px] text-slate-400">پنل مدیریت جامع</p></div>
@@ -514,13 +515,13 @@ export default function AdminPage() {
         <div className="p-4 border-t border-gray-100 shrink-0"><button onClick={() => { setIsLoggedIn(false); setPassword(''); }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"><LogOut className="w-4 h-4" />خروج از پنل</button></div>
       </aside>
       <div className="flex-1 min-w-0 flex flex-col">
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-100 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between shrink-0">
+        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-orange-100/30 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between shrink-0 shadow-sm">
           <div className="flex items-center gap-3">
             <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-gray-100 text-slate-500"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg></button>
             <h1 className="text-base sm:text-lg font-bold text-slate-900">{sidebarCategories.flatMap(c => c.items).find(i => i.key === activeTab)?.label || 'داشبورد'}</h1>
           </div>
           <div className="flex items-center gap-3">
-            <button className="relative p-2 rounded-xl hover:bg-gray-100 text-slate-400 hover:text-slate-600 transition-colors"><Bell className="w-5 h-5" /><span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span></button>
+            <div className="relative"><button onClick={() => setShowNotif(!showNotif)} className="relative p-2 rounded-xl hover:bg-orange-50 text-slate-400 hover:text-orange-500 transition-colors"><Bell className="w-5 h-5" /><span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span></button>{showNotif && (<><div className="fixed inset-0 z-40" onClick={() => setShowNotif(false)} /><div className="absolute left-0 top-full mt-2 w-80 bg-white rounded-2xl border border-gray-100 shadow-2xl z-50 overflow-hidden"><div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between"><span className="text-sm font-bold text-slate-800">اعلان‌ها</span><button onClick={() => setShowNotif(false)} className="text-xs text-orange-500 hover:text-orange-600 font-medium">خواندن همه</button></div><div className="max-h-64 overflow-y-auto divide-y divide-gray-50"><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer bg-orange-50/30"><p className="text-xs text-slate-800 font-medium">ثبت‌نام جدید: سارا احمدی</p><p className="text-[10px] text-slate-400 mt-1">۵ دقیقه پیش</p></div><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer bg-orange-50/30"><p className="text-xs text-slate-800 font-medium">پرداخت موفق: ۲,۵۰۰,۰۰۰ تومان</p><p className="text-[10px] text-slate-400 mt-1">۳۰ دقیقه پیش</p></div><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"><p className="text-xs text-slate-500">تیکت جدید از محمد رضایی</p><p className="text-[10px] text-slate-400 mt-1">۱ ساعت پیش</p></div><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"><p className="text-xs text-slate-500">آزمون حساب ذهنی فردا برگزار می‌شود</p><p className="text-[10px] text-slate-400 mt-1">۲ ساعت پیش</p></div></div></div></>)}</div>
             <div className="flex items-center gap-2"><div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold">م</div><span className="text-sm font-medium text-slate-700 hidden sm:block">مدیر</span></div>
           </div>
         </header>
