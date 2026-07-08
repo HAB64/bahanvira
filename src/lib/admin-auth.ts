@@ -13,16 +13,16 @@ const SESSION_SECRET = new TextEncoder().encode(
 const COOKIE_NAME = 'admin_session';
 const MAX_AGE = 24 * 60 * 60; // 24 hours in seconds
 
+// ── Fallback credentials (used when env vars are not set) ──
+
+const FALLBACK_USERNAME = 'admin';
+const FALLBACK_HASH = '$2b$12$f.3yXQ4taXxXi5bLA654YOuS9I6JC92sf8UNgrYLwbEPQUPSMNnTa'; // vira2024
+
 // ── Verify username + password ───────────────────────────
 
 export async function verifyAdminCredentials(username: string, password: string): Promise<boolean> {
-  const expectedUsername = process.env.ADMIN_USERNAME;
-  const hash = process.env.ADMIN_PASSWORD_HASH;
-
-  if (!expectedUsername || !hash) {
-    console.error('[SECURITY] ADMIN_USERNAME or ADMIN_PASSWORD_HASH not set in .env');
-    return false;
-  }
+  const expectedUsername = process.env.ADMIN_USERNAME || FALLBACK_USERNAME;
+  const hash = process.env.ADMIN_PASSWORD_HASH || FALLBACK_HASH;
 
   // Username check (case-sensitive)
   if (username.trim() !== expectedUsername.trim()) {
