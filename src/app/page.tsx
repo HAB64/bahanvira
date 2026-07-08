@@ -10,7 +10,6 @@ import Instructors from "@/components/sections/instructors";
 import About from "@/components/sections/about";
 import WhyVira from "@/components/sections/why-vira";
 import Cooperation from "@/components/sections/cooperation";
-import Testimonials from "@/components/sections/testimonials";
 import FAQ from "@/components/sections/faq";
 import ConsultForm from "@/components/sections/consult-form";
 import CTASection from "@/components/sections/cta-section";
@@ -30,7 +29,6 @@ export default function Home() {
         <Instructors />
         <About />
         <WhyVira />
-        <Testimonials />
         <Cooperation />
         <FAQ />
         <ConsultForm />

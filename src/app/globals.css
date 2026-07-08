@@ -518,6 +518,16 @@
   animation: progress-fill 1.5s ease-out forwards;
 }
 
+@keyframes gradient-x {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-x {
+  background-size: 200% auto;
+  animation: gradient-x 4s ease-in-out infinite;
+}
+
 /* ── Scroll Reveal ────────────────────────────────── */
 .reveal {
   opacity: 0;
