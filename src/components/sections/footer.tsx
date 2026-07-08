@@ -49,7 +49,7 @@ export default function Footer() {
               {[
                 { icon: Instagram, href: "https://instagram.com/bahanvira", hoverBg: "hover:bg-pink-500/20 hover:text-pink-400" },
                 { icon: Send, href: "https://t.me/bahanvira", hoverBg: "hover:bg-sky-500/20 hover:text-sky-400" },
-                { icon: Phone, href: "tel:02191302584", hoverBg: "hover:bg-emerald-500/20 hover:text-emerald-400" },
+                { icon: Phone, href: "tel:09111277194", hoverBg: "hover:bg-emerald-500/20 hover:text-emerald-400" },
               ].map((social, i) => (
                 <a key={i} href={social.href} target="_blank" rel="noopener noreferrer" aria-label={social.href} className={`flex h-10 w-10 items-center justify-center rounded-xl text-white/40 transition-all duration-300 ${social.hoverBg}`} style={{ background: "rgba(255,255,255,0.04)" }}>
                   <social.icon className="h-[18px] w-[18px]" />
@@ -96,9 +96,13 @@ export default function Footer() {
                 <MapPin className="h-4 w-4 mt-1 shrink-0 text-white/30" />
                 <span className="text-sm text-white/50 leading-6">تهران، خیابان انقلاب، پلاک ۱۲۳</span>
               </div>
-              <a href="tel:02191302584" className="flex items-center gap-3 text-sm text-white/50 hover:text-[#2F80ED] transition-colors">
+              <a href="tel:09111277194" className="flex items-center gap-3 text-sm text-white/50 hover:text-[#2F80ED] transition-colors">
                 <Phone className="h-4 w-4 shrink-0 text-white/30" />
-                <span dir="ltr">۰۲۱-۹۱۳۰۲۵۸۴</span>
+                <span dir="ltr">۰۹۱۱۱۲۷۷۱۹۴</span>
+              </a>
+              <a href="tel:01144746441" className="flex items-center gap-3 text-sm text-white/50 hover:text-[#2F80ED] transition-colors">
+                <Phone className="h-4 w-4 shrink-0 text-white/30" />
+                <span dir="ltr">۰۱۱-۴۴۷۴۶۴۴۱</span>
               </a>
               <a href="mailto:info@bahanvira.ir" className="flex items-center gap-3 text-sm text-white/50 hover:text-[#2F80ED] transition-colors">
                 <Mail className="h-4 w-4 shrink-0 text-white/30" />

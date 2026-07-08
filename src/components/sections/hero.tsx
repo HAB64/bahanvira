@@ -275,6 +275,19 @@ export default function Hero() {
                 </span>
               </div>
             </div>
+
+            {/* ── Phone Numbers ────────────────────────── */}
+            <div className="animate-slide-up flex items-center justify-center gap-6 mt-5" style={{ animationDelay: "0.5s" }}>
+              <a href="tel:09111277194" className="flex items-center gap-2 text-sm font-bold text-[#2F80ED] hover:text-[#1A6DD1] transition-colors">
+                <Phone className="w-4 h-4" />
+                <span dir="ltr">۰۹۱۱۱۲۷۷۱۹۴</span>
+              </a>
+              <span className="text-[#E8EDF3]">|</span>
+              <a href="tel:01144746441" className="flex items-center gap-2 text-sm font-bold text-[#2F80ED] hover:text-[#1A6DD1] transition-colors">
+                <Phone className="w-4 h-4" />
+                <span dir="ltr">۰۱۱-۴۴۷۴۶۴۴۱</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
