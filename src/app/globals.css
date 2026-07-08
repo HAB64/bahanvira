@@ -528,6 +528,16 @@
   animation: gradient-x 4s ease-in-out infinite;
 }
 
+/* ── Abacus Bead Animation (up/down) ────────────── */
+@keyframes abacus-bounce {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-6px); }
+  75% { transform: translateY(4px); }
+}
+.animate-abacus-bounce {
+  animation: abacus-bounce 3s ease-in-out infinite;
+}
+
 /* ── Scroll Reveal ────────────────────────────────── */
 .reveal {
   opacity: 0;

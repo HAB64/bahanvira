@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import {
   Brain,
   Calculator,
@@ -16,71 +17,6 @@ import {
   Trophy,
   Flame,
 } from "lucide-react";
-
-/* ── Animated Abacus SVG ────────────────────────────── */
-function AnimatedAbacus() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-
-  const rods = [0, 1, 2, 3, 4];
-  const beadColors = ["#2F80ED", "#27AE60", "#F2994A", "#8B5CF6", "#FFD54F"];
-
-  return (
-    <svg viewBox="0 0 320 260" className="w-full h-auto drop-shadow-2xl" aria-hidden="true">
-      {/* Frame */}
-      <rect x="10" y="10" width="300" height="240" rx="20" fill="white" fillOpacity="0.7" stroke="#E8EDF3" strokeWidth="1.5" />
-      <rect x="15" y="15" width="290" height="230" rx="17" fill="white" fillOpacity="0.5" />
-
-      {/* Rods */}
-      {rods.map((i) => (
-        <line key={i} x1="50" y1={50 + i * 42} x2="270" y2={50 + i * 42} stroke="#CBD5E0" strokeWidth="2" strokeLinecap="round" />
-      ))}
-
-      {/* Beads - upper (animate down on mount) */}
-      {rods.map((i) => (
-        <g key={`upper-${i}`}>
-          <circle cx={70 + (mounted ? 40 : 0)} cy={50 + i * 42} r="12" fill={beadColors[i]} opacity="0.9" style={{ transition: `cx 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${0.2 + i * 0.12}s` }}>
-            <animate attributeName="cy" values={`${50 + i * 42};${46 + i * 42};${50 + i * 42}`} dur="3s" repeatCount="indefinite" begin={`${i * 0.4}s`} />
-          </circle>
-          <circle cx={100 + (mounted ? 40 : 0)} cy={50 + i * 42} r="12" fill={beadColors[i]} opacity="0.7" style={{ transition: `cx 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${0.35 + i * 0.12}s` }}>
-            <animate attributeName="cy" values={`${50 + i * 42};${46 + i * 42};${50 + i * 42}`} dur="3s" repeatCount="indefinite" begin={`${i * 0.4 + 0.2}s`} />
-          </circle>
-        </g>
-      ))}
-
-      {/* Beads - lower (animate up on mount) */}
-      {rods.map((i) => (
-        <g key={`lower-${i}`}>
-          <circle cx={220 - (mounted ? 50 : 0)} cy={50 + i * 42} r="12" fill={beadColors[(i + 2) % 5]} opacity="0.85" style={{ transition: `cx 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${0.5 + i * 0.12}s` }}>
-            <animate attributeName="cy" values={`${50 + i * 42};${54 + i * 42};${50 + i * 42}`} dur="2.5s" repeatCount="indefinite" begin={`${i * 0.3 + 0.5}s`} />
-          </circle>
-          <circle cx={250 - (mounted ? 50 : 0)} cy={50 + i * 42} r="12" fill={beadColors[(i + 2) % 5]} opacity="0.65" style={{ transition: `cx 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${0.65 + i * 0.12}s` }}>
-            <animate attributeName="cy" values={`${50 + i * 42};${54 + i * 42};${50 + i * 42}`} dur="2.5s" repeatCount="indefinite" begin={`${i * 0.3 + 0.7}s`} />
-          </circle>
-          <circle cx={280 - (mounted ? 50 : 0)} cy={50 + i * 42} r="12" fill={beadColors[(i + 2) % 5]} opacity="0.5" style={{ transition: `cx 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${0.8 + i * 0.12}s` }}>
-            <animate attributeName="cy" values={`${50 + i * 42};${54 + i * 42};${50 + i * 42}`} dur="2.5s" repeatCount="indefinite" begin={`${i * 0.3 + 0.9}s`} />
-          </circle>
-        </g>
-      ))}
-
-      {/* Sparkle effects */}
-      <g opacity="0.6">
-        <circle cx="160" cy="130" r="2" fill="#FFD54F">
-          <animate attributeName="r" values="1;4;1" dur="2s" repeatCount="indefinite" />
-          <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="140" cy="90" r="1.5" fill="#2F80ED">
-          <animate attributeName="r" values="0.5;3;0.5" dur="2.5s" repeatCount="indefinite" begin="0.5s" />
-          <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.5s" repeatCount="indefinite" begin="0.5s" />
-        </circle>
-        <circle cx="180" cy="170" r="1.5" fill="#27AE60">
-          <animate attributeName="r" values="0.5;3;0.5" dur="2.2s" repeatCount="indefinite" begin="1s" />
-          <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.2s" repeatCount="indefinite" begin="1s" />
-        </circle>
-      </g>
-    </svg>
-  );
-}
 
 /* ── Floating Math Symbols ─────────────────────────── */
 const mathSymbols = [
@@ -273,15 +209,24 @@ export default function Hero() {
 
           {/* ── Right Column: Abacus + Form ──────────── */}
           <div className="w-full max-w-md lg:max-w-[420px] flex-shrink-0">
-            {/* Animated Abacus SVG */}
+            {/* Animated Abacus Image */}
             <div
-              className="animate-slide-up relative mb-7 rounded-3xl overflow-hidden p-4"
+              className="animate-slide-up relative mb-7 rounded-3xl overflow-hidden"
               style={{ animationDelay: "0.25s" }}
             >
               {/* Animated glow border */}
               <div className="absolute -inset-[1px] rounded-3xl z-0 animate-pulse-glow opacity-60 pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(47,128,237,0.2) 0%, rgba(139,92,246,0.15) 40%, rgba(39,174,96,0.15) 70%, rgba(242,153,74,0.2) 100%)" }} />
-              <div className="relative z-10 rounded-2xl overflow-hidden bg-white/50 backdrop-blur-sm p-3">
-                <AnimatedAbacus />
+              <div className="relative z-10 rounded-2xl overflow-hidden bg-white/50 backdrop-blur-sm p-2">
+                <div className="animate-abacus-bounce">
+                  <Image
+                    src="/chertke-dohgani-vira.png"
+                    alt="چرتکه دهگانی ویرا"
+                    width={500}
+                    height={400}
+                    className="w-full h-auto object-contain"
+                    priority
+                  />
+                </div>
               </div>
             </div>
 
