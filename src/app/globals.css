@@ -286,10 +286,10 @@
 /* Hero: multi-layer depth with organic color fields */
 .hero-gradient {
   background:
-    radial-gradient(ellipse 120% 80% at 15% 50%, rgba(47, 128, 237, 0.14) 0%, transparent 55%),
-    radial-gradient(ellipse 80% 90% at 85% 15%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse 90% 60% at 55% 85%, rgba(39, 174, 96, 0.10) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 50% at 95% 65%, rgba(242, 153, 74, 0.10) 0%, transparent 45%),
+    radial-gradient(ellipse 120% 80% at 15% 50%, rgba(47, 128, 237, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 90% at 85% 15%, rgba(139, 92, 246, 0.18) 0%, transparent 50%),
+    radial-gradient(ellipse 90% 60% at 55% 85%, rgba(39, 174, 96, 0.16) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 95% 65%, rgba(242, 153, 74, 0.16) 0%, transparent 45%),
     linear-gradient(175deg, #F8FBFF 0%, #FFFFFF 40%, #F6F9FF 70%, #F4F7FA 100%);
 }
 
@@ -298,7 +298,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  opacity: 0.025;
+  opacity: 0.03;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
@@ -310,7 +310,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  opacity: 0.04;
+  opacity: 0.055;
   pointer-events: none;
   background-image: radial-gradient(circle, #2F80ED 0.8px, transparent 0.8px);
   background-size: 32px 32px;
@@ -320,87 +320,87 @@
 /* Section 1: Benefits — warm air with depth */
 .section-benefits {
   background:
-    radial-gradient(ellipse 70% 50% at 80% 0%, rgba(242, 153, 74, 0.13) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(255, 213, 79, 0.11) 0%, transparent 50%),
-    linear-gradient(180deg, #FFFFFF 0%, #FFF8ED 30%, #FDF5EA 60%, #F8FBFF 100%);
+    radial-gradient(ellipse 70% 50% at 80% 0%, rgba(242, 153, 74, 0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 80%, rgba(255, 213, 79, 0.17) 0%, transparent 50%),
+    linear-gradient(180deg, #FFFFFF 0%, #FFF0D4 30%, #FCEAC0 60%, #F8FBFF 100%);
 }
 
 /* Section 2: Courses — cool trust blue */
 .section-courses {
   background:
-    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(47, 128, 237, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 40% at 85% 70%, rgba(139, 92, 246, 0.10) 0%, transparent 50%),
-    linear-gradient(180deg, #F8FBFF 0%, #E8F0FF 40%, #DDE9FF 70%, #F8FBFF 100%);
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(47, 128, 237, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 85% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #F8FBFF 0%, #DCE8FF 40%, #CDDAFF 70%, #F8FBFF 100%);
 }
 
 /* Section 3: Learning Path — blue to purple journey */
 .section-journey {
   background:
-    radial-gradient(ellipse 60% 40% at 70% 20%, rgba(139, 92, 246, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 50% 50% at 20% 80%, rgba(47, 128, 237, 0.10) 0%, transparent 50%),
-    linear-gradient(180deg, #F8FBFF 0%, #EDE8FF 35%, #E8E2FF 65%, #F8FBFF 100%);
+    radial-gradient(ellipse 60% 40% at 70% 20%, rgba(139, 92, 246, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 50% at 20% 80%, rgba(47, 128, 237, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #F8FBFF 0%, #E4DCFF 35%, #DDD3FF 65%, #F8FBFF 100%);
 }
 
 /* Section 4: Practice Tools — creative purple energy */
 .section-practice {
   background:
-    radial-gradient(ellipse 55% 45% at 85% 30%, rgba(139, 92, 246, 0.14) 0%, transparent 50%),
-    radial-gradient(ellipse 45% 40% at 15% 60%, rgba(47, 128, 237, 0.10) 0%, transparent 50%),
-    linear-gradient(180deg, #F8FBFF 0%, #EDEAFC 40%, #E8E4FF 70%, #F8FBFF 100%);
+    radial-gradient(ellipse 55% 45% at 85% 30%, rgba(139, 92, 246, 0.22) 0%, transparent 50%),
+    radial-gradient(ellipse 45% 40% at 15% 60%, rgba(47, 128, 237, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #F8FBFF 0%, #E3DDFF 40%, #DDD6FF 70%, #F8FBFF 100%);
 }
 
 /* Section 5: Instructors — clean with subtle warmth */
 .section-instructors {
   background:
-    radial-gradient(ellipse 50% 40% at 50% 0%, rgba(47, 128, 237, 0.08) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 35% at 90% 80%, rgba(39, 174, 96, 0.07) 0%, transparent 45%),
-    linear-gradient(180deg, #F8FBFF 0%, #F0F6FF 50%, #EDF4FF 100%);
+    radial-gradient(ellipse 50% 40% at 50% 0%, rgba(47, 128, 237, 0.13) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 90% 80%, rgba(39, 174, 96, 0.11) 0%, transparent 45%),
+    linear-gradient(180deg, #F8FBFF 0%, #E6EEFF 50%, #DEE8FF 100%);
 }
 
 /* Section 6: About / Testimonials — green growth */
 .section-about {
   background:
-    radial-gradient(ellipse 60% 45% at 30% 40%, rgba(39, 174, 96, 0.13) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 35% at 80% 80%, rgba(255, 213, 79, 0.10) 0%, transparent 45%),
-    linear-gradient(180deg, #F8FBFF 0%, #E2F9EC 35%, #D8F5E5 65%, #F8FBFF 100%);
+    radial-gradient(ellipse 60% 45% at 30% 40%, rgba(39, 174, 96, 0.20) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 80% 80%, rgba(255, 213, 79, 0.15) 0%, transparent 45%),
+    linear-gradient(180deg, #F8FBFF 0%, #D4F5E0 35%, #C5F0D6 65%, #F8FBFF 100%);
 }
 
 /* Section 7: Why Vira — orange confidence energy */
 .section-why-vira {
   background:
-    radial-gradient(ellipse 55% 45% at 75% 20%, rgba(242, 153, 74, 0.14) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 35% at 10% 70%, rgba(255, 213, 79, 0.11) 0%, transparent 45%),
-    linear-gradient(180deg, #F8FBFF 0%, #FFF3E0 40%, #FFEED0 70%, #F8FBFF 100%);
+    radial-gradient(ellipse 55% 45% at 75% 20%, rgba(242, 153, 74, 0.22) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 35% at 10% 70%, rgba(255, 213, 79, 0.17) 0%, transparent 45%),
+    linear-gradient(180deg, #F8FBFF 0%, #FFEACC 40%, #FFE2B8 70%, #F8FBFF 100%);
 }
 
 /* Section 8: Cooperation — purple innovation */
 .section-cooperation {
   background:
-    radial-gradient(ellipse 55% 40% at 60% 50%, rgba(139, 92, 246, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 35% at 20% 20%, rgba(47, 128, 237, 0.10) 0%, transparent 45%),
-    linear-gradient(180deg, #F8FBFF 0%, #ECE8FF 40%, #E6E1FF 70%, #F8FBFF 100%);
+    radial-gradient(ellipse 55% 40% at 60% 50%, rgba(139, 92, 246, 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 20% 20%, rgba(47, 128, 237, 0.15) 0%, transparent 45%),
+    linear-gradient(180deg, #F8FBFF 0%, #E5DFFF 40%, #DDD5FF 70%, #F8FBFF 100%);
 }
 
 /* Section 9: FAQ — minimal clean */
 .section-faq {
   background:
-    radial-gradient(ellipse 50% 40% at 40% 30%, rgba(47, 128, 237, 0.08) 0%, transparent 55%),
-    linear-gradient(180deg, #F8FBFF 0%, #F0F4FA 50%, #EDF1F8 100%);
+    radial-gradient(ellipse 50% 40% at 40% 30%, rgba(47, 128, 237, 0.13) 0%, transparent 55%),
+    linear-gradient(180deg, #F8FBFF 0%, #E8EDF8 50%, #E2E8F4 100%);
 }
 
 /* Section 10: Consult Form — blue trust */
 .section-consult {
   background:
-    radial-gradient(ellipse 60% 50% at 30% 50%, rgba(47, 128, 237, 0.13) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 35% at 80% 30%, rgba(39, 174, 96, 0.10) 0%, transparent 45%),
-    linear-gradient(180deg, #F8FBFF 0%, #E6EFFE 35%, #DEE9FF 65%, #F8FBFF 100%);
+    radial-gradient(ellipse 60% 50% at 30% 50%, rgba(47, 128, 237, 0.20) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 80% 30%, rgba(39, 174, 96, 0.15) 0%, transparent 45%),
+    linear-gradient(180deg, #F8FBFF 0%, #DDEAFF 35%, #D0E2FF 65%, #F8FBFF 100%);
 }
 
 /* CTA Section — premium gradient */
 .section-cta {
   background:
-    radial-gradient(ellipse 80% 60% at 30% 50%, rgba(47, 128, 237, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 50% at 70% 50%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 60% at 30% 50%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 50% at 70% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
     linear-gradient(135deg, #1A6DD1 0%, #2F80ED 25%, #6D42D9 60%, #8B5CF6 100%);
 }
 
