@@ -4,8 +4,8 @@ import { Phone, ArrowLeft, Sparkles, Zap, ShieldCheck, Gift } from "lucide-react
 
 export default function CTASection() {
   return (
-    <section className="relative overflow-hidden">
-      <div className="relative py-16 sm:py-20 overflow-hidden" style={{ background: "linear-gradient(135deg, #2F80ED 0%, #1A6DD1 40%, #8B5CF6 100%)" }}>
+    <section className="section-cta relative overflow-hidden">
+      <div className="relative py-16 sm:py-20 overflow-hidden" style={{ background: "linear-gradient(135deg, #1A6DD1 0%, #2F80ED 30%, #5B3FD4 65%, #8B5CF6 100%)" }}>
         {/* Animated mesh background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[10%] right-[5%] h-20 w-20 rounded-full bg-white/10 animate-float-slow" />

@@ -37,7 +37,7 @@ const gamificationBadges = [
 
 export default function WhyVira() {
   return (
-    <section id="why-vira" className="relative overflow-hidden bg-white py-20 sm:py-24" dir="rtl">
+    <section id="why-vira" className="section-why-vira bg-dots relative overflow-hidden py-20 sm:py-24" dir="rtl">
       <div className="pointer-events-none absolute -top-20 left-[20%] h-[350px] w-[350px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #2F80ED 0%, transparent 70%)" }} />
       <div className="animate-float-slow pointer-events-none absolute top-24 right-[8%] h-5 w-5 rounded-lg bg-[#27AE60]/15 rotate-12" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle, #102A43 1px, transparent 1px)", backgroundSize: "48px 48px" }} />

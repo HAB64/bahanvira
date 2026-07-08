@@ -35,7 +35,7 @@ export default function ConsultForm() {
   };
 
   return (
-    <section id="register" className="section-cool relative overflow-hidden py-20 sm:py-24" dir="rtl">
+    <section id="register" className="section-consult bg-dots relative overflow-hidden py-20 sm:py-24" dir="rtl">
       <div className="pointer-events-none absolute -top-20 right-[20%] h-[350px] w-[350px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #2F80ED 0%, transparent 70%)" }} />
       <div className="animate-float-slow pointer-events-none absolute bottom-20 left-[10%] h-5 w-5 rounded-lg bg-[#27AE60]/15 rotate-12" />
 

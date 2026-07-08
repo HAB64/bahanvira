@@ -40,7 +40,7 @@ const testimonials = [
 
 export default function About() {
   return (
-    <section className="section-growth relative overflow-hidden py-20 sm:py-24" dir="rtl">
+    <section className="section-about bg-dots relative overflow-hidden py-20 sm:py-24" dir="rtl">
       <div className="pointer-events-none absolute -top-20 right-[5%] h-[350px] w-[350px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #27AE60 0%, transparent 70%)" }} />
       <div className="animate-float pointer-events-none absolute top-16 left-[10%] h-4 w-4 rounded-full bg-[#27AE60]/20" />
       <div className="pointer-events-none absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle, #102A43 1px, transparent 1px)", backgroundSize: "48px 48px" }} />

@@ -44,7 +44,7 @@ export default function LearningPath() {
   const [activeLevel, setActiveLevel] = useState<number | null>(null);
 
   return (
-    <section className="relative overflow-hidden bg-white py-20 sm:py-24" dir="rtl">
+    <section className="section-journey bg-dots relative overflow-hidden py-20 sm:py-24" dir="rtl">
       {/* Background */}
       <div className="pointer-events-none absolute top-0 right-0 h-full w-full opacity-30" style={{ background: "linear-gradient(135deg, rgba(39,174,96,0.08) 0%, transparent 40%, rgba(15,23,42,0.02) 100%)" }} />
       <div className="pointer-events-none absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle, #102A43 1px, transparent 1px)", backgroundSize: "48px 48px" }} />

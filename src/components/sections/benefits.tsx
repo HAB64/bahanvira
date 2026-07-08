@@ -43,7 +43,7 @@ const benefits = [
 
 export default function Benefits() {
   return (
-    <section className="relative overflow-hidden bg-white py-20 sm:py-24" dir="rtl">
+    <section className="section-benefits bg-noise relative overflow-hidden py-20 sm:py-24" dir="rtl">
       {/* Background layers */}
       <div className="pointer-events-none absolute -top-32 -right-32 h-[500px] w-[500px] rounded-full opacity-20 blur-3xl" style={{ background: "radial-gradient(circle, #2F80ED 0%, transparent 70%)" }} />
       <div className="pointer-events-none absolute -bottom-32 -left-32 h-[450px] w-[450px] rounded-full opacity-20 blur-3xl" style={{ background: "radial-gradient(circle, #27AE60 0%, transparent 70%)" }} />

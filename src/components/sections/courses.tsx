@@ -33,7 +33,7 @@ const difficultyColors: Record<string, string> = { "مبتدی": "#27AE60", "م�
 
 export default function Courses() {
   return (
-    <section id="courses" className="section-cool relative overflow-hidden py-20 sm:py-24" dir="rtl">
+    <section id="courses" className="section-courses bg-dots relative overflow-hidden py-20 sm:py-24" dir="rtl">
       <div className="pointer-events-none absolute -top-20 left-[10%] h-[400px] w-[400px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #2F80ED 0%, transparent 70%)" }} />
       <div className="pointer-events-none absolute -bottom-20 right-[10%] h-[350px] w-[350px] rounded-full opacity-10 blur-3xl" style={{ background: "radial-gradient(circle, #8B5CF6 0%, transparent 70%)" }} />
       <div className="animate-float pointer-events-none absolute top-20 right-[8%] h-3 w-3 rounded-full bg-[#2F80ED]/30" />

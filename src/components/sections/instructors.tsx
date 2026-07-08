@@ -27,7 +27,7 @@ const instructors = [
 
 export default function Instructors() {
   return (
-    <section className="relative overflow-hidden bg-white py-20 sm:py-24" dir="rtl">
+    <section className="section-instructors bg-noise relative overflow-hidden py-20 sm:py-24" dir="rtl">
       <div className="pointer-events-none absolute -top-24 left-[15%] h-[400px] w-[400px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #8B5CF6 0%, transparent 70%)" }} />
       <div className="pointer-events-none absolute -bottom-24 right-[15%] h-[350px] w-[350px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #2F80ED 0%, transparent 70%)" }} />
       <div className="animate-float pointer-events-none absolute top-20 right-[12%] h-4 w-4 rounded-full bg-[#8B5CF6]/20" />

@@ -43,7 +43,7 @@ export default function FAQ() {
   };
 
   return (
-    <section id="faq" className="relative overflow-hidden bg-white py-20 sm:py-24" dir="rtl">
+    <section id="faq" className="section-faq bg-noise relative overflow-hidden py-20 sm:py-24" dir="rtl">
       <div className="pointer-events-none absolute -bottom-20 right-[15%] h-[300px] w-[300px] rounded-full opacity-15 blur-3xl" style={{ background: "radial-gradient(circle, #F2994A 0%, transparent 70%)" }} />
       <div className="pointer-events-none absolute inset-0 opacity-[0.012]" style={{ backgroundImage: "radial-gradient(circle, #102A43 1px, transparent 1px)", backgroundSize: "48px 48px" }} />
 
