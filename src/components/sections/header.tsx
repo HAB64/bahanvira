@@ -149,9 +149,13 @@ export default function Header() {
 
           {/* ── Desktop Actions ────────────────────── */}
           <div className="hidden lg:flex items-center gap-2">
-            <a href="tel:02191302584" className="flex items-center gap-1.5 text-[12px] font-medium text-[#A0AEC0] hover:text-[#2F80ED] transition-colors duration-300 px-2.5 py-2 rounded-lg" dir="ltr">
+            <a href="tel:09111277194" className="flex items-center gap-1.5 text-[12px] font-medium text-[#A0AEC0] hover:text-[#2F80ED] transition-colors duration-300 px-2.5 py-2 rounded-lg" dir="ltr">
               <Phone className="h-3.5 w-3.5" />
-              ۰۲۱-۹۱۳۰۲۵۸۴
+              ۰۹۱۱۱۲۷۷۱۹۴
+            </a>
+            <a href="tel:01144746441" className="flex items-center gap-1.5 text-[12px] font-medium text-[#A0AEC0] hover:text-[#2F80ED] transition-colors duration-300 px-2.5 py-2 rounded-lg" dir="ltr">
+              <Phone className="h-3.5 w-3.5" />
+              ۰۱۱-۴۴۷۴۶۴۴۱
             </a>
 
             <div className="h-5 w-px bg-[#E8EDF3] mx-1" />
@@ -228,9 +232,13 @@ export default function Header() {
 
         {/* Panel Footer */}
         <div className="border-t border-[#E8EDF3]/60 p-5 bg-white/50 backdrop-blur-sm">
-          <a href="tel:02191302584" className="flex items-center gap-2.5 text-[12px] font-medium text-[#A0AEC0] hover:text-[#2F80ED] mb-4 transition-colors duration-300">
+          <a href="tel:09111277194" className="flex items-center gap-2.5 text-[12px] font-medium text-[#A0AEC0] hover:text-[#2F80ED] mb-3 transition-colors duration-300">
             <Phone className="h-3.5 w-3.5" />
-            <span dir="ltr">۰۲۱-۹۱۳۰۲۵۸۴</span>
+            <span dir="ltr">۰۹۱۱۱۲۷۷۱۹۴</span>
+          </a>
+          <a href="tel:01144746441" className="flex items-center gap-2.5 text-[12px] font-medium text-[#A0AEC0] hover:text-[#2F80ED] mb-4 transition-colors duration-300">
+            <Phone className="h-3.5 w-3.5" />
+            <span dir="ltr">۰۱۱-۴۴۷۴۶۴۴۱</span>
           </a>
           <div className="flex gap-2.5">
             <a href="/portal" onClick={() => setMobileMenuOpen(false)} className="flex-1 flex items-center justify-center gap-2 text-[13px] font-semibold text-[#4A5568] border border-[#E8EDF3] rounded-xl py-3 hover:bg-[#2F80ED]/[0.04] hover:border-[#2F80ED]/20 hover:text-[#2F80ED] transition-all duration-300 bg-white/60 backdrop-blur-sm">
