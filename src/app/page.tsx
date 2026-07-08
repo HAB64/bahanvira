@@ -13,6 +13,7 @@ import Cooperation from "@/components/sections/cooperation";
 import FAQ from "@/components/sections/faq";
 import ConsultForm from "@/components/sections/consult-form";
 import CTASection from "@/components/sections/cta-section";
+import AdBanner from "@/components/sections/ad-banner";
 import Footer from "@/components/sections/footer";
 import WhatsAppButton from "@/components/sections/whatsapp-button";
 
@@ -22,6 +23,7 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <Hero />
+        <AdBanner />
         <Benefits />
         <Courses />
         <LearningPath />

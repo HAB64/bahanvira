@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import {
   Menu,
   X,
@@ -86,9 +87,8 @@ export default function Header() {
         <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           {/* ── Logo ────────────────────────────────── */}
           <a href="/" className="flex items-center gap-3 shrink-0 group">
-            <div className={`relative flex h-10 w-10 items-center justify-center rounded-2xl text-white shadow-lg transition-all duration-500 ${scrolled ? "bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/25" : "bg-gradient-to-br from-blue-500 to-blue-600 shadow-blue-500/20 group-hover:shadow-blue-500/30"}`}>
-              <GraduationCap className="h-5 w-5" strokeWidth={2} />
-              <div className="absolute -top-0.5 -left-0.5 h-3 w-3 rounded-full bg-[#27AE60] border-2 border-white animate-pulse" />
+            <div className={`relative flex h-11 w-11 items-center justify-center overflow-hidden transition-all duration-500 ${scrolled ? "rounded-2xl shadow-lg shadow-blue-500/25" : "rounded-2xl shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/30"}`}>
+              <Image src="/logo-vira.jpg" alt="لوگو ویرا" width={44} height={44} className="w-full h-full object-cover rounded-2xl" />
             </div>
             <div className="flex flex-col">
               <span className={`text-[15px] font-extrabold leading-tight tracking-tight transition-colors duration-500 ${scrolled ? "text-[#102A43]" : "text-[#102A43]"}`}>
@@ -185,8 +185,8 @@ export default function Header() {
         {/* Panel Header */}
         <div className="flex items-center justify-between px-5 h-[68px] border-b border-[#E8EDF3]/60">
           <a href="/" className="flex items-center gap-2.5" onClick={() => setMobileMenuOpen(false)}>
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md shadow-blue-500/25">
-              <GraduationCap className="h-4.5 w-4.5" strokeWidth={2} />
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl overflow-hidden shadow-md">
+              <Image src="/logo-vira.jpg" alt="لوگو ویرا" width={36} height={36} className="w-full h-full object-cover rounded-xl" />
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-extrabold text-[#102A43] leading-tight">ویرا | چرتکه دهگانی</span>
