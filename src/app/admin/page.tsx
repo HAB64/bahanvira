@@ -474,51 +474,51 @@ export default function AdminPage() {
 
   if (!isLoggedIn) {
     return (
-      <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-100 via-orange-50/50 to-amber-50/40 flex items-center justify-center px-4">
-        <div className="bg-white rounded-3xl shadow-xl shadow-black/[0.06] p-8 w-full max-w-sm border border-gray-100">
-          <div className="flex justify-center mb-6"><div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20"><Lock className="w-8 h-8 text-white" /></div></div>
-          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">ورود به پنل مدیریت</h1>
-          <p className="text-sm text-slate-500 text-center mb-8">آموزگاه چرتکه دهگانی ویرا</p>
+      <div dir="rtl" className="min-h-screen bg-[#0f1117] flex items-center justify-center px-4">
+        <div className="bg-[#1a1d2e] rounded-3xl shadow-2xl shadow-black/30 p-8 w-full max-w-sm border border-white/[0.06]">
+          <div className="flex justify-center mb-6"><div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/30"><Lock className="w-8 h-8 text-white" /></div></div>
+          <h1 className="text-2xl font-bold text-white text-center mb-2">ورود به پنل مدیریت</h1>
+          <p className="text-sm text-slate-400 text-center mb-8">آموزگاه چرتکه دهگانی ویرا</p>
           <div className="space-y-4"><div>
-            <input type="password" value={password} onChange={e => { setPassword(e.target.value); setPasswordError(''); }} onKeyDown={e => e.key === 'Enter' && handleLogin()} placeholder="رمز عبور" className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all" autoFocus />
-            {passwordError && <p className="text-red-500 text-xs mt-2 text-center">{passwordError}</p>}
+            <input type="password" value={password} onChange={e => { setPassword(e.target.value); setPasswordError(''); }} onKeyDown={e => e.key === 'Enter' && handleLogin()} placeholder="رمز عبور" className="w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.06] text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500/40 focus:border-orange-500/50 text-white placeholder:text-slate-500 transition-all" autoFocus />
+            {passwordError && <p className="text-red-400 text-xs mt-2 text-center">{passwordError}</p>}
           </div>
-          <button onClick={handleLogin} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-md shadow-orange-500/20 hover:shadow-lg">ورود</button></div>
+          <button onClick={handleLogin} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40">ورود</button></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-orange-50/20 flex">
+    <div dir="rtl" className="min-h-screen bg-[#f8f9fb] flex">
       {mobileSidebarOpen && <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden" onClick={() => setMobileSidebarOpen(false)} />}
-      <aside className={"fixed lg:sticky top-0 right-0 z-50 lg:z-10 h-screen w-72 bg-gradient-to-b from-white to-orange-50/30 border-l border-orange-100/50 flex flex-col transition-transform duration-300 ease-out " + (mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0') + " shadow-xl lg:shadow-none"}>
-        <div className="p-5 border-b border-gray-100 flex items-center gap-3 shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md shadow-orange-500/20"><GraduationCap className="w-5 h-5 text-white" /></div>
-          <div className="flex-1 min-w-0"><h2 className="text-sm font-bold text-slate-900 truncate">ویرا | چرتکه دهگانی</h2><p className="text-[11px] text-slate-400">پنل مدیریت جامع</p></div>
-          <button onClick={() => setMobileSidebarOpen(false)} className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 text-slate-400"><X className="w-5 h-5" /></button>
+      <aside className={"fixed lg:sticky top-0 right-0 z-50 lg:z-10 h-screen w-72 bg-[#0f1117] border-l border-white/[0.06] flex flex-col transition-transform duration-300 ease-out " + (mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0') + " shadow-2xl lg:shadow-none"}>
+        <div className="p-5 border-b border-white/[0.06] flex items-center gap-3 shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/30"><GraduationCap className="w-5 h-5 text-white" /></div>
+          <div className="flex-1 min-w-0"><h2 className="text-sm font-bold text-white truncate">ویرا | چرتکه دهگانی</h2><p className="text-[11px] text-slate-500">پنل مدیریت جامع</p></div>
+          <button onClick={() => setMobileSidebarOpen(false)} className="lg:hidden p-1.5 rounded-lg hover:bg-white/10 text-slate-400"><X className="w-5 h-5" /></button>
         </div>
         <nav className="flex-1 overflow-y-auto py-3 px-3">{sidebarCategories.map(cat => (
           <div key={cat.title} className="mb-2">
-            <button onClick={() => setExpandedCategories(p => ({ ...p, [cat.title]: !p[cat.title] }))} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-gray-50">
-              <FolderOpen className="w-4 h-4 text-orange-400" /><span className="flex-1 text-right">{cat.title}</span>
+            <button onClick={() => setExpandedCategories(p => ({ ...p, [cat.title]: !p[cat.title] }))} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-slate-500 hover:text-slate-300 transition-colors rounded-lg hover:bg-white/[0.04]">
+              <FolderOpen className="w-4 h-4 text-orange-400/80" /><span className="flex-1 text-right">{cat.title}</span>
               <ChevronDown className={"w-3.5 h-3.5 transition-transform duration-200 " + (expandedCategories[cat.title] ? 'rotate-180' : '')} />
             </button>
             <div className={"overflow-hidden transition-all duration-200 " + (expandedCategories[cat.title] ? 'max-h-96' : 'max-h-0')}>
               {cat.items.map(item => { const I = item.icon; return (
-                <button key={item.key} onClick={() => navigateTo(item.key)} className={"flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 mb-0.5 " + (activeTab === item.key ? 'bg-orange-50 text-orange-600 shadow-sm border border-orange-100' : 'text-slate-600 hover:bg-gray-50 hover:text-slate-900')}>
-                  <I className={"w-4 h-4 " + (activeTab === item.key ? 'text-orange-500' : 'text-slate-400')} />{item.label}
+                <button key={item.key} onClick={() => navigateTo(item.key)} className={"flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 mb-0.5 " + (activeTab === item.key ? 'bg-orange-500/15 text-orange-400 shadow-sm border border-orange-500/20' : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-200')}>
+                  <I className={"w-4 h-4 " + (activeTab === item.key ? 'text-orange-400' : 'text-slate-500')} />{item.label}
                 </button>); })}
             </div>
           </div>
         ))}</nav>
-        <div className="p-4 border-t border-gray-100 shrink-0"><button onClick={() => { setIsLoggedIn(false); setPassword(''); }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"><LogOut className="w-4 h-4" />خروج از پنل</button></div>
+        <div className="p-4 border-t border-white/[0.06] shrink-0"><button onClick={() => { setIsLoggedIn(false); setPassword(''); }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 transition-colors"><LogOut className="w-4 h-4" />خروج از پنل</button></div>
       </aside>
       <div className="flex-1 min-w-0 flex flex-col">
-        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-orange-100/30 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between shrink-0 shadow-sm">
+        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-xl border-b border-gray-200/60 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
             <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-gray-100 text-slate-500"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg></button>
-            <h1 className="text-base sm:text-lg font-bold text-slate-900">{sidebarCategories.flatMap(c => c.items).find(i => i.key === activeTab)?.label || 'داشبورد'}</h1>
+            <h1 className="text-base sm:text-lg font-bold text-slate-800">{sidebarCategories.flatMap(c => c.items).find(i => i.key === activeTab)?.label || 'داشبورد'}</h1>
           </div>
           <div className="flex items-center gap-3">
             <div className="relative"><button onClick={() => setShowNotif(!showNotif)} className="relative p-2 rounded-xl hover:bg-orange-50 text-slate-400 hover:text-orange-500 transition-colors"><Bell className="w-5 h-5" /><span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span></button>{showNotif && (<><div className="fixed inset-0 z-40" onClick={() => setShowNotif(false)} /><div className="absolute left-0 top-full mt-2 w-80 bg-white rounded-2xl border border-gray-100 shadow-2xl z-50 overflow-hidden"><div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between"><span className="text-sm font-bold text-slate-800">اعلان‌ها</span><button onClick={() => setShowNotif(false)} className="text-xs text-orange-500 hover:text-orange-600 font-medium">خواندن همه</button></div><div className="max-h-64 overflow-y-auto divide-y divide-gray-50"><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer bg-orange-50/30"><p className="text-xs text-slate-800 font-medium">ثبت‌نام جدید: سارا احمدی</p><p className="text-[10px] text-slate-400 mt-1">۵ دقیقه پیش</p></div><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer bg-orange-50/30"><p className="text-xs text-slate-800 font-medium">پرداخت موفق: ۲,۵۰۰,۰۰۰ تومان</p><p className="text-[10px] text-slate-400 mt-1">۳۰ دقیقه پیش</p></div><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"><p className="text-xs text-slate-500">تیکت جدید از محمد رضایی</p><p className="text-[10px] text-slate-400 mt-1">۱ ساعت پیش</p></div><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"><p className="text-xs text-slate-500">آزمون حساب ذهنی فردا برگزار می‌شود</p><p className="text-[10px] text-slate-400 mt-1">۲ ساعت پیش</p></div></div></div></>)}</div>

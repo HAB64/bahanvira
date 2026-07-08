@@ -1,0 +1,335 @@
+     1→   200→        <button onClick={save} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/20 transition-all flex items-center justify-center gap-2"><Save className="w-4 h-4" />{modal === 'edit' ? 'ذخیره تغییرات' : 'ثبت دانش\u200cآموز'}</button></div>
+     2→   201→    </Modal>
+     3→   202→    <Modal open={modal === 'view'} onClose={() => setModal(null)} title="جزئیات دانش\u200cآموز">
+     4→   203→      {sel && (<div className="grid grid-cols-2 gap-4">
+     5→   204→        <div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">نام</div><div className="text-sm font-bold">{sel.name}</div></div>
+     6→   205→        <div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">تلفن</div><div className="text-sm font-bold" dir="ltr">{sel.phone}</div></div>
+     7→   206→        <div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">سطح</div><div className="text-sm font-bold">{sel.level}</div></div>
+     8→   207→        <div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">تاریخ</div><div className="text-sm font-bold">{sel.date}</div></div>
+     9→   208→        <div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">وضعیت</div><span className={"text-xs font-bold border rounded-full px-2.5 py-0.5 " + sc[sel.status]}>{sel.status}</span></div>
+    10→   209→        <div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">پرداخت</div><div className="text-sm font-bold">{sel.paid}</div></div>
+    11→   210→      </div>)}
+    12→   211→    </Modal>
+    13→   212→  </div>);
+    14→   213→}
+    15→   214→
+    16→   215→
+    17→   216→function ClassesTab() {
+    18→   217→  const [data, setData] = useState([
+    19→   218→    { id: 1, name: 'چرتکه مبتدی - گروه الف', instructor: 'استاد رضایی', students: 18, schedule: 'شنبه و دوشنبه - ۱۶:۰۰' },
+    20→   219→    { id: 2, name: 'چرتکه مبتدی - گروه ب', instructor: 'استاد احمدی', students: 15, schedule: 'یکشنبه و سه\u200cشنبه - ۱۵:۰۰' },
+    21→   220→    { id: 3, name: 'چرتکه متوسط', instructor: 'استاد کریمی', students: 12, schedule: 'شنبه و چهارشنبه - ۱۷:۰۰' },
+    22→   221→    { id: 4, name: 'چرتکه پیشرفته', instructor: 'استاد حسینی', students: 8, schedule: 'دوشنبه و پنجشنبه - ۱۴:۰۰' },
+    23→   222→    { id: 5, name: 'حساب ذهنی ۱', instructor: 'استاد محمدی', students: 20, schedule: 'سه\u200cشنبه و پنجشنبه - ۱۶:۰۰' },
+    24→   223→  ]);
+    25→   224→  const [modal, setModal] = useState(false); const [editId, setEditId] = useState<number | null>(null);
+    26→   225→  const [form, setForm] = useState({ name: '', instructor: '', students: '', schedule: '' });
+    27→   226→  const { toast, show } = useToast();
+    28→   227→  const openAdd = () => { setForm({ name: '', instructor: '', students: '', schedule: '' }); setEditId(null); setModal(true); };
+    29→   228→  const openEdit = (c: typeof data[0]) => { setForm({ name: c.name, instructor: c.instructor, students: String(c.students), schedule: c.schedule }); setEditId(c.id); setModal(true); };
+    30→   229→  const save = () => {
+    31→   230→    if (!form.name.trim()) { show('نام کلاس الزامی است', 'error'); return; }
+    32→   231→    if (editId) { setData(p => p.map(c => c.id === editId ? { ...c, name: form.name, instructor: form.instructor, students: parseInt(form.students) || 0, schedule: form.schedule } : c)); show('کلاس ویرایش شد'); }
+    33→   232→    else { setData(p => [...p, { id: Math.max(0, ...p.map(c => c.id)) + 1, name: form.name, instructor: form.instructor, students: parseInt(form.students) || 0, schedule: form.schedule }]); show('کلاس ایجاد شد'); }
+    34→   233→    setModal(false);
+    35→   234→  };
+    36→   235→  const del = (id: number) => { if (confirm('حذف شود؟')) { setData(p => p.filter(c => c.id !== id)); show('حذف شد'); } };
+    37→   236→
+    38→   237→  return (<div className="space-y-6" dir="rtl">{toast && <Toast {...toast} />}
+    39→   238→    <div className="flex items-center justify-between"><h3 className="text-lg font-bold text-slate-900">کلاس\u200cها ({data.length})</h3>
+    40→   239→      <button onClick={openAdd} className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5 hover:shadow-lg hover:shadow-orange-500/20 transition-all"><Plus className="w-4 h-4" />ایجاد کلاس</button></div>
+    41→   240→    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">{data.map(c => (
+    42→   241→      <div key={c.id} className="bg-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-shadow relative group">
+    43→   242→        <div className="absolute top-3 left-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+    44→   243→          <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg bg-white border border-gray-200 hover:bg-orange-50 text-slate-400 hover:text-orange-500 shadow-sm"><Edit3 className="w-3.5 h-3.5" /></button>
+    45→   244→          <button onClick={() => del(c.id)} className="p-1.5 rounded-lg bg-white border border-gray-200 hover:bg-red-50 text-slate-400 hover:text-red-500 shadow-sm"><Trash2 className="w-3.5 h-3.5" /></button>
+    46→   245→        </div>
+    47→   246→        <h4 className="text-sm font-bold text-slate-900 leading-6 mb-4">{c.name}</h4>
+    48→   247→        <div className="space-y-3 text-sm">
+    49→   248→          <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><GraduationCap className="w-3.5 h-3.5" />مربی</span><span className="text-slate-900 font-medium">{c.instructor}</span></div>
+    50→   249→          <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><Users className="w-3.5 h-3.5" />دانش\u200cآموز</span><span className="text-slate-900 font-medium">{c.students} نفر</span></div>
+    51→   250→          <div className="flex justify-between"><span className="text-slate-500 flex items-center gap-1.5"><CalendarIcon className="w-3.5 h-3.5" />برنامه</span><span className="text-slate-900 font-medium text-xs">{c.schedule}</span></div>
+    52→   251→        </div>
+    53→   252→      </div>))}</div>
+    54→   253→    <Modal open={modal} onClose={() => setModal(false)} title={editId ? 'ویرایش کلاس' : 'ایجاد کلاس جدید'}>
+    55→   254→      <div className="space-y-4"><Fld label="نام کلاس"><Inp value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></Fld><Fld label="مربی"><Inp value={form.instructor} onChange={e => setForm({ ...form, instructor: e.target.value })} /></Fld><Fld label="تعداد دانش\u200cآموز"><Inp type="number" value={form.students} onChange={e => setForm({ ...form, students: e.target.value })} /></Fld><Fld label="برنامه زمانی"><Inp value={form.schedule} onChange={e => setForm({ ...form, schedule: e.target.value })} /></Fld>
+    56→   255→        <button onClick={save} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/20 transition-all flex items-center justify-center gap-2"><Save className="w-4 h-4" />{editId ? 'ذخیره' : 'ایجاد'}</button></div>
+    57→   256→    </Modal>
+    58→   257→  </div>);
+    59→   258→}
+    60→   259→
+    61→   260→function ExamsTab() {
+    62→   261→  const [data, setData] = useState([
+    63→   262→    { id: 1, name: 'آزمون سطح ۱', students: 35, avg: '۸۵٪', date: '۱۴۰۴/۰۳/۱۵', status: 'بسته شده' }, { id: 2, name: 'آزمون سطح ۳', students: 28, avg: '۷۸٪', date: '۱۴۰۴/۰۳/۱۰', status: 'بسته شده' },
+    64→   263→    { id: 3, name: 'آزمون سرعت', students: 42, avg: '۷۲٪', date: '۱۴۰۴/۰۲/۲۸', status: 'بسته شده' }, { id: 4, name: 'آزمون جامع', students: 15, avg: '۸۰٪', date: '۱۴۰۴/۰۳/۲۲', status: 'فعال' },
+    65→   264→  ]);
+    66→   265→  const [modal, setModal] = useState(false); const [editId, setEditId] = useState<number | null>(null);
+    67→   266→  const [form, setForm] = useState({ name: '', students: '', date: '', status: 'فعال' });
+    68→   267→  const { toast, show } = useToast();
+    69→   268→  const sc: Record<string, string> = { 'فعال': 'bg-emerald-100 text-emerald-600 border-emerald-200', 'بسته شده': 'bg-slate-100 text-slate-500 border-slate-200' };
+    70→   269→  const toggle = (id: number) => { setData(p => p.map(e => e.id === id ? { ...e, status: e.status === 'فعال' ? 'بسته شده' : 'فعال' } : e)); show('وضعیت تغییر کرد'); };
+    71→   270→  const openAdd = () => { setForm({ name: '', students: '', date: '', status: 'فعال' }); setEditId(null); setModal(true); };
+    72→   271→  const openEdit = (e: typeof data[0]) => { setForm({ name: e.name, students: String(e.students), date: e.date, status: e.status }); setEditId(e.id); setModal(true); };
+    73→   272→  const save = () => {
+    74→   273→    if (!form.name.trim()) { show('نام الزامی', 'error'); return; }
+    75→   274→    if (editId) { setData(p => p.map(e => e.id === editId ? { ...e, name: form.name, students: parseInt(form.students) || 0, date: form.date, status: form.status } : e)); show('ویرایش شد'); }
+    76→   275→    else { setData(p => [...p, { id: Math.max(0, ...p.map(e => e.id)) + 1, name: form.name, students: parseInt(form.students) || 0, avg: '۰٪', date: form.date, status: form.status }]); show('ایجاد شد'); }
+    77→   276→    setModal(false);
+    78→   277→  };
+    79→   278→  return (<div dir="rtl">{toast && <Toast {...toast} />}
+    80→   279→    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+    81→   280→      <div className="p-6 border-b border-gray-100 flex items-center justify-between"><h3 className="text-lg font-bold text-slate-900">آزمون\u200cها ({data.length})</h3>
+    82→   281→        <button onClick={openAdd} className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5 hover:shadow-lg hover:shadow-orange-500/20 transition-all"><Plus className="w-4 h-4" />ایجاد آزمون</button></div>
+    83→   282→      <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-400 text-xs border-b border-gray-100 bg-gray-50/50"><th className="text-right py-3 px-4 font-medium">نام</th><th className="text-right py-3 px-4 font-medium">شرکت\u200cکننده</th><th className="text-right py-3 px-4 font-medium hidden sm:table-cell">میانگین</th><th className="text-right py-3 px-4 font-medium">وضعیت</th><th className="text-right py-3 px-4 font-medium">عملیات</th></tr></thead>
+    84→   283→        <tbody className="divide-y divide-gray-50">{data.map(e => (<tr key={e.id} className="hover:bg-orange-50/30"><td className="py-3 px-4 text-slate-900 font-medium">{e.name}</td><td className="py-3 px-4 text-slate-600">{e.students} نفر</td><td className="py-3 px-4 text-emerald-600 font-bold hidden sm:table-cell">{e.avg}</td>
+    85→   284→          <td className="py-3 px-4"><button onClick={() => toggle(e.id)} className={"text-xs font-bold border rounded-full px-2.5 py-0.5 cursor-pointer hover:opacity-80 " + sc[e.status]}>{e.status}</button></td>
+    86→   285→          <td className="py-3 px-4"><button onClick={() => openEdit(e)} className="p-1.5 rounded-lg hover:bg-orange-50 text-slate-400 hover:text-orange-500"><Edit3 className="w-4 h-4" /></button></td></tr>))}</tbody></table></div>
+    87→   286→    </div>
+    88→   287→    <Modal open={modal} onClose={() => setModal(false)} title={editId ? 'ویرایش آزمون' : 'ایجاد آزمون'}>
+    89→   288→      <div className="space-y-4"><Fld label="نام"><Inp value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></Fld><Fld label="تعداد"><Inp type="number" value={form.students} onChange={e => setForm({ ...form, students: e.target.value })} /></Fld><Fld label="تاریخ"><Inp value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} /></Fld>
+    90→   289→        <Fld label="وضعیت"><Sel value={form.status} onChange={e => setForm({ ...form, status: e.target.value })} options={[{ value: 'فعال', label: 'فعال' }, { value: 'بسته شده', label: 'بسته شده' }]} /></Fld>
+    91→   290→        <button onClick={save} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/20 transition-all flex items-center justify-center gap-2"><Save className="w-4 h-4" />ذخیره</button></div>
+    92→   291→    </Modal>
+    93→   292→  </div>);
+    94→   293→}
+    95→   294→
+    96→   295→
+    97→   296→function CRMInlineTab() {
+    98→   297→  const [data, setData] = useState([
+    99→   298→    { id: 1, name: 'زهرا محمدی', phone: '۰۹۱۲۳۴۵۶۷۸۹', source: 'اینستاگرام', status: 'ثبت\u200cنام شده', course: 'چرتکه مبتدی', date: '۱۴۰۴/۰۳/۲۰', assignee: 'مستر رضایی' },
+   100→   299→    { id: 2, name: 'علی حسینی', phone: '۰۹۳۵۶۷۸۹۰۱۲', source: 'وبسایت', status: 'تماس گرفته شد', course: 'حساب ذهنی ۱', date: '۱۴۰۴/۰۳/۱۹', assignee: 'مستر احمدی' },
+   101→   300→    { id: 3, name: 'مینا رضایی', phone: '۰۹۱۰۱۲۳۴۵۶۷', source: 'معرفی', status: 'جلسه مشاوره', course: 'چرتکه متوسط', date: '۱۴۰۴/۰۳/۱۸', assignee: 'مستر کریمی' },
+   102→   301→    { id: 4, name: 'امیر کریمی', phone: '۰۹۲۱۲۳۴۵۶۷۸', source: 'تلگرام', status: 'جدید', course: 'چرتکه مبتدی', date: '۱۴۰۴/۰۳/۲۲', assignee: '-' },
+   103→   302→  ]);
+   104→   303→  const [search, setSearch] = useState(''); const [modal, setModal] = useState(false); const [viewId, setViewId] = useState<number | null>(null);
+   105→   304→  const [form, setForm] = useState({ name: '', phone: '', source: 'وبسایت', course: '', assignee: '' });
+   106→   305→  const { toast, show } = useToast();
+   107→   306→  const statuses = ['جدید', 'تماس گرفته شد', 'جلسه مشاوره', 'ثبت\u200cنام شده', 'غیرفعال'];
+   108→   307→  const sc: Record<string, string> = { 'جدید': 'bg-blue-100 text-blue-600 border-blue-200', 'تماس گرفته شد': 'bg-amber-100 text-amber-600 border-amber-200', 'جلسه مشاوره': 'bg-purple-100 text-purple-600 border-purple-200', 'ثبت\u200cنام شده': 'bg-emerald-100 text-emerald-600 border-emerald-200', 'غیرفعال': 'bg-slate-100 text-slate-500 border-slate-200' };
+   109→   308→  const filtered = data.filter(l => l.name.includes(search) || l.phone.includes(search));
+   110→   309→  const cycle = (id: number) => { setData(p => p.map(l => { if (l.id !== id) return l; const i = statuses.indexOf(l.status); return { ...l, status: statuses[(i + 1) % statuses.length] }; })); show('وضعیت تغییر کرد'); };
+   111→   310→  const addLead = () => {
+   112→   311→    if (!form.name.trim() || !form.phone.trim()) { show('نام و تلفن الزامی', 'error'); return; }
+   113→   312→    setData(p => [...p, { id: Math.max(0, ...p.map(l => l.id)) + 1, ...form, status: 'جدید', date: '۱۴۰۴/۰۳/۲۵' }]); show('سرنخ اضافه شد'); setModal(false); setForm({ name: '', phone: '', source: 'وبسایت', course: '', assignee: '' });
+   114→   313→  };
+   115→   314→  const del = (id: number) => { if (confirm('حذف شود؟')) { setData(p => p.filter(l => l.id !== id)); show('حذف شد'); } };
+   116→   315→  const vl = data.find(l => l.id === viewId);
+   117→   316→
+   118→   317→  return (<div className="space-y-6" dir="rtl">{toast && <Toast {...toast} />}
+   119→   318→    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">{statuses.map(s => (
+   120→   319→      <div key={s} className={"p-4 rounded-2xl border text-center cursor-pointer hover:shadow-md transition-shadow " + sc[s]} onClick={() => setSearch(s === 'جدید' ? '' : s)}>
+   121→   320→        <div className="text-2xl font-bold">{data.filter(l => l.status === s).length}</div><div className="text-xs font-medium mt-1">{s}</div></div>))}</div>
+   122→   321→    <div className="flex gap-3"><div className="relative flex-1"><Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" /><input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="جستجو..." className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400" /></div>
+   123→   322→      <button onClick={() => setModal(true)} className="shrink-0 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium px-5 py-2.5 rounded-xl flex items-center gap-1.5 hover:shadow-lg hover:shadow-orange-500/20 transition-all"><UserPlus className="w-4 h-4" />سرنخ جدید</button></div>
+   124→   323→    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden"><div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-400 text-xs border-b border-gray-100 bg-gray-50/50"><th className="text-right py-3 px-4 font-medium">نام</th><th className="text-right py-3 px-4 font-medium hidden md:table-cell">تلفن</th><th className="text-right py-3 px-4 font-medium">دوره</th><th className="text-right py-3 px-4 font-medium">وضعیت</th><th className="text-right py-3 px-4 font-medium hidden sm:table-cell">مسئول</th><th className="text-right py-3 px-4 font-medium">عملیات</th></tr></thead>
+   125→   324→        <tbody className="divide-y divide-gray-50">{filtered.map(l => (<tr key={l.id} className="hover:bg-orange-50/30"><td className="py-3 px-4 text-slate-900 font-medium">{l.name}</td><td className="py-3 px-4 text-slate-500 hidden md:table-cell" dir="ltr">{l.phone}</td><td className="py-3 px-4 text-slate-600">{l.course}</td>
+   126→   325→          <td className="py-3 px-4"><button onClick={() => cycle(l.id)} className={"text-xs font-bold border rounded-full px-2.5 py-0.5 cursor-pointer hover:opacity-80 " + sc[l.status]}>{l.status}</button></td>
+   127→   326→          <td className="py-3 px-4 text-slate-600 hidden sm:table-cell">{l.assignee}</td>
+   128→   327→          <td className="py-3 px-4"><div className="flex gap-1"><button onClick={() => setViewId(l.id)} className="p-1.5 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-500"><Eye className="w-4 h-4" /></button><a href={"tel:" + l.phone.replace(/[^0-9]/g, '')} className="p-1.5 rounded-lg hover:bg-green-50 text-slate-400 hover:text-green-500"><Phone className="w-4 h-4" /></a><button onClick={() => del(l.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button></div></td></tr>))}</tbody></table></div></div>
+   129→   328→    <Modal open={modal} onClose={() => setModal(false)} title="سرنخ جدید"><div className="space-y-4">
+   130→   329→      <Fld label="نام"><Inp value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></Fld><Fld label="تلفن"><Inp value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} dir="ltr" /></Fld>
+   131→   330→      <Fld label="منبع"><Sel value={form.source} onChange={e => setForm({ ...form, source: e.target.value })} options={[{ value: 'وبسایت', label: 'وبسایت' }, { value: 'اینستاگرام', label: 'اینستاگرام' }, { value: 'تلگرام', label: 'تلگرام' }, { value: 'معرفی', label: 'معرفی' }, { value: 'واتساپ', label: 'واتساپ' }]} /></Fld>
+   132→   331→      <Fld label="دوره"><Inp value={form.course} onChange={e => setForm({ ...form, course: e.target.value })} /></Fld><Fld label="مسئول"><Inp value={form.assignee} onChange={e => setForm({ ...form, assignee: e.target.value })} /></Fld>
+   133→   332→      <button onClick={addLead} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/20 transition-all flex items-center justify-center gap-2"><UserPlus className="w-4 h-4" />ثبت</button></div></Modal>
+   134→   333→    <Modal open={viewId !== null} onClose={() => setViewId(null)} title="جزئیات سرنخ">{vl && (<div className="space-y-4">
+   135→   334→      <div className="grid grid-cols-2 gap-4"><div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">نام</div><div className="text-sm font-bold">{vl.name}</div></div><div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">تلفن</div><div className="text-sm font-bold" dir="ltr">{vl.phone}</div></div><div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">منبع</div><div className="text-sm font-bold">{vl.source}</div></div><div className="bg-gray-50 rounded-xl p-4"><div className="text-xs text-slate-400 mb-1">دوره</div><div className="text-sm font-bold">{vl.course}</div></div></div>
+   136→   335→      <div className="flex gap-2 pt-2"><a href={"tel:" + vl.phone.replace(/[^0-9]/g, '')} className="flex-1 bg-emerald-500 text-white text-sm font-medium py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-600"><Phone className="w-4 h-4" />تماس</a><a href={"https://wa.me/" + vl.phone.replace(/[^0-9]/g, '')} target="_blank" className="flex-1 bg-green-600 text-white text-sm font-medium py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-green-700"><MessageSquare className="w-4 h-4" />پیام</a></div>
+   137→   336→    </div>)}</Modal>
+   138→   337→  </div>);
+   139→   338→}
+   140→   339→
+   141→   340→function FinancialTab() {
+   142→   341→  const [data, setData] = useState([
+   143→   342→    { id: 1, desc: 'شهریه چرتکه مبتدی - سارا احمدی', raw: 2500000, date: '۱۴۰۴/۰۳/۲۰', type: 'درآمد' }, { id: 2, desc: 'حقوق مربی رضایی', raw: 8000000, date: '۱۴۰۴/۰۳/۱۵', type: 'هزینه' },
+   144→   343→    { id: 3, desc: 'شهریه حساب ذهنی - محمد رضایی', raw: 2000000, date: '۱۴۰۴/۰۳/۱۹', type: 'درآمد' }, { id: 4, desc: 'اجاره محل آموزشگاه', raw: 15000000, date: '۱۴۰۴/۰۳/۰۱', type: 'هزینه' },
+   145→   344→  ]);
+   146→   345→  const [modal, setModal] = useState(false); const [form, setForm] = useState({ desc: '', amount: '', type: 'درآمد' });
+   147→   346→  const { toast, show } = useToast();
+   148→   347→  const toP = (n: number) => n.toString().replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[parseInt(d)]).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+   149→   348→  const inc = data.filter(t => t.type === 'درآمد').reduce((s, t) => s + t.raw, 0);
+   150→   349→  const exp = data.filter(t => t.type === 'هزینه').reduce((s, t) => s + t.raw, 0);
+   151→   350→  const add = () => {
+   152→   351→    if (!form.desc.trim() || !form.amount.trim()) { show('فیلدها الزامی', 'error'); return; }
+   153→   352→    const raw = parseInt(form.amount.replace(/[^0-9]/g, '')) || 0;
+   154→   353→    setData(p => [...p, { id: Math.max(0, ...p.map(t => t.id)) + 1, desc: form.desc, raw, date: '۱۴۰۴/۰۳/۲۵', type: form.type }]); show('ثبت شد'); setModal(false); setForm({ desc: '', amount: '', type: 'درآمد' });
+   155→   354→  };
+   156→   355→  const del = (id: number) => { if (confirm('حذف شود؟')) { setData(p => p.filter(t => t.id !== id)); show('حذف شد'); } };
+   157→   356→
+   158→   357→  return (<div className="space-y-6" dir="rtl">{toast && <Toast {...toast} />}
+   159→   358→    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+   160→   359→      <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="text-xs text-slate-400 mb-1">کل درآمد</div><div className="text-2xl font-bold text-emerald-600">{toP(inc)}</div><div className="text-xs text-slate-400 mt-1">تومان</div></div>
+   161→   360→      <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="text-xs text-slate-400 mb-1">کل هزینه</div><div className="text-2xl font-bold text-rose-600">{toP(exp)}</div><div className="text-xs text-slate-400 mt-1">تومان</div></div>
+   162→   361→      <div className="bg-white rounded-2xl p-5 border border-gray-100"><div className="text-xs text-slate-400 mb-1">سود خالص</div><div className="text-2xl font-bold text-slate-900">{toP(inc - exp)}</div><div className="text-xs text-slate-400 mt-1">تومان</div></div>
+   163→   362→    </div>
+   164→   363→    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+   165→   364→      <div className="p-6 border-b border-gray-100 flex items-center justify-between"><h3 className="text-lg font-bold text-slate-900">تراکنش\u200cها ({data.length})</h3>
+   166→   365→        <button onClick={() => setModal(true)} className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5 hover:shadow-lg hover:shadow-orange-500/20 transition-all"><Plus className="w-4 h-4" />ثبت تراکنش</button></div>
+   167→   366→      <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-400 text-xs border-b border-gray-100 bg-gray-50/50"><th className="text-right py-3 px-4 font-medium">توضیحات</th><th className="text-right py-3 px-4 font-medium">مبلغ</th><th className="text-right py-3 px-4 font-medium hidden sm:table-cell">نوع</th><th className="text-right py-3 px-4 font-medium">عملیات</th></tr></thead>
+   168→   367→        <tbody className="divide-y divide-gray-50">{data.map(t => (<tr key={t.id} className="hover:bg-orange-50/30"><td className="py-3 px-4 text-slate-900 font-medium">{t.desc}</td>
+   169→   368→          <td className={"py-3 px-4 font-bold " + (t.type === 'درآمد' ? 'text-emerald-600' : 'text-rose-600')}>{t.type === 'درآمد' ? '+' : '-'}{toP(t.raw)}</td>
+   170→   369→          <td className="py-3 px-4 hidden sm:table-cell"><span className={"text-xs font-bold border rounded-full px-2.5 py-0.5 " + (t.type === 'درآمد' ? 'bg-emerald-100 text-emerald-600 border-emerald-200' : 'bg-rose-100 text-rose-600 border-rose-200')}>{t.type}</span></td>
+   171→   370→          <td className="py-3 px-4"><button onClick={() => del(t.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button></td></tr>))}</tbody></table></div>
+   172→   371→    </div>
+   173→   372→    <Modal open={modal} onClose={() => setModal(false)} title="ثبت تراکنش"><div className="space-y-4">
+   174→   373→      <Fld label="توضیحات"><Inp value={form.desc} onChange={e => setForm({ ...form, desc: e.target.value })} /></Fld><Fld label="مبلغ (تومان)"><Inp type="number" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} dir="ltr" /></Fld>
+   175→   374→      <Fld label="نوع"><Sel value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} options={[{ value: 'درآمد', label: 'درآمد' }, { value: 'هزینه', label: 'هزینه' }]} /></Fld>
+   176→   375→      <button onClick={add} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/20 transition-all flex items-center justify-center gap-2"><Save className="w-4 h-4" />ثبت</button></div></Modal>
+   177→   376→  </div>);
+   178→   377→}
+   179→   378→
+   180→   379→function UsersTab() {
+   181→   380→  const [data, setData] = useState([
+   182→   381→    { id: 1, name: 'مستر رضایی', role: 'مدیر', phone: '۰۹۱۲۱۱۱۱۱۱', status: 'آنلاین' }, { id: 2, name: 'مستر احمدی', role: 'مربی', phone: '۰۹۳۵۲۲۲۲۲', status: 'آنلاین' }, { id: 3, name: 'مستر کریمی', role: 'مربی', phone: '۰۹۱۰۳۳۳۳', status: 'آفلاین' },
+   183→   382→  ]);
+   184→   383→  const [modal, setModal] = useState(false); const [editId, setEditId] = useState<number | null>(null);
+   185→   384→  const [form, setForm] = useState({ name: '', role: 'مربی', phone: '' });
+   186→   385→  const { toast, show } = useToast();
+   187→   386→  const openAdd = () => { setForm({ name: '', role: 'مربی', phone: '' }); setEditId(null); setModal(true); };
+   188→   387→  const openEdit = (u: typeof data[0]) => { setForm({ name: u.name, role: u.role, phone: u.phone }); setEditId(u.id); setModal(true); };
+   189→   388→  const save = () => {
+   190→   389→    if (!form.name.trim()) { show('نام الزامی', 'error'); return; }
+   191→   390→    if (editId) { setData(p => p.map(u => u.id === editId ? { ...u, name: form.name, role: form.role, phone: form.phone } : u)); show('ویرایش شد'); }
+   192→   391→    else { setData(p => [...p, { id: Math.max(0, ...p.map(u => u.id)) + 1, ...form, status: 'آفلاین' }]); show('اضافه شد'); }
+   193→   392→    setModal(false);
+   194→   393→  };
+   195→   394→  const del = (id: number) => { if (confirm('حذف شود؟')) { setData(p => p.filter(u => u.id !== id)); show('حذف شد'); } };
+   196→   395→
+   197→   396→  return (<div dir="rtl">{toast && <Toast {...toast} />}
+   198→   397→    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+   199→   398→      <div className="p-6 border-b border-gray-100 flex items-center justify-between"><h3 className="text-lg font-bold text-slate-900">کاربران ({data.length})</h3>
+   200→   399→        <button onClick={openAdd} className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-1.5 hover:shadow-lg hover:shadow-orange-500/20 transition-all"><UserPlus className="w-4 h-4" />افزودن</button></div>
+   201→   400→      <div className="overflow-x-auto"><table className="w-full text-sm"><thead><tr className="text-slate-400 text-xs border-b border-gray-100 bg-gray-50/50"><th className="text-right py-3 px-4 font-medium">نام</th><th className="text-right py-3 px-4 font-medium">نقش</th><th className="text-right py-3 px-4 font-medium">وضعیت</th><th className="text-right py-3 px-4 font-medium">عملیات</th></tr></thead>
+   202→   401→        <tbody className="divide-y divide-gray-50">{data.map(u => (<tr key={u.id} className="hover:bg-orange-50/30"><td className="py-3 px-4 text-slate-900 font-medium flex items-center gap-2"><div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold shrink-0">{u.name.charAt(0)}</div>{u.name}</td>
+   203→   402→          <td className="py-3 px-4"><span className={"text-xs font-bold border rounded-full px-2.5 py-0.5 " + (u.role === 'مدیر' ? 'bg-purple-100 text-purple-600 border-purple-200' : 'bg-blue-100 text-blue-600 border-blue-200')}>{u.role}</span></td>
+   204→   403→          <td className="py-3 px-4"><span className={"text-xs font-bold border rounded-full px-2.5 py-0.5 " + (u.status === 'آنلاین' ? 'bg-emerald-100 text-emerald-600 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200')}>{u.status}</span></td>
+   205→   404→          <td className="py-3 px-4"><div className="flex gap-1"><button onClick={() => openEdit(u)} className="p-1.5 rounded-lg hover:bg-orange-50 text-slate-400 hover:text-orange-500"><Edit3 className="w-4 h-4" /></button><button onClick={() => del(u.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button></div></td></tr>))}</tbody></table></div>
+   206→   405→    </div>
+   207→   406→    <Modal open={modal} onClose={() => setModal(false)} title={editId ? 'ویرایش کاربر' : 'افزودن کاربر'}><div className="space-y-4">
+   208→   407→      <Fld label="نام"><Inp value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></Fld>
+   209→   408→      <Fld label="نقش"><Sel value={form.role} onChange={e => setForm({ ...form, role: e.target.value })} options={[{ value: 'مدیر', label: 'مدیر' }, { value: 'مربی', label: 'مربی' }, { value: 'کارشناس', label: 'کارشناس' }, { value: 'بازاریاب', label: 'بازاریاب' }]} /></Fld>
+   210→   409→      <Fld label="تلفن"><Inp value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} dir="ltr" /></Fld>
+   211→   410→      <button onClick={save} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium py-3 rounded-xl hover:shadow-lg hover:shadow-orange-500/20 transition-all flex items-center justify-center gap-2"><Save className="w-4 h-4" />ذخیره</button></div></Modal>
+   212→   411→  </div>);
+   213→   412→}
+   214→   413→
+   215→   414→function SettingsTab() {
+   216→   415→  const [saved, setSaved] = useState(false);
+   217→   416→  const [g, setG] = useState({ name: 'چرتکه دهگانی ویرا', phone: '۰۲۱-۹۱۳۰۲۵۸۴', email: 'info@bahanvira.ir', address: 'تهران، خیابان انقلاب، پلاک ۱۲۳' });
+   218→   417→  const [s, setS] = useState({ instagram: 'https://instagram.com/bahanvira', telegram: 'https://t.me/bahanvira' });
+   219→   418→  const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2500); };
+   220→   419→  return (<div className="space-y-6" dir="rtl">{saved && <Toast message="تنظیمات ذخیره شد" type="success" />}
+   221→   420→    <div className="bg-white rounded-2xl border border-gray-100 p-6"><h3 className="text-lg font-bold text-slate-900 mb-6">تنظیمات عمومی</h3><div className="space-y-5 max-w-lg">
+   222→   421→      <Fld label="نام آموزشگاه"><Inp value={g.name} onChange={e => setG({ ...g, name: e.target.value })} /></Fld>
+   223→   422→      <Fld label="شماره تماس"><Inp value={g.phone} onChange={e => setG({ ...g, phone: e.target.value })} dir="ltr" className="text-left" /></Fld>
+   224→   423→      <Fld label="ایمیل"><Inp type="email" value={g.email} onChange={e => setG({ ...g, email: e.target.value })} dir="ltr" className="text-left" /></Fld>
+   225→   424→      <Fld label="آدرس"><textarea value={g.address} onChange={e => setG({ ...g, address: e.target.value })} rows={2} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 resize-none" /></Fld>
+   226→   425→      <button onClick={save} className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium px-6 py-2.5 rounded-xl hover:shadow-lg hover:shadow-orange-500/20 transition-all flex items-center gap-2"><Save className="w-4 h-4" />ذخیره تنظیمات</button></div></div>
+   227→   426→    <div className="bg-white rounded-2xl border border-gray-100 p-6"><h3 className="text-lg font-bold text-slate-900 mb-6">تنظیمات ارتباطی</h3><div className="space-y-5 max-w-lg">
+   228→   427→      <Fld label="لینک اینستاگرام"><Inp value={s.instagram} onChange={e => setS({ ...s, instagram: e.target.value })} dir="ltr" className="text-left" /></Fld>
+   229→   428→      <Fld label="لینک تلگرام"><Inp value={s.telegram} onChange={e => setS({ ...s, telegram: e.target.value })} dir="ltr" className="text-left" /></Fld>
+   230→   429→      <button onClick={save} className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium px-6 py-2.5 rounded-xl hover:shadow-lg hover:shadow-orange-500/20 transition-all flex items-center gap-2"><Save className="w-4 h-4" />ذخیره</button></div></div>
+   231→   430→  </div>);
+   232→   431→}
+   233→   432→
+   234→   433→
+   235→   434→export default function AdminPage() {
+   236→   435→  const [isLoggedIn, setIsLoggedIn] = useState(false);
+   237→   436→  const [password, setPassword] = useState('');
+   238→   437→  const [passwordError, setPasswordError] = useState('');
+   239→   438→  const [activeTab, setActiveTab] = useState<TabKey>('dashboard');
+   240→   439→  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+   241→   440→  const [showNotif, setShowNotif] = useState(false);
+   242→   441→  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(
+   243→   442→    Object.fromEntries(sidebarCategories.map(c => [c.title, true]))
+   244→   443→  );
+   245→   444→
+   246→   445→  const handleLogin = () => {
+   247→   446→    if (password === 'vira2024') { setIsLoggedIn(true); setPasswordError(''); }
+   248→   447→    else { setPasswordError('رمز عبور اشتباه است'); }
+   249→   448→  };
+   250→   449→
+   251→   450→  const navigateTo = (key: TabKey) => { setActiveTab(key); setMobileSidebarOpen(false); };
+   252→   451→
+   253→   452→  const renderContent = () => {
+   254→   453→    switch (activeTab) {
+   255→   454→      case 'dashboard': return <DashboardTab nav={navigateTo} />;
+   256→   455→      case 'students': return <StudentsTab />;
+   257→   456→      case 'classes': return <ClassesTab />;
+   258→   457→      case 'exams': return <ExamsTab />;
+   259→   458→      case 'crm': return <CRMInlineTab />;
+   260→   459→      case 'financial': return <FinancialTab />;
+   261→   460→      case 'users': return <UsersTab />;
+   262→   461→      case 'settings': return <SettingsTab />;
+   263→   462→      case 'marketers': return <MarketersTab />;
+   264→   463→      case 'agencies': return <AgenciesTab />;
+   265→   464→      case 'lms': return <LMSTab />;
+   266→   465→      case 'calendar': return <CalendarTab />;
+   267→   466→      case 'reports': return <ReportsTab />;
+   268→   467→      case 'support': return <SupportTab />;
+   269→   468→      case 'files': return <FilesTab />;
+   270→   469→      case 'payments': return <PaymentsTab />;
+   271→   470→      case 'marketing': return <MarketingTab />;
+   272→   471→      case 'emails': return <EmailsTab />;
+   273→   472→    }
+   274→   473→  };
+   275→   474→
+   276→   475→  if (!isLoggedIn) {
+   277→   476→    return (
+   278→   477→      <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-100 via-orange-50/50 to-amber-50/40 flex items-center justify-center px-4">
+   279→   478→        <div className="bg-white rounded-3xl shadow-xl shadow-black/[0.06] p-8 w-full max-w-sm border border-gray-100">
+   280→   479→          <div className="flex justify-center mb-6"><div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/20"><Lock className="w-8 h-8 text-white" /></div></div>
+   281→   480→          <h1 className="text-2xl font-bold text-slate-900 text-center mb-2">ورود به پنل مدیریت</h1>
+   282→   481→          <p className="text-sm text-slate-500 text-center mb-8">آموزگاه چرتکه دهگانی ویرا</p>
+   283→   482→          <div className="space-y-4"><div>
+   284→   483→            <input type="password" value={password} onChange={e => { setPassword(e.target.value); setPasswordError(''); }} onKeyDown={e => e.key === 'Enter' && handleLogin()} placeholder="رمز عبور" className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500/30 focus:border-orange-400 transition-all" autoFocus />
+   285→   484→            {passwordError && <p className="text-red-500 text-xs mt-2 text-center">{passwordError}</p>}
+   286→   485→          </div>
+   287→   486→          <button onClick={handleLogin} className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-3.5 rounded-xl transition-all shadow-md shadow-orange-500/20 hover:shadow-lg">ورود</button></div>
+   288→   487→        </div>
+   289→   488→      </div>
+   290→   489→    );
+   291→   490→  }
+   292→   491→
+   293→   492→  return (
+   294→   493→    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-orange-50/20 flex">
+   295→   494→      {mobileSidebarOpen && <div className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm lg:hidden" onClick={() => setMobileSidebarOpen(false)} />}
+   296→   495→      <aside className={"fixed lg:sticky top-0 right-0 z-50 lg:z-10 h-screen w-72 bg-gradient-to-b from-white to-orange-50/30 border-l border-orange-100/50 flex flex-col transition-transform duration-300 ease-out " + (mobileSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0') + " shadow-xl lg:shadow-none"}>
+   297→   496→        <div className="p-5 border-b border-gray-100 flex items-center gap-3 shrink-0">
+   298→   497→          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center shadow-md shadow-orange-500/20"><GraduationCap className="w-5 h-5 text-white" /></div>
+   299→   498→          <div className="flex-1 min-w-0"><h2 className="text-sm font-bold text-slate-900 truncate">ویرا | چرتکه دهگانی</h2><p className="text-[11px] text-slate-400">پنل مدیریت جامع</p></div>
+   300→   499→          <button onClick={() => setMobileSidebarOpen(false)} className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 text-slate-400"><X className="w-5 h-5" /></button>
+   301→   500→        </div>
+   302→   501→        <nav className="flex-1 overflow-y-auto py-3 px-3">{sidebarCategories.map(cat => (
+   303→   502→          <div key={cat.title} className="mb-2">
+   304→   503→            <button onClick={() => setExpandedCategories(p => ({ ...p, [cat.title]: !p[cat.title] }))} className="flex items-center gap-2 w-full px-3 py-2 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-gray-50">
+   305→   504→              <FolderOpen className="w-4 h-4 text-orange-400" /><span className="flex-1 text-right">{cat.title}</span>
+   306→   505→              <ChevronDown className={"w-3.5 h-3.5 transition-transform duration-200 " + (expandedCategories[cat.title] ? 'rotate-180' : '')} />
+   307→   506→            </button>
+   308→   507→            <div className={"overflow-hidden transition-all duration-200 " + (expandedCategories[cat.title] ? 'max-h-96' : 'max-h-0')}>
+   309→   508→              {cat.items.map(item => { const I = item.icon; return (
+   310→   509→                <button key={item.key} onClick={() => navigateTo(item.key)} className={"flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 mb-0.5 " + (activeTab === item.key ? 'bg-orange-50 text-orange-600 shadow-sm border border-orange-100' : 'text-slate-600 hover:bg-gray-50 hover:text-slate-900')}>
+   311→   510→                  <I className={"w-4 h-4 " + (activeTab === item.key ? 'text-orange-500' : 'text-slate-400')} />{item.label}
+   312→   511→                </button>); })}
+   313→   512→            </div>
+   314→   513→          </div>
+   315→   514→        ))}</nav>
+   316→   515→        <div className="p-4 border-t border-gray-100 shrink-0"><button onClick={() => { setIsLoggedIn(false); setPassword(''); }} className="flex items-center gap-2 w-full px-3 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"><LogOut className="w-4 h-4" />خروج از پنل</button></div>
+   317→   516→      </aside>
+   318→   517→      <div className="flex-1 min-w-0 flex flex-col">
+   319→   518→        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-xl border-b border-orange-100/30 px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between shrink-0 shadow-sm">
+   320→   519→          <div className="flex items-center gap-3">
+   321→   520→            <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-gray-100 text-slate-500"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+   322→   521→            <h1 className="text-base sm:text-lg font-bold text-slate-900">{sidebarCategories.flatMap(c => c.items).find(i => i.key === activeTab)?.label || 'داشبورد'}</h1>
+   323→   522→          </div>
+   324→   523→          <div className="flex items-center gap-3">
+   325→   524→            <div className="relative"><button onClick={() => setShowNotif(!showNotif)} className="relative p-2 rounded-xl hover:bg-orange-50 text-slate-400 hover:text-orange-500 transition-colors"><Bell className="w-5 h-5" /><span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span></button>{showNotif && (<><div className="fixed inset-0 z-40" onClick={() => setShowNotif(false)} /><div className="absolute left-0 top-full mt-2 w-80 bg-white rounded-2xl border border-gray-100 shadow-2xl z-50 overflow-hidden"><div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between"><span className="text-sm font-bold text-slate-800">اعلان‌ها</span><button onClick={() => setShowNotif(false)} className="text-xs text-orange-500 hover:text-orange-600 font-medium">خواندن همه</button></div><div className="max-h-64 overflow-y-auto divide-y divide-gray-50"><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer bg-orange-50/30"><p className="text-xs text-slate-800 font-medium">ثبت‌نام جدید: سارا احمدی</p><p className="text-[10px] text-slate-400 mt-1">۵ دقیقه پیش</p></div><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer bg-orange-50/30"><p className="text-xs text-slate-800 font-medium">پرداخت موفق: ۲,۵۰۰,۰۰۰ تومان</p><p className="text-[10px] text-slate-400 mt-1">۳۰ دقیقه پیش</p></div><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"><p className="text-xs text-slate-500">تیکت جدید از محمد رضایی</p><p className="text-[10px] text-slate-400 mt-1">۱ ساعت پیش</p></div><div className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"><p className="text-xs text-slate-500">آزمون حساب ذهنی فردا برگزار می‌شود</p><p className="text-[10px] text-slate-400 mt-1">۲ ساعت پیش</p></div></div></div></>)}</div>
+   326→   525→            <div className="flex items-center gap-2"><div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white text-xs font-bold">م</div><span className="text-sm font-medium text-slate-700 hidden sm:block">مدیر</span></div>
+   327→   526→          </div>
+   328→   527→        </header>
+   329→   528→        <main className="flex-1 p-4 sm:p-6 lg:p-8">{renderContent()}</main>
+   330→   529→      </div>
+   331→   530→    </div>
+   332→   531→  );
+   333→   532→}
+   334→
+   335→[showing lines 200-532 of 533; use offset=533 with limit to continue reading]
